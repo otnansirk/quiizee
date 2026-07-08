@@ -256,7 +256,7 @@ export default function HomePage() {
             <span className="editorial-logo-badge">&apos;26</span>
           </Link>
           <Link href="/login" className="editorial-btn-black" style={{ width: "auto", padding: "0.5rem 1.25rem", fontSize: "0.85rem" }}>
-            Creator Portal →
+            Creator Portal
           </Link>
         </div>
       </header>
@@ -291,7 +291,7 @@ export default function HomePage() {
             </div>
             <div style={{ marginTop: "1.5rem" }}>
               <Link href="/quiz/join" className="editorial-btn-blue">
-                Join Quiz Room →
+                Join Quiz Room
               </Link>
             </div>
           </div>
@@ -333,7 +333,7 @@ export default function HomePage() {
                   padding: "0.9rem"
                 }}
               >
-                Check Results →
+                Check Results
               </button>
             </form>
           </div>

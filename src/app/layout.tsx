@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Mini LMS — Premium Assessment Platform",
-  description: "A next-generation, modern learning management system and quiz platform with real-time grading and interactive assessments.",
+  title: "QUIIZEE '26 — Interactive Assessment Platform",
+  description: "A next-generation editorial learning management system and assessment platform with real-time timers and verified grading.",
 };
 
 export default function RootLayout({

@@ -139,47 +139,47 @@ export default function QuizResultPage() {
   // Loading Spinner View
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col justify-between" style={{ background: "var(--bg-primary)" }}>
-        <header style={{ padding: "1.5rem 0", borderBottom: "1px solid var(--border)", background: "rgba(10, 10, 15, 0.8)" }}>
+      <div className="min-h-screen flex flex-col justify-between" style={{ background: "#ffffff", color: "#111827" }}>
+        <header style={{ padding: "1.25rem 0", borderBottom: "2px solid #111827", background: "#ffffff" }}>
           <div className="container flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2" style={{ textDecoration: "none" }}>
               <div
                 style={{
                   width: "36px",
                   height: "36px",
-                  borderRadius: "10px",
-                  background: "var(--accent-gradient)",
+                  borderRadius: "8px",
+                  background: "#111827",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontWeight: "bold",
+                  fontWeight: 900,
                   color: "#fff",
-                  fontSize: "1.2rem",
-                  boxShadow: "0 0 15px rgba(99, 102, 241, 0.5)",
+                  fontSize: "1.1rem",
+                  boxShadow: "3px 3px 0px #2563eb",
                 }}
               >
-                M
+                Q
               </div>
-              <span style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                Mini<span className="text-gradient">LMS</span>
+              <span style={{ fontSize: "1.3rem", fontWeight: 900, color: "#111827", letterSpacing: "-0.04em" }}>
+                QUIIZEE <span style={{ fontSize: "0.85rem", background: "#111827", color: "#fff", padding: "0.15rem 0.4rem", borderRadius: "4px", verticalAlign: "middle" }}>&apos;26</span>
               </span>
             </Link>
           </div>
         </header>
 
         <main className="container flex-1 flex flex-col items-center justify-center text-center animate-fade-in" style={{ padding: "4rem 1.5rem" }}>
-          <div className="spinner" style={{ marginBottom: "1.5rem", boxShadow: "0 0 25px rgba(99, 102, 241, 0.3)" }} />
-          <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "0.5rem" }}>
+          <div className="spinner" style={{ marginBottom: "1.5rem" }} />
+          <h2 style={{ fontSize: "1.75rem", fontWeight: 900, color: "#111827", marginBottom: "0.5rem" }}>
             Retrieving Score Report
           </h2>
-          <p style={{ color: "var(--text-secondary)", maxWidth: "400px" }}>
+          <p style={{ color: "#4b5563", maxWidth: "400px", fontWeight: 600 }}>
             Please wait while we verify your attempt and compile your comprehensive assessment breakdown...
           </p>
         </main>
 
-        <footer style={{ padding: "2rem 0", borderTop: "1px solid var(--border)", textAlign: "center", color: "var(--text-muted)", fontSize: "0.875rem" }}>
+        <footer style={{ padding: "2.5rem 0", borderTop: "2px solid #111827", textAlign: "center", color: "#4b5563", fontSize: "0.85rem", fontWeight: 700 }}>
           <div className="container">
-            <p>© {new Date().getFullYear()} Mini LMS. Engineered for excellence.</p>
+            <p>© {new Date().getFullYear()} QUIIZEE &apos;26. ENGINEERED FOR INSTRUCTIONAL EXCELLENCE.</p>
           </div>
         </footer>
       </div>
@@ -189,68 +189,51 @@ export default function QuizResultPage() {
   // Error / 404 Not Found View
   if (error || !data) {
     return (
-      <div className="min-h-screen flex flex-col justify-between" style={{ background: "var(--bg-primary)" }}>
-        <header style={{ padding: "1.5rem 0", borderBottom: "1px solid var(--border)", background: "rgba(10, 10, 15, 0.8)" }}>
+      <div className="min-h-screen flex flex-col justify-between" style={{ background: "#ffffff", color: "#111827" }}>
+        <header style={{ padding: "1.25rem 0", borderBottom: "2px solid #111827", background: "#ffffff" }}>
           <div className="container flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2" style={{ textDecoration: "none" }}>
               <div
                 style={{
                   width: "36px",
                   height: "36px",
-                  borderRadius: "10px",
-                  background: "var(--accent-gradient)",
+                  borderRadius: "8px",
+                  background: "#111827",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontWeight: "bold",
+                  fontWeight: 900,
                   color: "#fff",
-                  fontSize: "1.2rem",
+                  fontSize: "1.1rem",
+                  boxShadow: "3px 3px 0px #2563eb",
                 }}
               >
-                M
+                Q
               </div>
-              <span style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                Mini<span className="text-gradient">LMS</span>
+              <span style={{ fontSize: "1.3rem", fontWeight: 900, color: "#111827", letterSpacing: "-0.04em" }}>
+                QUIIZEE <span style={{ fontSize: "0.85rem", background: "#111827", color: "#fff", padding: "0.15rem 0.4rem", borderRadius: "4px", verticalAlign: "middle" }}>&apos;26</span>
               </span>
             </Link>
           </div>
         </header>
 
         <main className="container flex-1 flex flex-col items-center justify-center animate-fade-in" style={{ padding: "4rem 1.5rem" }}>
-          <div className="card text-center" style={{ maxWidth: "500px", width: "100%", padding: "3rem 2.5rem", borderColor: "rgba(239, 68, 68, 0.3)" }}>
-            <div
-              style={{
-                width: "72px",
-                height: "72px",
-                borderRadius: "50%",
-                background: "rgba(239, 68, 68, 0.15)",
-                border: "1px solid rgba(239, 68, 68, 0.3)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "2rem",
-                margin: "0 auto 1.5rem",
-                color: "#fca5a5",
-                boxShadow: "0 0 25px rgba(239, 68, 68, 0.2)",
-              }}
-            >
-              ⚠️
-            </div>
-            <h1 className="card-title" style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>
+          <div className="card text-center" style={{ maxWidth: "500px", width: "100%", padding: "3rem 2.5rem", borderColor: "#111827", boxShadow: "8px 8px 0px #111827" }}>
+            <h1 className="card-title" style={{ fontSize: "1.75rem", marginBottom: "0.75rem", fontWeight: 900 }}>
               Result Not Found
             </h1>
-            <p className="card-description" style={{ marginBottom: "2.5rem", color: "var(--text-secondary)", fontSize: "1rem" }}>
-              Result not found. Please check your Result Code (<code style={{ color: "var(--text-primary)", fontWeight: 600 }}>{resultCodeParam}</code>) and try again.
+            <p className="card-description" style={{ marginBottom: "2.5rem", color: "#4b5563", fontSize: "1rem", fontWeight: 600 }}>
+              Result not found. Please check your Result Code (<code style={{ color: "#111827", fontWeight: 800 }}>{resultCodeParam}</code>) and try again.
             </p>
-            <Link href="/" className="btn btn-secondary btn-block btn-lg">
-              ← Back to Home
+            <Link href="/" className="btn btn-secondary btn-block btn-lg" style={{ border: "2px solid #111827", boxShadow: "4px 4px 0px #111827" }}>
+              Back to Home
             </Link>
           </div>
         </main>
 
-        <footer style={{ padding: "2rem 0", borderTop: "1px solid var(--border)", textAlign: "center", color: "var(--text-muted)", fontSize: "0.875rem" }}>
+        <footer style={{ padding: "2.5rem 0", borderTop: "2px solid #111827", textAlign: "center", color: "#4b5563", fontSize: "0.85rem", fontWeight: 700 }}>
           <div className="container">
-            <p>© {new Date().getFullYear()} Mini LMS. Engineered for excellence.</p>
+            <p>© {new Date().getFullYear()} QUIIZEE &apos;26. ENGINEERED FOR INSTRUCTIONAL EXCELLENCE.</p>
           </div>
         </footer>
       </div>
@@ -283,35 +266,35 @@ export default function QuizResultPage() {
   const maxAttempts = data.quiz?.maxAttempts || 1;
 
   return (
-    <div className="min-h-screen flex flex-col justify-between" style={{ background: "var(--bg-primary)" }}>
+    <div className="min-h-screen flex flex-col justify-between" style={{ background: "#ffffff", color: "#111827" }}>
       {/* Top Navigation */}
-      <header style={{ padding: "1.5rem 0", borderBottom: "1px solid var(--border)", background: "rgba(10, 10, 15, 0.8)", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 40 }}>
+      <header style={{ padding: "1.25rem 0", borderBottom: "2px solid #111827", background: "#ffffff", position: "sticky", top: 0, zIndex: 40 }}>
         <div className="container flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2" style={{ textDecoration: "none" }}>
             <div
               style={{
                 width: "36px",
                 height: "36px",
-                borderRadius: "10px",
-                background: "var(--accent-gradient)",
+                borderRadius: "8px",
+                background: "#111827",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontWeight: "bold",
+                fontWeight: 900,
                 color: "#fff",
-                fontSize: "1.2rem",
-                boxShadow: "0 0 15px rgba(99, 102, 241, 0.5)",
+                fontSize: "1.1rem",
+                boxShadow: "3px 3px 0px #2563eb",
               }}
             >
-              M
+              Q
             </div>
-            <span style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)" }}>
-              Mini<span className="text-gradient">LMS</span>
+            <span style={{ fontSize: "1.3rem", fontWeight: 900, color: "#111827", letterSpacing: "-0.04em" }}>
+              QUIIZEE <span style={{ fontSize: "0.85rem", background: "#111827", color: "#fff", padding: "0.15rem 0.4rem", borderRadius: "4px", verticalAlign: "middle" }}>&apos;26</span>
             </span>
           </Link>
           <div className="flex items-center gap-3">
-            <Link href="/" className="btn btn-ghost btn-sm" style={{ color: "var(--text-secondary)" }}>
-              ← Back to Home
+            <Link href="/" className="btn btn-ghost btn-sm" style={{ color: "#111827", fontWeight: 800 }}>
+              Back to Home
             </Link>
           </div>
         </div>
@@ -347,7 +330,7 @@ export default function QuizResultPage() {
                   {quizTitle}
                 </h1>
                 <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>👤 Student:</span> {studentName}
+                  <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>Student:</span> {studentName}
                 </p>
               </div>
 
@@ -365,7 +348,7 @@ export default function QuizResultPage() {
                       boxShadow: "0 0 20px rgba(34, 197, 94, 0.25)",
                     }}
                   >
-                    <span>🟢</span> Completed & Graded
+                    Completed & Graded
                   </div>
                 ) : (
                   <div
@@ -379,7 +362,7 @@ export default function QuizResultPage() {
                       boxShadow: "0 0 20px rgba(245, 158, 11, 0.25)",
                     }}
                   >
-                    <span>🟡</span> Waiting for Teacher Review
+                    Waiting for Teacher Review
                   </div>
                 )}
               </div>
@@ -402,7 +385,6 @@ export default function QuizResultPage() {
                   lineHeight: 1.5,
                 }}
               >
-                <span style={{ fontSize: "1.25rem", flexShrink: 0 }}>⏳</span>
                 <div>
                   Your multiple choice questions have been auto-scored. Your final score will appear after your teacher reviews your essay responses.
                 </div>
@@ -453,12 +435,11 @@ export default function QuizResultPage() {
                     fontWeight: 600,
                   }}
                 >
-                  {copied ? "✅ Copied!" : "📋 Copy Result Code"}
+                  {copied ? "Copied!" : "Copy Result Code"}
                 </button>
               </div>
 
               <div style={{ fontSize: "0.825rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span>⚠️</span>
                 <span>
                   Save this unique code! You can use it anytime on the home page to revisit your detailed score report or download your certificate.
                 </span>
@@ -560,9 +541,6 @@ export default function QuizResultPage() {
                   overflow: "hidden",
                 }}
               >
-                <div style={{ fontSize: "3rem", marginBottom: "0.75rem", animation: "pulseGlow 2.5s infinite" }}>
-                  🎓
-                </div>
                 <h2 style={{ fontSize: "1.35rem", fontWeight: 800, color: "#fff", marginBottom: "0.5rem", lineHeight: 1.3 }}>
                   Congratulations!
                 </h2>
@@ -581,7 +559,7 @@ export default function QuizResultPage() {
                     fontWeight: 700,
                   }}
                 >
-                  📥 Download PDF Certificate
+                  Download PDF Certificate
                 </button>
               </div>
             )}
@@ -630,7 +608,7 @@ export default function QuizResultPage() {
                 } else if (isAnsIncorrect) {
                   ptsBadgeStyle = {
                     background: "rgba(239, 68, 68, 0.15)",
-                    color: "#fca5a5",
+                    color: "#e12727",
                     border: "1px solid rgba(239, 68, 68, 0.4)",
                   };
                   ptsText = `0 / ${q.points} pts`;
@@ -730,18 +708,18 @@ export default function QuizResultPage() {
                               optionBg = "rgba(34, 197, 94, 0.15)";
                               optionBorder = "rgba(34, 197, 94, 0.6)";
                               optionColor = "#86efac";
-                              statusIcon = <span style={{ fontSize: "1.1rem", color: "#22c55e" }}>✅ Correct Choice</span>;
+                              statusIcon = <span style={{ fontSize: "1.1rem", color: "#22c55e" }}>Correct Choice</span>;
                             } else if (isSelected && !isThisOptionCorrect) {
                               optionBg = "rgba(239, 68, 68, 0.15)";
                               optionBorder = "rgba(239, 68, 68, 0.6)";
-                              optionColor = "#fca5a5";
-                              statusIcon = <span style={{ fontSize: "1.1rem", color: "#ef4444" }}>❌ Your Selection</span>;
+                              optionColor = "#e12727";
+                              statusIcon = <span style={{ fontSize: "1.1rem", color: "#ef4444" }}>Your Selection</span>;
                             } else if (!isSelected && isThisOptionCorrect) {
                               // Highlight actual correct option in green so they learn!
                               optionBg = "rgba(34, 197, 94, 0.08)";
                               optionBorder = "1px dashed rgba(34, 197, 94, 0.5)";
                               optionColor = "#86efac";
-                              statusIcon = <span style={{ fontSize: "0.9rem", color: "#22c55e", fontWeight: 600 }}>✅ Correct Answer</span>;
+                              statusIcon = <span style={{ fontSize: "0.9rem", color: "#22c55e", fontWeight: 600 }}>Correct Answer</span>;
                             }
 
                             return (
@@ -776,7 +754,6 @@ export default function QuizResultPage() {
                                       flexShrink: 0,
                                     }}
                                   >
-                                    {isSelected && "✓"}
                                   </div>
                                   <span style={{ color: optionColor, fontWeight: isSelected || isThisOptionCorrect ? 600 : 400, fontSize: "0.95rem" }}>
                                     {opt.text}
@@ -806,9 +783,9 @@ export default function QuizResultPage() {
                             <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700, display: "block", marginBottom: "0.35rem" }}>
                               Your Submitted Answer
                             </span>
-                            <div className="flex items-center gap-2" style={{ fontSize: "1.1rem", fontWeight: 700, color: isAnsCorrect ? "#86efac" : "#fca5a5" }}>
+                            <div className="flex items-center gap-2" style={{ fontSize: "1.1rem", fontWeight: 700, color: isAnsCorrect ? "#86efac" : "#e12727" }}>
                               <span>{ans?.answerText ? ans.answerText.toString().toUpperCase() : "NO ANSWER"}</span>
-                              <span>{isAnsCorrect ? "✅" : "❌"}</span>
+                              <span>{isAnsCorrect ? "Correct" : "Incorrect"}</span>
                             </div>
                           </div>
 
@@ -822,7 +799,7 @@ export default function QuizResultPage() {
                                   ? q.correctAnswer.toString().toUpperCase()
                                   : "TRUE"}
                               </span>
-                              <span>✅</span>
+                              <span>Correct</span>
                             </div>
                           </div>
                         </div>
@@ -845,11 +822,11 @@ export default function QuizResultPage() {
                               </span>
                               {isAnsPending ? (
                                 <span className="badge badge-warning" style={{ margin: 0, fontSize: "0.75rem" }}>
-                                  📝 Pending Teacher Grading
+                                  Pending Teacher Grading
                                 </span>
                               ) : (
                                 <span className="badge badge-success" style={{ margin: 0, fontSize: "0.75rem" }}>
-                                  ✅ Graded by Instructor
+                                  Graded by Instructor
                                 </span>
                               )}
                             </div>
@@ -869,7 +846,7 @@ export default function QuizResultPage() {
                               }}
                             >
                               <div style={{ fontSize: "0.8rem", color: "var(--accent-hover)", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                                <span>💬</span> Instructor Feedback & Comments:
+                                Instructor Feedback & Comments:
                               </div>
                               <p style={{ color: "var(--text-primary)", fontSize: "0.95rem", lineHeight: 1.5, margin: 0 }}>
                                 {ans.feedback}
@@ -905,7 +882,7 @@ export default function QuizResultPage() {
 
             <div className="flex items-center gap-3 flex-wrap">
               <Link href="/" className="btn btn-secondary" style={{ padding: "0.75rem 1.5rem", fontWeight: 600 }}>
-                ← Back to Home
+                Back to Home
               </Link>
 
               {maxAttempts > 1 && (
@@ -914,7 +891,7 @@ export default function QuizResultPage() {
                   className="btn btn-primary"
                   style={{ padding: "0.75rem 1.75rem", fontWeight: 700, boxShadow: "0 4px 15px rgba(99, 102, 241, 0.3)" }}
                 >
-                  🔄 Retake Quiz
+                  Retake Quiz
                 </Link>
               )}
             </div>
@@ -924,9 +901,9 @@ export default function QuizResultPage() {
       </main>
 
       {/* Footer */}
-      <footer style={{ padding: "2rem 0", borderTop: "1px solid var(--border)", textAlign: "center", color: "var(--text-muted)", fontSize: "0.875rem" }}>
+      <footer style={{ padding: "2.5rem 0", borderTop: "2px solid #111827", textAlign: "center", color: "#4b5563", fontSize: "0.85rem", fontWeight: 700 }}>
         <div className="container">
-          <p>© {new Date().getFullYear()} Mini LMS. Engineered for excellence in interactive assessments.</p>
+          <p>© {new Date().getFullYear()} QUIIZEE &apos;26. ENGINEERED FOR INSTRUCTIONAL EXCELLENCE.</p>
         </div>
       </footer>
     </div>

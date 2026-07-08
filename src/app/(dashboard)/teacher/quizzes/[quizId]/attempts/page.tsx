@@ -124,7 +124,7 @@ export default function AttemptHistoryPage() {
             gap: '0.4rem',
           }}
         >
-          <span>←</span> Back to Quizzes
+          Back to Quizzes
         </Link>
 
         <div className="flex justify-between items-start" style={{ flexWrap: 'wrap', gap: '1rem' }}>
@@ -147,7 +147,7 @@ export default function AttemptHistoryPage() {
             }}
             title="Refresh attempt history"
           >
-            <span>🔄</span> Refresh
+            Refresh
           </button>
         </div>
       </div>
@@ -155,7 +155,6 @@ export default function AttemptHistoryPage() {
       {/* Error Banner */}
       {error && (
         <div className="alert alert-error animate-fade-in mb-6" style={{ alignItems: 'flex-start' }}>
-          <span style={{ fontSize: '1.25rem' }}>⚠️</span>
           <div style={{ flex: 1 }}>
             <strong style={{ display: 'block', marginBottom: '0.25rem' }}>Notice</strong>
             <span>{error}</span>
@@ -163,9 +162,9 @@ export default function AttemptHistoryPage() {
           <button
             onClick={() => setError(null)}
             className="btn btn-ghost btn-sm"
-            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#fca5a5' }}
+            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#e12727' }}
           >
-            ✕
+            X
           </button>
         </div>
       )}
@@ -205,7 +204,7 @@ export default function AttemptHistoryPage() {
             boxShadow: filter === 'submitted' ? '0 0 12px rgba(245, 158, 11, 0.2)' : 'none',
           }}
         >
-          <span>🟡</span> Needs Grading ({countSubmitted})
+          Needs Grading ({countSubmitted})
         </button>
 
         <button
@@ -218,7 +217,7 @@ export default function AttemptHistoryPage() {
             boxShadow: filter === 'graded' ? '0 0 12px rgba(34, 197, 94, 0.2)' : 'none',
           }}
         >
-          <span>🟢</span> Graded ({countGraded})
+          Graded ({countGraded})
         </button>
 
         <button
@@ -230,7 +229,7 @@ export default function AttemptHistoryPage() {
             border: filter === 'in_progress' ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid transparent',
           }}
         >
-          <span>🔵</span> In Progress ({countInProgress})
+          In Progress ({countInProgress})
         </button>
       </div>
 
@@ -281,7 +280,7 @@ export default function AttemptHistoryPage() {
             </button>
           ) : (
             <Link href="/teacher/quizzes" className="btn btn-primary btn-lg" style={{ boxShadow: '0 0 25px rgba(99, 102, 241, 0.4)' }}>
-              <span>←</span> Back to My Quizzes
+              Back to My Quizzes
             </Link>
           )}
         </div>
@@ -410,7 +409,7 @@ export default function AttemptHistoryPage() {
                               boxShadow: '0 0 12px rgba(34, 197, 94, 0.15)',
                             }}
                           >
-                            <span>🟢</span> Graded
+                            Graded
                           </span>
                         ) : status === 'submitted' ? (
                           <span
@@ -423,7 +422,7 @@ export default function AttemptHistoryPage() {
                               boxShadow: '0 0 12px rgba(245, 158, 11, 0.15)',
                             }}
                           >
-                            <span>🟡</span> Submitted
+                            Submitted
                           </span>
                         ) : (
                           <span
@@ -435,7 +434,7 @@ export default function AttemptHistoryPage() {
                               gap: '0.35rem',
                             }}
                           >
-                            <span>🔵</span> In Progress
+                            In Progress
                           </span>
                         )}
                       </td>
@@ -483,7 +482,7 @@ export default function AttemptHistoryPage() {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            <span>📝</span> Grade Essays ➔
+                            Grade Essays
                           </Link>
                         ) : status === 'graded' ? (
                           <Link
@@ -497,7 +496,7 @@ export default function AttemptHistoryPage() {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            <span>👁️</span> View Score Report
+                            View Score Report
                           </Link>
                         ) : (
                           <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic', paddingRight: '0.5rem' }}>

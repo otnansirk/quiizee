@@ -285,7 +285,7 @@ export default function QuizTakingEnginePage() {
 
   // 3b. Per-Question Countdown Timer Effect
   const handleQuestionTimeout = useCallback(async (currentQ: Question, currentIndex: number) => {
-    setQuestionTimeoutBanner(`⏰ Time's up for Question ${currentIndex + 1}! Advancing to next question...`);
+    setQuestionTimeoutBanner(`Time's up for Question ${currentIndex + 1}! Advancing to next question...`);
     setTimeout(() => {
       setQuestionTimeoutBanner(prev => (prev?.includes(`Question ${currentIndex + 1}`) ? null : prev));
     }, 4000);
@@ -609,23 +609,6 @@ export default function QuizTakingEnginePage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 animate-fade-in">
         <div className="card" style={{ maxWidth: '500px', width: '100%', textAlign: 'center', padding: '3rem 2rem' }}>
-          <div
-            style={{
-              width: '70px',
-              height: '70px',
-              borderRadius: '50%',
-              background: 'rgba(239, 68, 68, 0.15)',
-              border: '1px solid rgba(239, 68, 68, 0.4)',
-              color: '#fca5a5',
-              fontSize: '2.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 1.5rem',
-            }}
-          >
-            ⚠️
-          </div>
           <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
             Assessment Unavailable
           </h2>
@@ -633,7 +616,7 @@ export default function QuizTakingEnginePage() {
             {error}
           </p>
           <Link href="/" className="btn btn-primary btn-block btn-lg">
-            ← Return to Dashboard
+            Return to Dashboard
           </Link>
         </div>
       </div>
@@ -667,7 +650,7 @@ export default function QuizTakingEnginePage() {
         }
         .timer-pulse-red {
           animation: pulse 1s infinite !important;
-          color: #fca5a5 !important;
+          color: #e12727 !important;
           background: rgba(239, 68, 68, 0.25) !important;
           border: 1px solid rgba(239, 68, 68, 0.6) !important;
           box-shadow: 0 0 25px rgba(239, 68, 68, 0.5) !important;
@@ -754,12 +737,9 @@ export default function QuizTakingEnginePage() {
           position: 'sticky',
           top: 0,
           zIndex: 50,
-          background: 'rgba(10, 10, 15, 0.88)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid var(--border)',
-          padding: '0.85rem 0',
-          boxShadow: 'var(--shadow-md)',
+          background: '#ffffff',
+          borderBottom: '2px solid #111827',
+          padding: '1rem 0',
         }}
       >
         <div className="container flex justify-between items-center" style={{ flexWrap: 'wrap', gap: '1rem' }}>
@@ -767,21 +747,21 @@ export default function QuizTakingEnginePage() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <h1
               style={{
-                fontSize: '1.25rem',
-                fontWeight: 800,
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.01em',
+                fontSize: '1.35rem',
+                fontWeight: 900,
+                color: '#111827',
+                letterSpacing: '-0.02em',
                 lineHeight: '1.2',
               }}
             >
               {quiz?.title || 'Live Assessment'}
             </h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.2rem' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                👤 Candidate: <strong style={{ color: 'var(--text-primary)' }}>{studentName}</strong>
+              <span style={{ fontSize: '0.85rem', color: '#4b5563', fontWeight: 700 }}>
+                Candidate: <strong style={{ color: '#111827', fontWeight: 900 }}>{studentName}</strong>
               </span>
-              <span style={{ color: 'var(--border)' }}>|</span>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              <span style={{ color: '#111827', fontWeight: 900 }}>|</span>
+              <span style={{ fontSize: '0.85rem', color: '#6b7280', fontWeight: 700 }}>
                 Attempt #{attempt?.attemptNumber || 1}
               </span>
             </div>
@@ -795,26 +775,22 @@ export default function QuizTakingEnginePage() {
                 fontSize: '1.05rem',
                 padding: '0.5rem 1.25rem',
                 margin: 0,
-                borderRadius: 'var(--radius-full)',
+                borderRadius: '6px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
                 fontFamily: 'monospace',
-                fontWeight: 800,
+                fontWeight: 900,
                 letterSpacing: '0.05em',
+                border: '2px solid #111827',
+                boxShadow: '2px 2px 0px #111827',
                 transition: 'all 0.3s ease',
               }}
             >
               {quiz?.durationMode === 'per_question' ? (
-                <>
-                  <span style={{ fontSize: '1.2rem' }}>⚡</span>
-                  <span>Q{currentQuestionIndex + 1} Timer: {formatTime(remainingSeconds)} remaining</span>
-                </>
+                <span>Q{currentQuestionIndex + 1} Timer: {formatTime(remainingSeconds)} remaining</span>
               ) : (
-                <>
-                  <span style={{ fontSize: '1.2rem' }}>⏱️</span>
-                  <span>{formatTime(remainingSeconds)} remaining</span>
-                </>
+                <span>{formatTime(remainingSeconds)} remaining</span>
               )}
             </div>
           )}
@@ -827,11 +803,12 @@ export default function QuizTakingEnginePage() {
               className="btn btn-primary"
               style={{
                 padding: '0.65rem 1.5rem',
-                boxShadow: '0 0 20px rgba(99, 102, 241, 0.4)',
-                fontWeight: 700,
+                boxShadow: '4px 4px 0px #111827',
+                border: '2px solid #111827',
+                fontWeight: 900,
               }}
             >
-              <span>🏁</span> Submit Quiz
+              Submit Quiz
             </button>
           </div>
         </div>
@@ -860,7 +837,6 @@ export default function QuizTakingEnginePage() {
             border: '2px solid rgba(255, 255, 255, 0.3)',
           }}
         >
-          <span style={{ fontSize: '1.25rem' }}>⏰</span>
           <span>{questionTimeoutBanner}</span>
         </div>
       )}
@@ -869,7 +845,6 @@ export default function QuizTakingEnginePage() {
       <main className="container flex-1">
         {questions.length === 0 ? (
           <div className="empty-state animate-fade-in" style={{ marginTop: '3rem' }}>
-            <div className="empty-state-icon">📝</div>
             <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>
               No Questions Found
             </h2>
@@ -877,7 +852,7 @@ export default function QuizTakingEnginePage() {
               This assessment currently contains no active questions. Please contact your instructor or institution administrator.
             </p>
             <Link href="/" className="btn btn-secondary btn-lg">
-              ← Return to Dashboard
+              Return to Dashboard
             </Link>
           </div>
         ) : (
@@ -979,13 +954,13 @@ export default function QuizTakingEnginePage() {
                       }}
                     >
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#86efac' }}>
-                        🟢 Answered
+                        Answered
                       </span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-secondary)' }}>
-                        ⚪ Unanswered
+                        Unanswered
                       </span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#818cf8' }}>
-                        🟣 Active
+                        Active
                       </span>
                     </div>
                   </div>
@@ -1020,10 +995,10 @@ export default function QuizTakingEnginePage() {
                 <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
                   <span className="badge badge-info" style={{ margin: 0 }}>
                     {currentQuestion.type === 'multiple_choice'
-                      ? '📑 Multiple Choice'
+                      ? 'Multiple Choice'
                       : currentQuestion.type === 'true_false'
-                      ? '⚖️ True or False'
-                      : '✍️ Essay'}
+                      ? 'True or False'
+                      : 'Essay'}
                   </span>
                   <span className="badge badge-accent" style={{ margin: 0, fontWeight: 800 }}>
                     {currentQuestion.points} pt{currentQuestion.points === 1 ? '' : 's'}
@@ -1109,7 +1084,7 @@ export default function QuizTakingEnginePage() {
                               transition: 'all var(--transition-fast)',
                             }}
                           >
-                            {isSelected ? '✓' : letter}
+                            {letter}
                           </div>
                           <div
                             style={{
@@ -1155,7 +1130,6 @@ export default function QuizTakingEnginePage() {
                               boxShadow: isTrueSelected ? '0 0 30px rgba(34, 197, 94, 0.25)' : undefined,
                             }}
                           >
-                            <div style={{ fontSize: '3rem' }}>👍</div>
                             <div style={{ fontSize: '1.35rem', fontWeight: 800, color: isTrueSelected ? '#86efac' : 'var(--text-primary)' }}>
                               True
                             </div>
@@ -1177,8 +1151,7 @@ export default function QuizTakingEnginePage() {
                               boxShadow: isFalseSelected ? '0 0 30px rgba(239, 68, 68, 0.25)' : undefined,
                             }}
                           >
-                            <div style={{ fontSize: '3rem' }}>👎</div>
-                            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: isFalseSelected ? '#fca5a5' : 'var(--text-primary)' }}>
+                            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: isFalseSelected ? '#e12727' : 'var(--text-primary)' }}>
                               False
                             </div>
                           </div>
@@ -1223,17 +1196,17 @@ export default function QuizTakingEnginePage() {
                     >
                       {savingStatus[currentQuestion.id] === 'saving' && (
                         <span style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          💾 Saving response...
+                          Saving response...
                         </span>
                       )}
                       {savingStatus[currentQuestion.id] === 'saved' && (
                         <span style={{ color: '#86efac', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          ✅ Saved securely
+                          Saved securely
                         </span>
                       )}
                       {savingStatus[currentQuestion.id] === 'error' && (
-                        <span style={{ color: '#fca5a5', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          ❌ Error saving. Will retry on next edit.
+                        <span style={{ color: '#e12727', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          Error saving. Will retry on next edit.
                         </span>
                       )}
                     </div>
@@ -1260,7 +1233,7 @@ export default function QuizTakingEnginePage() {
                     className="btn btn-secondary"
                     style={{ padding: '0.75rem 1.75rem', fontWeight: 700 }}
                   >
-                    ← Previous
+                    Previous
                   </button>
                 ) : <div />}
 
@@ -1275,7 +1248,7 @@ export default function QuizTakingEnginePage() {
                     className="btn btn-primary"
                     style={{ padding: '0.75rem 2rem', fontWeight: 700 }}
                   >
-                    Next →
+                    Next
                   </button>
                 ) : (
                   <button
@@ -1288,7 +1261,7 @@ export default function QuizTakingEnginePage() {
                       boxShadow: '0 0 25px rgba(168, 85, 247, 0.5)',
                     }}
                   >
-                    Review & Submit 🏁
+                    Review & Submit
                   </button>
                 )}
               </div>
@@ -1328,24 +1301,6 @@ export default function QuizTakingEnginePage() {
               boxShadow: '0 0 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(99, 102, 241, 0.25)',
             }}
           >
-            <div
-              style={{
-                width: '76px',
-                height: '76px',
-                borderRadius: '50%',
-                background: 'rgba(99, 102, 241, 0.15)',
-                border: '1px solid rgba(99, 102, 241, 0.4)',
-                fontSize: '2.5rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 1.5rem',
-                boxShadow: '0 0 25px rgba(99, 102, 241, 0.3)',
-              }}
-            >
-              🏁
-            </div>
-
             <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
               Submit Assessment?
             </h3>
@@ -1408,7 +1363,6 @@ export default function QuizTakingEnginePage() {
                   gap: '0.75rem',
                 }}
               >
-                <span style={{ fontSize: '1.3rem' }}>⚠️</span>
                 <div>
                   <strong style={{ display: 'block', marginBottom: '0.2rem' }}>Incomplete Assessment Warning</strong>
                   <span>
@@ -1430,7 +1384,6 @@ export default function QuizTakingEnginePage() {
                   gap: '0.75rem',
                 }}
               >
-                <span style={{ fontSize: '1.3rem' }}>✅</span>
                 <span>
                   <strong>All Set!</strong> You have provided an answer for every question in this assessment.
                 </span>
@@ -1445,7 +1398,7 @@ export default function QuizTakingEnginePage() {
                 className="btn btn-secondary btn-lg"
                 style={{ flex: 1, minWidth: '160px', justifyContent: 'center' }}
               >
-                ← Keep Working
+                Keep Working
               </button>
               <button
                 onClick={handleManualSubmit}
@@ -1458,7 +1411,7 @@ export default function QuizTakingEnginePage() {
                   boxShadow: '0 0 25px rgba(99, 102, 241, 0.5)',
                 }}
               >
-                {isSubmitting ? '⌛ Submitting...' : 'Yes, Submit Assessment 🏁'}
+                {isSubmitting ? 'Submitting...' : 'Yes, Submit Assessment'}
               </button>
             </div>
           </div>
@@ -1496,23 +1449,6 @@ export default function QuizTakingEnginePage() {
               boxShadow: '0 0 50px rgba(239, 68, 68, 0.3)',
             }}
           >
-            <div
-              style={{
-                width: '80px',
-                height: '80px',
-                borderRadius: '50%',
-                background: 'rgba(239, 68, 68, 0.2)',
-                border: '1px solid rgba(239, 68, 68, 0.5)',
-                fontSize: '2.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 1.5rem',
-                animation: 'pulse 1s infinite',
-              }}
-            >
-              ⏰
-            </div>
             <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
               Time&apos;s Up!
             </h3>

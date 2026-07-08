@@ -110,21 +110,20 @@ export default function EssayReviewsPage() {
           }}
           title="Refresh pending reviews list"
         >
-          <span>🔄</span> Refresh List
+          Refresh List
         </button>
       </div>
 
       {/* Error Banner */}
       {error && (
         <div className="alert alert-error animate-fade-in" style={{ marginBottom: '1.5rem' }}>
-          <span style={{ fontSize: '1.25rem' }}>⚠️</span>
           <span style={{ flex: 1 }}>{error}</span>
           <button
             onClick={() => setError(null)}
             className="btn btn-ghost btn-sm"
-            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#fca5a5' }}
+            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#e12727' }}
           >
-            ✕
+            X
           </button>
         </div>
       )}
@@ -167,7 +166,7 @@ export default function EssayReviewsPage() {
               fontSize: '3rem',
             }}
           >
-            🎉
+            !
           </div>
           <h2 style={{ fontSize: '1.85rem', fontWeight: 800, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>
             All Caught Up!
@@ -191,7 +190,7 @@ export default function EssayReviewsPage() {
               padding: '1rem 2.25rem',
             }}
           >
-            <span>←</span> Back to My Quizzes
+            Back to My Quizzes
           </Link>
         </div>
       ) : (
@@ -262,7 +261,7 @@ export default function EssayReviewsPage() {
                         boxShadow: '0 0 15px rgba(245, 158, 11, 0.15)',
                       }}
                     >
-                      <span>🟡</span> Needs Grading
+                      Needs Grading
                     </span>
                   </div>
 
@@ -335,7 +334,6 @@ export default function EssayReviewsPage() {
                         gap: '0.4rem',
                       }}
                     >
-                      <span>📅</span>
                       <span>Attempted: {attemptDate}</span>
                     </div>
                   </div>
@@ -351,7 +349,6 @@ export default function EssayReviewsPage() {
                     }}
                   >
                     <div className="flex items-center gap-2" style={{ color: '#fde047', fontSize: '0.9rem', fontWeight: 600 }}>
-                      <span>📝</span>
                       <span>{ungradedCount} ungraded {ungradedCount === 1 ? 'essay' : 'essays'}</span>
                     </div>
                     <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
@@ -372,7 +369,7 @@ export default function EssayReviewsPage() {
                     boxShadow: '0 4px 18px rgba(99, 102, 241, 0.35)',
                   }}
                 >
-                  <span>📝</span> Grade Response ➔
+                  Grade Response
                 </Link>
               </div>
             );

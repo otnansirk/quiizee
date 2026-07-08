@@ -165,7 +165,7 @@ export default function QuizQuestionsPage() {
 
       setQuiz((prev) => (prev ? { ...prev, isPublished: targetPublishState } : null));
       showToast(
-        `Quiz successfully ${targetPublishState ? 'published 🚀' : 'unpublished ⏸️'}!`,
+        `Quiz successfully ${targetPublishState ? 'published' : 'unpublished'}!`,
         'success'
       );
     } catch (err: any) {
@@ -430,7 +430,7 @@ export default function QuizQuestionsPage() {
       }
 
       showToast(
-        editingQuestionId ? 'Question updated successfully! ✨' : 'Question added successfully! 🎉',
+        editingQuestionId ? 'Question updated successfully!' : 'Question added successfully!',
         'success'
       );
       setIsModalOpen(false);
@@ -489,7 +489,6 @@ export default function QuizQuestionsPage() {
     return (
       <div className="container animate-fade-in" style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>
         <div className="card" style={{ maxWidth: '550px', margin: '0 auto', padding: '3rem 2rem' }}>
-          <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>⚠️</div>
           <h2 className="card-title" style={{ fontSize: '1.75rem', marginBottom: '0.75rem' }}>
             Failed to Load Quiz
           </h2>
@@ -498,10 +497,10 @@ export default function QuizQuestionsPage() {
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
             <Link href="/teacher/quizzes" className="btn btn-secondary">
-              ← Back to Quizzes
+              Back to Quizzes
             </Link>
             <button onClick={fetchQuizData} className="btn btn-primary">
-              🔄 Try Again
+              Try Again
             </button>
           </div>
         </div>
@@ -587,8 +586,8 @@ export default function QuizQuestionsPage() {
               maxWidth: '400px',
             }}
           >
-            <span>
-              {toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}
+            <span style={{ fontWeight: 800, textTransform: 'uppercase', fontSize: '0.75rem' }}>
+              {toast.type === 'success' ? '[SUCCESS]' : toast.type === 'error' ? '[ERROR]' : '[INFO]'}
             </span>
             <span>{toast.message}</span>
           </div>
@@ -616,7 +615,7 @@ export default function QuizQuestionsPage() {
                 background: 'rgba(255, 255, 255, 0.03)',
               }}
             >
-              ← Back to Quizzes
+              Back to Quizzes
             </Link>
           </div>
 
@@ -696,9 +695,9 @@ export default function QuizQuestionsPage() {
                   onClick={() => handlePublishToggle(false)}
                   disabled={isPublishing}
                   className="btn btn-secondary"
-                  style={{ borderColor: 'rgba(239, 68, 68, 0.3)', color: '#fca5a5' }}
+                  style={{ borderColor: 'rgba(236, 37, 37, 0.756)', color: '#e12727' }}
                 >
-                  {isPublishing ? '⏸️ Unpublishing...' : '⏸️ Unpublish'}
+                  {isPublishing ? 'Unpublishing...' : 'Unpublish'}
                 </button>
               ) : (
                 <button
@@ -711,7 +710,7 @@ export default function QuizQuestionsPage() {
                     boxShadow: '0 4px 15px rgba(16, 185, 129, 0.35)',
                   }}
                 >
-                  {isPublishing ? '🚀 Publishing...' : '🚀 Publish Quiz'}
+                  {isPublishing ? 'Publishing...' : 'Publish Quiz'}
                 </button>
               )}
 
@@ -720,7 +719,7 @@ export default function QuizQuestionsPage() {
                 className="btn btn-primary"
                 style={{ padding: '0.75rem 1.5rem', fontSize: '0.95rem' }}
               >
-                ➕ Add Question
+                Add Question
               </button>
             </div>
           </div>
@@ -753,7 +752,7 @@ export default function QuizQuestionsPage() {
                   fontSize: '1.5rem',
                 }}
               >
-                📋
+                Q
               </div>
               <div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
@@ -780,7 +779,7 @@ export default function QuizQuestionsPage() {
                   fontSize: '1.5rem',
                 }}
               >
-                🏆
+                P
               </div>
               <div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
@@ -807,7 +806,7 @@ export default function QuizQuestionsPage() {
                   fontSize: '1.5rem',
                 }}
               >
-                ⏳
+                T
               </div>
               <div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
@@ -869,7 +868,7 @@ export default function QuizQuestionsPage() {
                   boxShadow: '0 0 30px rgba(99, 102, 241, 0.15)',
                 }}
               >
-                ✨
+                Q
               </div>
               <h2
                 style={{
@@ -893,7 +892,7 @@ export default function QuizQuestionsPage() {
                 Start building your interactive assessment by adding multiple choice, true/false, or essay questions.
               </p>
               <button onClick={openAddModal} className="btn btn-primary btn-lg">
-                ➕ Add Your First Question
+                Add Your First Question
               </button>
             </div>
           ) : (
@@ -907,20 +906,20 @@ export default function QuizQuestionsPage() {
                 let typeBadgeBg = 'rgba(99, 102, 241, 0.15)';
                 let typeBadgeColor = '#818cf8';
                 let typeBadgeBorder = 'rgba(99, 102, 241, 0.3)';
-                let typeLabel = '🔘 Multiple Choice';
+                let typeLabel = 'Multiple Choice';
                 let cardBorderLeft = '#6366f1';
 
                 if (q.type === 'true_false') {
                   typeBadgeBg = 'rgba(16, 185, 129, 0.15)';
                   typeBadgeColor = '#34d399';
                   typeBadgeBorder = 'rgba(16, 185, 129, 0.3)';
-                  typeLabel = '⚖️ True or False';
+                  typeLabel = 'True or False';
                   cardBorderLeft = '#10b981';
                 } else if (q.type === 'essay') {
                   typeBadgeBg = 'rgba(245, 158, 11, 0.15)';
                   typeBadgeColor = '#fbbf24';
                   typeBadgeBorder = 'rgba(245, 158, 11, 0.3)';
-                  typeLabel = '📝 Essay / Free Text';
+                  typeLabel = 'Essay / Free Text';
                   cardBorderLeft = '#f59e0b';
                 }
 
@@ -989,7 +988,7 @@ export default function QuizQuestionsPage() {
                             fontWeight: 600,
                           }}
                         >
-                          🏆 {q.points} {q.points === 1 ? 'pt' : 'pts'}
+                          {q.points} {q.points === 1 ? 'pt' : 'pts'}
                         </span>
 
                         {/* Duration Badge (if per-question mode) */}
@@ -1005,7 +1004,7 @@ export default function QuizQuestionsPage() {
                               fontWeight: 600,
                             }}
                           >
-                            ⏳ {q.duration}s
+                            {q.duration}s
                           </span>
                         )}
                       </div>
@@ -1023,7 +1022,7 @@ export default function QuizQuestionsPage() {
                             cursor: isFirst ? 'not-allowed' : 'pointer',
                           }}
                         >
-                          ⬆️
+                          UP
                         </button>
                         <button
                           onClick={() => handleMoveQuestion(idx, 'down')}
@@ -1036,7 +1035,7 @@ export default function QuizQuestionsPage() {
                             cursor: isLast ? 'not-allowed' : 'pointer',
                           }}
                         >
-                          ⬇️
+                          DOWN
                         </button>
 
                         <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 0.25rem' }} />
@@ -1046,7 +1045,7 @@ export default function QuizQuestionsPage() {
                           className="btn btn-secondary btn-sm"
                           style={{ padding: '0.4rem 0.85rem' }}
                         >
-                          ✏️ Edit
+                          Edit
                         </button>
 
                         <button
@@ -1054,11 +1053,11 @@ export default function QuizQuestionsPage() {
                           className="btn btn-ghost btn-sm"
                           style={{
                             padding: '0.4rem 0.85rem',
-                            color: '#fca5a5',
+                            color: '#e12727',
                             background: 'rgba(239, 68, 68, 0.08)',
                           }}
                         >
-                          🗑️ Delete
+                          Delete
                         </button>
                       </div>
                     </div>
@@ -1181,7 +1180,7 @@ export default function QuizQuestionsPage() {
                                         gap: '0.3rem',
                                       }}
                                     >
-                                      ✅ Correct
+                                      Correct
                                     </span>
                                   )}
                                 </div>
@@ -1207,7 +1206,7 @@ export default function QuizQuestionsPage() {
                             boxShadow: '0 0 20px rgba(16, 185, 129, 0.1)',
                           }}
                         >
-                          <span>⚖️ Correct Answer:</span>
+                          <span>Correct Answer:</span>
                           <span
                             style={{
                               padding: '0.25rem 0.75rem',
@@ -1217,7 +1216,7 @@ export default function QuizQuestionsPage() {
                               textTransform: 'capitalize',
                             }}
                           >
-                            {q.correctAnswer === 'false' ? 'False ✅' : 'True ✅'}
+                            {q.correctAnswer === 'false' ? 'False (Correct)' : 'True (Correct)'}
                           </span>
                         </div>
                       )}
@@ -1238,7 +1237,6 @@ export default function QuizQuestionsPage() {
                             fontWeight: 500,
                           }}
                         >
-                          <span style={{ fontSize: '1.25rem' }}>📝</span>
                           <span>
                             <strong>Manual grading required:</strong> Teacher review is needed to evaluate student responses after quiz completion.
                           </span>
@@ -1311,14 +1309,13 @@ export default function QuizQuestionsPage() {
                 className="btn btn-ghost btn-sm"
                 style={{ padding: '0.5rem', fontSize: '1.25rem', lineHeight: 1 }}
               >
-                ✕
+                X
               </button>
             </div>
 
             {/* Error Banner */}
             {formError && (
               <div className="alert alert-error animate-fade-in" style={{ marginBottom: '1.5rem' }}>
-                <span>⚠️</span>
                 <span>{formError}</span>
               </div>
             )}
@@ -1354,7 +1351,7 @@ export default function QuizQuestionsPage() {
                       boxShadow: formType === 'multiple_choice' ? '0 4px 15px rgba(99, 102, 241, 0.3)' : 'none',
                     }}
                   >
-                    🔘 Multiple Choice
+                    Multiple Choice
                   </button>
                   <button
                     type="button"
@@ -1371,7 +1368,7 @@ export default function QuizQuestionsPage() {
                       boxShadow: formType === 'true_false' ? '0 4px 15px rgba(16, 185, 129, 0.3)' : 'none',
                     }}
                   >
-                    ⚖️ True / False
+                    True / False
                   </button>
                   <button
                     type="button"
@@ -1388,7 +1385,7 @@ export default function QuizQuestionsPage() {
                       boxShadow: formType === 'essay' ? '0 4px 15px rgba(245, 158, 11, 0.3)' : 'none',
                     }}
                   >
-                    📝 Essay / Free Text
+                    Essay / Free Text
                   </button>
                 </div>
               </div>
@@ -1530,7 +1527,7 @@ export default function QuizQuestionsPage() {
                         ANSWER OPTIONS <span style={{ color: 'var(--error)' }}>*</span>
                       </label>
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                        Select the correct option(s) using the checkmark ✅
+                        Select the correct option(s) using the checkmark
                       </span>
                     </div>
 
@@ -1614,7 +1611,7 @@ export default function QuizQuestionsPage() {
                                 flexShrink: 0,
                               }}
                             >
-                              {opt.isCorrect ? '✅ Correct' : 'Mark Correct'}
+                              {opt.isCorrect ? 'Correct' : 'Mark Correct'}
                             </button>
 
                             {/* Remove Option Button */}
@@ -1626,13 +1623,13 @@ export default function QuizQuestionsPage() {
                               title="Remove option"
                               style={{
                                 padding: '0.45rem 0.65rem',
-                                color: '#fca5a5',
+                                color: '#e12727',
                                 opacity: formOptions.length <= 2 ? 0.3 : 1,
                                 cursor: formOptions.length <= 2 ? 'not-allowed' : 'pointer',
                                 flexShrink: 0,
                               }}
                             >
-                              🗑️
+                              X
                             </button>
                           </div>
                         );
@@ -1652,7 +1649,7 @@ export default function QuizQuestionsPage() {
                         color: 'var(--accent-hover)',
                       }}
                     >
-                      ➕ Add Another Option
+                      Add Another Option
                     </button>
                   </div>
                 )}
@@ -1684,7 +1681,6 @@ export default function QuizQuestionsPage() {
                           boxShadow: formCorrectAnswer === 'true' ? '0 0 25px rgba(16, 185, 129, 0.2)' : 'none',
                         }}
                       >
-                        <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👍</div>
                         <div
                           style={{
                             fontSize: '1.2rem',
@@ -1692,7 +1688,7 @@ export default function QuizQuestionsPage() {
                             color: formCorrectAnswer === 'true' ? '#34d399' : 'var(--text-primary)',
                           }}
                         >
-                          True is Correct {formCorrectAnswer === 'true' && '✅'}
+                          True is Correct {formCorrectAnswer === 'true' && '(Selected)'}
                         </div>
                       </button>
 
@@ -1716,7 +1712,6 @@ export default function QuizQuestionsPage() {
                           boxShadow: formCorrectAnswer === 'false' ? '0 0 25px rgba(16, 185, 129, 0.2)' : 'none',
                         }}
                       >
-                        <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👎</div>
                         <div
                           style={{
                             fontSize: '1.2rem',
@@ -1724,7 +1719,7 @@ export default function QuizQuestionsPage() {
                             color: formCorrectAnswer === 'false' ? '#34d399' : 'var(--text-primary)',
                           }}
                         >
-                          False is Correct {formCorrectAnswer === 'false' && '✅'}
+                          False is Correct {formCorrectAnswer === 'false' && '(Selected)'}
                         </div>
                       </button>
                     </div>
@@ -1745,7 +1740,6 @@ export default function QuizQuestionsPage() {
                       color: '#fbbf24',
                     }}
                   >
-                    <div style={{ fontSize: '2.5rem' }}>📝</div>
                     <div>
                       <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.25rem', color: '#fef08a' }}>
                         Manual Review Required
@@ -1785,7 +1779,7 @@ export default function QuizQuestionsPage() {
                   className="btn btn-primary"
                   style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
                 >
-                  {isSaving ? '⏳ Saving...' : 'Save Question ➔'}
+                  {isSaving ? 'Saving...' : 'Save Question'}
                 </button>
               </div>
             </form>
@@ -1832,12 +1826,13 @@ export default function QuizQuestionsPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '2rem',
+                fontSize: '1.5rem',
+                fontWeight: 900,
                 margin: '0 auto 1.25rem',
                 border: '1px solid rgba(239, 68, 68, 0.3)',
               }}
             >
-              🗑️
+              DEL
             </div>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
               Delete Question?
@@ -1888,7 +1883,7 @@ export default function QuizQuestionsPage() {
                   boxShadow: '0 4px 15px rgba(239, 68, 68, 0.35)',
                 }}
               >
-                {isDeleting ? 'Deleting...' : '🗑️ Delete'}
+                {isDeleting ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>
@@ -1935,11 +1930,12 @@ export default function QuizQuestionsPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '2rem',
+                fontWeight: 900,
                 margin: '0 auto 1.25rem',
                 border: '1px solid rgba(245, 158, 11, 0.3)',
               }}
             >
-              ⚠️
+              !
             </div>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
               Cannot Publish Quiz
@@ -1955,7 +1951,7 @@ export default function QuizQuestionsPage() {
               className="btn btn-primary btn-block"
               style={{ padding: '0.85rem' }}
             >
-              ➕ Add Question Now
+              Add Question Now
             </button>
           </div>
         </div>

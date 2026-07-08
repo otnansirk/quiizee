@@ -91,7 +91,7 @@ export default function EditQuizPage() {
       }
 
       setIsPublished(!isPublished);
-      setSuccessMsg(`Quiz has been successfully ${!isPublished ? 'published 🟢' : 'unpublished 🟡'}.`);
+      setSuccessMsg(`Quiz has been successfully ${!isPublished ? 'published' : 'unpublished'}.`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to toggle publication status.');
@@ -170,11 +170,10 @@ export default function EditQuizPage() {
   if (fetchError) {
     return (
       <div className="card animate-fade-in text-center" style={{ maxWidth: '600px', margin: '4rem auto', padding: '3rem 2rem' }}>
-        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>❌</div>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>Failed to Load Quiz</h2>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>{fetchError}</p>
         <Link href="/teacher/quizzes" className="btn btn-primary">
-          ← Return to My Quizzes
+          Return to My Quizzes
         </Link>
       </div>
     );
@@ -189,7 +188,7 @@ export default function EditQuizPage() {
           className="btn btn-ghost btn-sm"
           style={{ paddingLeft: 0, color: 'var(--text-secondary)' }}
         >
-          ← Back to Quizzes
+          Back to Quizzes
         </Link>
 
         <Link
@@ -197,7 +196,7 @@ export default function EditQuizPage() {
           className="btn btn-secondary btn-sm"
           style={{ borderColor: 'rgba(99, 102, 241, 0.4)', color: 'var(--accent-hover)' }}
         >
-          ❓ Manage Questions ({questionsCount}) ➔
+          Manage Questions ({questionsCount})
         </Link>
       </div>
 
@@ -214,28 +213,26 @@ export default function EditQuizPage() {
       {/* Alert Messages */}
       {errorMsg && (
         <div className="alert alert-error animate-fade-in">
-          <span>⚠️</span>
           <span style={{ flex: 1 }}>{errorMsg}</span>
           <button
             onClick={() => setErrorMsg(null)}
             className="btn btn-ghost btn-sm"
-            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#fca5a5' }}
+            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#e12727' }}
           >
-            ✕
+            X
           </button>
         </div>
       )}
 
       {successMsg && (
         <div className="alert alert-success animate-fade-in">
-          <span>✅</span>
           <span style={{ flex: 1 }}>{successMsg}</span>
           <button
             onClick={() => setSuccessMsg(null)}
             className="btn btn-ghost btn-sm"
             style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#86efac' }}
           >
-            ✕
+            X
           </button>
         </div>
       )}
@@ -261,7 +258,7 @@ export default function EditQuizPage() {
               Publication Status:
             </span>
             <span className={`badge ${isPublished ? 'badge-success' : 'badge-warning'}`} style={{ margin: 0, fontSize: '0.8rem' }}>
-              {isPublished ? '🟢 Published' : '🟡 Draft'}
+              {isPublished ? 'Published' : 'Draft'}
             </span>
           </div>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
@@ -277,7 +274,7 @@ export default function EditQuizPage() {
           disabled={isPublishing || isSubmitting}
           className={`btn ${isPublished ? 'btn-secondary' : 'btn-primary'}`}
         >
-          {isPublishing ? '⌛ Updating...' : isPublished ? '⏸️ Unpublish Quiz' : '🚀 Publish Quiz'}
+          {isPublishing ? 'Updating...' : isPublished ? 'Unpublish Quiz' : 'Publish Quiz'}
         </button>
       </div>
 
@@ -343,7 +340,7 @@ export default function EditQuizPage() {
 
           <div className="choice-card selected" style={{ cursor: 'default' }}>
             <div className="choice-card-title">
-              <span>🌐</span> Public Access Code Only
+              Public Access Code Only
             </div>
             <div className="choice-card-desc">
               Students access this assessment by entering the unique access code along with their Name and Email. No student login or account registration required.
@@ -366,7 +363,7 @@ export default function EditQuizPage() {
               onClick={() => !isSubmitting && setDurationMode('global')}
             >
               <div className="choice-card-title">
-                <span>⏱️</span> Global Timer
+                Global Timer
               </div>
               <div className="choice-card-desc">
                 A single countdown timer for the entire assessment. Students can freely navigate back and forth between questions.
@@ -378,7 +375,7 @@ export default function EditQuizPage() {
               onClick={() => !isSubmitting && setDurationMode('per_question')}
             >
               <div className="choice-card-title">
-                <span>⚡</span> Per-Question Timer
+                Per-Question Timer
               </div>
               <div className="choice-card-desc">
                 Each question has its own timer. Sequential navigation only: students must answer within the limit and cannot return to previous questions.
@@ -447,7 +444,7 @@ export default function EditQuizPage() {
           >
             <div>
               <div style={{ fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span>🎓</span> Enable Certificate for this Quiz
+                Enable Certificate for this Quiz
               </div>
               <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                 Students who score above the minimum passing threshold will receive an official certificate of achievement.
@@ -502,16 +499,7 @@ export default function EditQuizPage() {
             disabled={isSubmitting}
             style={{ boxShadow: '0 0 25px rgba(99, 102, 241, 0.4)' }}
           >
-            {isSubmitting ? (
-              <>
-                <span style={{ display: 'inline-block', animation: 'spin 1s infinite linear' }}>⏳</span>
-                Saving Changes...
-              </>
-            ) : (
-              <>
-                💾 Save Changes
-              </>
-            )}
+            {isSubmitting ? "Saving Changes..." : "Save Changes"}
           </button>
         </div>
       </form>

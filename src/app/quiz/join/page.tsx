@@ -50,7 +50,6 @@ function JoinQuizForm() {
       const data = await res.json();
 
       if (!res.ok || (!data.success && !data.attemptId && !data.id && !data.attempt?.id)) {
-        // Handle specific status codes or error messages cleanly
         if (res.status === 401) {
           setError("This is a private classroom assessment. Please log in with your authorized student account first.");
         } else if (res.status === 403) {
@@ -64,7 +63,6 @@ function JoinQuizForm() {
         return;
       }
 
-      // Success! Extract attemptId and redirect immediately
       const attemptId = data.attemptId || data.attempt?.id || data.id;
       if (attemptId) {
         router.push(`/quiz/${attemptId}`);
@@ -80,36 +78,19 @@ function JoinQuizForm() {
   };
 
   return (
-    <div className="card card-hover" style={{ padding: "2.5rem", position: "relative" }}>
-      {/* Decorative Glow Corner */}
-      <div
-        style={{
-          position: "absolute",
-          top: "-50px",
-          right: "-50px",
-          width: "120px",
-          height: "120px",
-          background: "radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%)",
-          borderRadius: "50%",
-          filter: "blur(20px)",
-          pointerEvents: "none",
-        }}
-      />
-
+    <div className="card" style={{ padding: "2.5rem" }}>
       <form onSubmit={handleSubmit}>
-        {/* Error Alert Box */}
         {error && (
           <div className="alert alert-error animate-fade-in" role="alert" style={{ marginBottom: "1.75rem" }}>
-            <span style={{ fontSize: "1.25rem", flexShrink: 0 }}>⚠️</span>
-            <div style={{ flex: 1, fontWeight: 500 }}>{error}</div>
+            <div style={{ flex: 1, fontWeight: 700 }}>{error}</div>
           </div>
         )}
 
         {/* Access Code Input */}
         <div className="form-group">
           <label className="label" htmlFor="accessCode" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span>Access Code <span style={{ color: "var(--error)" }}>*</span></span>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "normal" }}>Required</span>
+            <span>Access Code <span style={{ color: "#dc2626" }}>*</span></span>
+            <span style={{ fontSize: "0.75rem", color: "#6b7280", fontWeight: 700 }}>REQUIRED</span>
           </label>
           <div style={{ position: "relative" }}>
             <input
@@ -128,32 +109,18 @@ function JoinQuizForm() {
                 fontFamily: "monospace, var(--font-inter)",
                 textTransform: "uppercase",
                 letterSpacing: "0.12em",
-                fontWeight: 700,
-                fontSize: "1.1rem",
-                paddingLeft: "2.75rem",
+                fontWeight: 900,
+                fontSize: "1.15rem",
               }}
             />
-            <span
-              style={{
-                position: "absolute",
-                left: "1rem",
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "var(--accent-hover)",
-                fontSize: "1.1rem",
-                pointerEvents: "none",
-              }}
-            >
-              🔑
-            </span>
           </div>
         </div>
 
         {/* Name Input */}
         <div className="form-group">
           <label className="label" htmlFor="name" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span>Your Full Name <span style={{ color: "var(--error)" }}>*</span></span>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "normal" }}>Required for public assessments</span>
+            <span>Your Full Name <span style={{ color: "#dc2626" }}>*</span></span>
+            <span style={{ fontSize: "0.75rem", color: "#6b7280", fontWeight: 700 }}>PUBLIC IDENTIFIER</span>
           </label>
           <input
             id="name"
@@ -173,8 +140,8 @@ function JoinQuizForm() {
         {/* Email Input */}
         <div className="form-group" style={{ marginBottom: "2rem" }}>
           <label className="label" htmlFor="email" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span>Email Address <span style={{ color: "var(--error)" }}>*</span></span>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "normal" }}>We'll send your result code here</span>
+            <span>Email Address <span style={{ color: "#dc2626" }}>*</span></span>
+            <span style={{ fontSize: "0.75rem", color: "#6b7280", fontWeight: 700 }}>FOR RESULT CODE &amp; CERTIFICATE</span>
           </label>
           <input
             id="email"
@@ -199,9 +166,9 @@ function JoinQuizForm() {
           style={{
             position: "relative",
             overflow: "hidden",
-            fontWeight: 700,
+            fontWeight: 900,
             letterSpacing: "0.02em",
-            boxShadow: "0 6px 20px rgba(99, 102, 241, 0.4)",
+            boxShadow: "6px 6px 0px #111827",
           }}
         >
           {loading ? (
@@ -220,7 +187,7 @@ function JoinQuizForm() {
               Joining Assessment Room...
             </span>
           ) : (
-            <span>Start Assessment ➔</span>
+            <span>Start Assessment</span>
           )}
         </button>
       </form>
@@ -230,34 +197,34 @@ function JoinQuizForm() {
 
 export default function JoinQuizPage() {
   return (
-    <div className="min-h-screen flex flex-col justify-between" style={{ background: "var(--bg-primary)" }}>
+    <div className="min-h-screen flex flex-col justify-between" style={{ background: "#ffffff", color: "#111827" }}>
       {/* Top Navigation */}
-      <header style={{ padding: "1.5rem 0", borderBottom: "1px solid var(--border)", background: "rgba(10, 10, 15, 0.8)", backdropFilter: "blur(12px)" }}>
+      <header style={{ padding: "1.25rem 0", borderBottom: "2px solid #111827", background: "#ffffff" }}>
         <div className="container flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2" style={{ textDecoration: "none" }}>
             <div
               style={{
                 width: "36px",
                 height: "36px",
-                borderRadius: "10px",
-                background: "var(--accent-gradient)",
+                borderRadius: "8px",
+                background: "#111827",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontWeight: "bold",
+                fontWeight: 900,
                 color: "#fff",
-                fontSize: "1.2rem",
-                boxShadow: "0 0 15px rgba(99, 102, 241, 0.5)",
+                fontSize: "1.1rem",
+                boxShadow: "3px 3px 0px #2563eb",
               }}
             >
-              M
+              Q
             </div>
-            <span style={{ fontSize: "1.25rem", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-primary)" }}>
-              Mini<span className="text-gradient">LMS</span>
+            <span style={{ fontSize: "1.3rem", fontWeight: 900, color: "#111827", letterSpacing: "-0.04em" }}>
+              QUIIZEE <span style={{ fontSize: "0.85rem", background: "#111827", color: "#fff", padding: "0.15rem 0.4rem", borderRadius: "4px", verticalAlign: "middle" }}>&apos;26</span>
             </span>
           </Link>
-          <Link href="/" className="btn btn-ghost btn-sm" style={{ color: "var(--text-secondary)" }}>
-            ← Back to Home
+          <Link href="/" className="btn btn-ghost btn-sm" style={{ color: "#111827", fontWeight: 800 }}>
+            Back to Home
           </Link>
         </div>
       </header>
@@ -267,7 +234,7 @@ export default function JoinQuizPage() {
         <div style={{ width: "100%", maxWidth: "560px", margin: "0 auto" }}>
           <div className="text-center" style={{ marginBottom: "2.5rem" }}>
             <div className="badge badge-accent" style={{ marginBottom: "1rem" }}>
-              🚀 Live Assessment Room
+              Live Assessment Room
             </div>
             <h1 className="title" style={{ fontSize: "2.75rem", marginBottom: "0.75rem" }}>
               Join Assessment
@@ -281,7 +248,7 @@ export default function JoinQuizPage() {
             fallback={
               <div className="card text-center" style={{ padding: "4rem 2rem" }}>
                 <div className="spinner" />
-                <p style={{ color: "var(--text-secondary)", marginTop: "1rem" }}>Loading assessment portal...</p>
+                <p style={{ color: "#4b5563", marginTop: "1rem", fontWeight: 700 }}>Loading assessment portal...</p>
               </div>
             }
           >
@@ -291,9 +258,9 @@ export default function JoinQuizPage() {
       </main>
 
       {/* Footer */}
-      <footer style={{ padding: "2rem 0", borderTop: "1px solid var(--border)", textAlign: "center", color: "var(--text-muted)", fontSize: "0.875rem" }}>
+      <footer style={{ padding: "2.5rem 0", borderTop: "2px solid #111827", textAlign: "center", color: "#4b5563", fontSize: "0.85rem", fontWeight: 700 }}>
         <div className="container">
-          <p>© {new Date().getFullYear()} Mini LMS. Engineered for seamless interactive assessments.</p>
+          <p>© {new Date().getFullYear()} QUIIZEE &apos;26. ENGINEERED FOR INSTRUCTIONAL EXCELLENCE.</p>
         </div>
       </footer>
     </div>

@@ -156,7 +156,7 @@ export default function RegisterPage() {
               Creating Account...
             </span>
           ) : (
-            "Create Instructor Account →"
+            "Create Instructor Account"
           )}
         </button>
       </form>

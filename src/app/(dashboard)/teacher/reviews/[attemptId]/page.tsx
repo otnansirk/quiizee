@@ -322,7 +322,7 @@ export default function InteractiveGradingStudioPage() {
         throw new Error(errData.error || errData.message || 'Failed to finalize exam score.');
       }
 
-      setFinalizeSuccess(`🎉 Exam graded! Final score: ${runningTotal} / ${displayMax}`);
+      setFinalizeSuccess(`Exam graded! Final score: ${runningTotal} / ${displayMax}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       // Redirect back to reviews list after 2.5 seconds
@@ -357,14 +357,13 @@ export default function InteractiveGradingStudioPage() {
           }}
         >
           <div className="flex items-center gap-3">
-            <span style={{ fontSize: '2rem' }}>🎉</span>
             <div>
               <strong style={{ fontSize: '1.25rem', display: 'block', color: '#ffffff' }}>Exam Finalized Successfully!</strong>
               <span style={{ fontSize: '1.05rem', color: '#86efac' }}>{finalizeSuccess}. Redirecting to reviews catalog...</span>
             </div>
           </div>
           <Link href="/teacher/reviews" className="btn btn-primary btn-sm" style={{ background: '#22c55e', color: '#000000', fontWeight: 800 }}>
-            Return to Reviews Now ➔
+            Return to Reviews Now
           </Link>
         </div>
       )}
@@ -372,7 +371,6 @@ export default function InteractiveGradingStudioPage() {
       {/* Error Banner */}
       {(error || finalizeError) && (
         <div className="alert alert-error animate-fade-in mb-6" style={{ alignItems: 'flex-start' }}>
-          <span style={{ fontSize: '1.25rem' }}>⚠️</span>
           <div style={{ flex: 1 }}>
             <strong style={{ display: 'block', marginBottom: '0.25rem' }}>Notice</strong>
             <span>{error || finalizeError}</span>
@@ -380,9 +378,9 @@ export default function InteractiveGradingStudioPage() {
           <button
             onClick={() => { setError(null); setFinalizeError(null); }}
             className="btn btn-ghost btn-sm"
-            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#fca5a5' }}
+            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#e12727' }}
           >
-            ✕
+            X
           </button>
         </div>
       )}
@@ -402,7 +400,7 @@ export default function InteractiveGradingStudioPage() {
           className="btn btn-ghost btn-sm"
           style={{ paddingLeft: 0, color: 'var(--text-secondary)', marginBottom: '1.25rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
         >
-          <span>←</span> Back to Reviews
+          Back to Reviews
         </Link>
 
         <div className="flex justify-between items-center" style={{ flexWrap: 'wrap', gap: '1.5rem' }}>
@@ -481,15 +479,15 @@ export default function InteractiveGradingStudioPage() {
                     : 'Finalize and publish exam score'
                 }
               >
-                <span>🏁</span> {finalizing ? 'Finalizing...' : 'Finalize Exam Score'}
+                {finalizing ? 'Finalizing...' : 'Finalize Exam Score'}
               </button>
               {ungradedCount > 0 ? (
                 <span style={{ fontSize: '0.8rem', color: '#fde047', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <span>⚠️</span> {ungradedCount} essay {ungradedCount === 1 ? 'question' : 'questions'} still need grading
+                  {ungradedCount} essay {ungradedCount === 1 ? 'question' : 'questions'} still need grading
                 </span>
               ) : (
                 <span style={{ fontSize: '0.8rem', color: '#86efac', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <span>✨</span> All questions graded! Ready to finalize.
+                  All questions graded! Ready to finalize.
                 </span>
               )}
             </div>
@@ -510,7 +508,7 @@ export default function InteractiveGradingStudioPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">❓</div>
+          <div className="empty-state-icon">!</div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
             No Questions Found
           </h2>
@@ -538,7 +536,7 @@ export default function InteractiveGradingStudioPage() {
             };
 
             // Badge styling per question type
-            const typeBadgeText = isEssay ? '📝 Essay' : isMC ? '🔘 Multiple Choice' : '⚖️ True / False';
+            const typeBadgeText = isEssay ? 'Essay' : isMC ? 'Multiple Choice' : 'True / False';
             const typeBadgeStyle = isEssay
               ? { background: 'rgba(245, 158, 11, 0.15)', color: '#fde047', border: '1px solid rgba(245, 158, 11, 0.3)' }
               : { background: 'rgba(59, 130, 246, 0.15)', color: '#93c5fd', border: '1px solid rgba(59, 130, 246, 0.3)' };
@@ -599,7 +597,7 @@ export default function InteractiveGradingStudioPage() {
                           padding: '0.4rem 0.9rem',
                         }}
                       >
-                        {item.isGraded ? `🟢 Graded: ${item.currentScore} / ${item.maxPoints} pts` : `🟡 Max ${item.maxPoints} pts (Ungraded)`}
+                        {item.isGraded ? `Graded: ${item.currentScore} / ${item.maxPoints} pts` : `Max ${item.maxPoints} pts (Ungraded)`}
                       </span>
                     ) : (
                       <span
@@ -607,13 +605,13 @@ export default function InteractiveGradingStudioPage() {
                         style={{
                           margin: 0,
                           background: item.isCorrect ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                          color: item.isCorrect ? '#86efac' : '#fca5a5',
+                          color: item.isCorrect ? '#86efac' : '#e12727',
                           border: `1px solid ${item.isCorrect ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
                           fontSize: '0.85rem',
                           padding: '0.4rem 0.9rem',
                         }}
                       >
-                        {item.isCorrect ? `🟢 ${item.currentScore} / ${item.maxPoints} pts` : `🔴 0 / ${item.maxPoints} pts`}
+                        {item.isCorrect ? `${item.currentScore} / ${item.maxPoints} pts` : `0 / ${item.maxPoints} pts`}
                       </span>
                     )}
                   </div>
@@ -639,10 +637,8 @@ export default function InteractiveGradingStudioPage() {
                 {isEssay ? (
                   /* ESSAY QUESTION: INTERACTIVE GRADING FORM */
                   <div style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1.5rem' }}>
-                    {/* Student's Written Response Box */}
                     <div className="mb-6">
-                      <label className="label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.6rem', color: 'var(--text-secondary)' }}>
-                        <span>✍️</span>
+                      <label className="label" style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-secondary)' }}>
                         <span>Student&apos;s Written Response:</span>
                       </label>
                       <div
@@ -674,7 +670,7 @@ export default function InteractiveGradingStudioPage() {
                       }}
                     >
                       <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent-hover)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span>⚖️</span> Assign Score & Instructor Feedback
+                        Assign Score & Instructor Feedback
                       </h4>
 
                       <div className="grid" style={{ gridTemplateColumns: '120px 1fr', gap: '1.5rem', alignItems: 'start' }}>
@@ -729,8 +725,8 @@ export default function InteractiveGradingStudioPage() {
 
                       {/* Error Message */}
                       {form.error && (
-                        <div style={{ color: '#fca5a5', fontSize: '0.85rem', marginTop: '0.75rem', fontWeight: 600 }}>
-                          ⚠️ {form.error}
+                        <div style={{ color: '#e12727', fontSize: '0.85rem', marginTop: '0.75rem', fontWeight: 600 }}>
+                          {form.error}
                         </div>
                       )}
 
@@ -738,7 +734,7 @@ export default function InteractiveGradingStudioPage() {
                       <div className="flex justify-end items-center gap-4 mt-4 pt-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
                         {form.saved && (
                           <span className="animate-fade-in" style={{ color: '#86efac', fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                            <span>✅</span> Saved & Live Score Updated!
+                            Saved & Live Score Updated!
                           </span>
                         )}
 
@@ -791,7 +787,7 @@ export default function InteractiveGradingStudioPage() {
                               border: '1px solid var(--success)',
                               boxShadow: '0 0 15px rgba(34, 197, 94, 0.15)',
                             };
-                            badgeText = '🟢 Student Answer (Correct)';
+                            badgeText = 'Student Answer (Correct)';
                             badgeBg = 'rgba(34, 197, 94, 0.2)';
                             badgeColor = '#86efac';
                           } else if (isSelected && !isOptCorrect) {
@@ -801,16 +797,16 @@ export default function InteractiveGradingStudioPage() {
                               border: '1px solid var(--error)',
                               boxShadow: '0 0 15px rgba(239, 68, 68, 0.15)',
                             };
-                            badgeText = '🔴 Student Answer (Incorrect)';
+                            badgeText = 'Student Answer (Incorrect)';
                             badgeBg = 'rgba(239, 68, 68, 0.2)';
-                            badgeColor = '#fca5a5';
+                            badgeColor = '#e12727';
                           } else if (!isSelected && isOptCorrect) {
                             boxStyle = {
                               ...boxStyle,
                               background: 'rgba(34, 197, 94, 0.06)',
                               border: '1px dashed var(--success)',
                             };
-                            badgeText = '✓ Correct Answer';
+                            badgeText = 'Correct Answer';
                             badgeBg = 'rgba(34, 197, 94, 0.15)';
                             badgeColor = '#86efac';
                           }
@@ -853,7 +849,7 @@ export default function InteractiveGradingStudioPage() {
                           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '0.3rem' }}>
                             STUDENT&apos;S ANSWER
                           </div>
-                          <div style={{ fontSize: '1.05rem', fontWeight: 700, color: item.isCorrect ? '#86efac' : '#fca5a5' }}>
+                          <div style={{ fontSize: '1.05rem', fontWeight: 700, color: item.isCorrect ? '#86efac' : '#e12727' }}>
                             {item.answerText || 'No answer selected'}
                           </div>
                         </div>

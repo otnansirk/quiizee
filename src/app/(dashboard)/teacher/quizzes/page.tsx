@@ -100,7 +100,7 @@ export default function MyQuizzesPage() {
       }
 
       await fetchQuizzes();
-      setSuccessMsg(`Quiz "${quiz.title}" has been successfully ${!quiz.isPublished ? 'published 🟢' : 'unpublished 🟡'}.`);
+      setSuccessMsg(`Quiz "${quiz.title}" has been successfully ${!quiz.isPublished ? 'published' : 'unpublished'}.`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       setPublishError(`Network error: ${err.message || 'Failed to update publication status'}`);
@@ -152,14 +152,13 @@ export default function MyQuizzesPage() {
         </div>
 
         <Link href="/teacher/quizzes/new" className="btn btn-primary btn-lg" style={{ boxShadow: '0 0 20px rgba(99, 102, 241, 0.4)' }}>
-          <span>➕</span> Create New Quiz
+          Create New Quiz
         </Link>
       </div>
 
       {/* Alert Messages */}
       {publishError && (
         <div className="alert alert-error animate-fade-in" style={{ marginBottom: '1.5rem', alignItems: 'flex-start' }}>
-          <span style={{ fontSize: '1.25rem' }}>⚠️</span>
           <div style={{ flex: 1 }}>
             <strong style={{ display: 'block', marginBottom: '0.25rem' }}>Action Required</strong>
             <span>{publishError}</span>
@@ -167,23 +166,22 @@ export default function MyQuizzesPage() {
           <button
             onClick={() => setPublishError(null)}
             className="btn btn-ghost btn-sm"
-            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#fca5a5' }}
+            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#e12727' }}
           >
-            ✕
+            X
           </button>
         </div>
       )}
 
       {successMsg && (
         <div className="alert alert-success animate-fade-in" style={{ marginBottom: '1.5rem' }}>
-          <span style={{ fontSize: '1.25rem' }}>✅</span>
           <span style={{ flex: 1 }}>{successMsg}</span>
           <button
             onClick={() => setSuccessMsg(null)}
             className="btn btn-ghost btn-sm"
             style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#86efac' }}
           >
-            ✕
+            X
           </button>
         </div>
       )}
@@ -199,7 +197,6 @@ export default function MyQuizzesPage() {
       ) : quizzes.length === 0 ? (
         /* Empty State */
         <div className="empty-state animate-fade-in">
-          <div className="empty-state-icon">📝</div>
           <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>
             No Quizzes Created Yet
           </h2>
@@ -207,7 +204,7 @@ export default function MyQuizzesPage() {
             Get started by building your first interactive assessment. You can customize duration timers, access security codes, and automated certificates.
           </p>
           <Link href="/teacher/quizzes/new" className="btn btn-primary btn-lg">
-            <span>➕</span> Create Your First Quiz
+            Create Your First Quiz
           </Link>
         </div>
       ) : (
@@ -264,7 +261,7 @@ export default function MyQuizzesPage() {
                     className={`badge ${isPublished ? 'badge-success' : 'badge-warning'}`}
                     style={{ margin: 0 }}
                   >
-                    {isPublished ? '🟢 Published' : '🟡 Draft'}
+                    {isPublished ? 'Published' : 'Draft'}
                   </span>
 
                   {/* Access Mode Badge */}
@@ -273,7 +270,7 @@ export default function MyQuizzesPage() {
                     style={{ margin: 0 }}
                     title={quiz.accessMode === 'public' ? 'Public: Anyone with access code (Name + Email)' : 'Private: Login Required'}
                   >
-                    {quiz.accessMode === 'public' ? '🌐 Public' : '🔒 Private'}
+                    {quiz.accessMode === 'public' ? 'Public' : 'Private'}
                   </span>
 
                   {/* Duration Mode Badge */}
@@ -282,8 +279,8 @@ export default function MyQuizzesPage() {
                     style={{ margin: 0 }}
                   >
                     {quiz.durationMode === 'global'
-                      ? `⏱️ ${globalMins ? `${globalMins} min Global` : 'No Limit'}`
-                      : '⚡ Per-Question'}
+                      ? `${globalMins ? `${globalMins} min Global` : 'No Limit'}`
+                      : 'Per-Question'}
                   </span>
 
                   {/* Certificate Badge */}
@@ -297,7 +294,7 @@ export default function MyQuizzesPage() {
                         border: '1px solid rgba(168, 85, 247, 0.3)',
                       }}
                     >
-                      🎓 Cert ({quiz.certificateMinScore || 70}%)
+                      Cert ({quiz.certificateMinScore || 70}%)
                     </span>
                   )}
                 </div>
@@ -332,7 +329,7 @@ export default function MyQuizzesPage() {
                     }}
                     title="Copy access code for students"
                   >
-                    {copiedId === quiz.id ? '✅ Copied!' : '📋 Copy Code'}
+                    {copiedId === quiz.id ? 'Copied!' : 'Copy Code'}
                   </button>
                 </div>
 
@@ -352,7 +349,7 @@ export default function MyQuizzesPage() {
                       boxShadow: '0 0 15px rgba(99, 102, 241, 0.2)',
                     }}
                   >
-                    👥 View Attempts
+                    View Attempts
                   </Link>
 
                   <Link
@@ -360,7 +357,7 @@ export default function MyQuizzesPage() {
                     className="btn btn-secondary btn-sm"
                     style={{ width: '100%', justifyContent: 'center' }}
                   >
-                    ✏️ Edit Settings
+                    Edit Settings
                   </Link>
 
                   <Link
@@ -374,7 +371,7 @@ export default function MyQuizzesPage() {
                       background: 'rgba(99, 102, 241, 0.08)',
                     }}
                   >
-                    ❓ Manage Questions
+                    Manage Questions
                   </Link>
 
                   <button
@@ -383,7 +380,7 @@ export default function MyQuizzesPage() {
                     className={`btn btn-sm ${isPublished ? 'btn-secondary' : 'btn-primary'}`}
                     style={{ width: '100%' }}
                   >
-                    {updatingId === quiz.id ? '⌛...' : isPublished ? '⏸️ Unpublish' : '🚀 Publish'}
+                    {updatingId === quiz.id ? 'Updating...' : isPublished ? 'Unpublish' : 'Publish'}
                   </button>
 
                   <button
@@ -393,10 +390,10 @@ export default function MyQuizzesPage() {
                     style={{
                       width: '100%',
                       borderColor: 'rgba(239, 68, 68, 0.3)',
-                      color: '#fca5a5',
+                      color: '#e12727',
                     }}
                   >
-                    {deletingId === quiz.id ? '⌛...' : '🗑️ Delete'}
+                    {deletingId === quiz.id ? 'Deleting...' : 'Delete'}
                   </button>
                 </div>
               </div>

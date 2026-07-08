@@ -92,7 +92,7 @@ export default function CreateNewQuizPage() {
           className="btn btn-ghost btn-sm"
           style={{ paddingLeft: 0, color: 'var(--text-secondary)' }}
         >
-          ← Back to Quizzes
+          Back to Quizzes
         </Link>
       </div>
 
@@ -109,14 +109,13 @@ export default function CreateNewQuizPage() {
       {/* Error Alert */}
       {errorMsg && (
         <div className="alert alert-error animate-fade-in">
-          <span>⚠️</span>
           <span style={{ flex: 1 }}>{errorMsg}</span>
           <button
             onClick={() => setErrorMsg(null)}
             className="btn btn-ghost btn-sm"
-            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#fca5a5' }}
+            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#e12727' }}
           >
-            ✕
+            X
           </button>
         </div>
       )}
@@ -175,7 +174,7 @@ export default function CreateNewQuizPage() {
 
           <div className="choice-card selected" style={{ cursor: 'default' }}>
             <div className="choice-card-title">
-              <span>🌐</span> Public Access Code Only
+              Public Access Code Only
             </div>
             <div className="choice-card-desc">
               Students access this assessment by entering the unique access code along with their Name and Email. No student login or account registration required.
@@ -198,7 +197,7 @@ export default function CreateNewQuizPage() {
               onClick={() => !isSubmitting && setDurationMode('global')}
             >
               <div className="choice-card-title">
-                <span>⏱️</span> Global Timer
+                Global Timer
               </div>
               <div className="choice-card-desc">
                 A single countdown timer for the entire assessment. Students can freely navigate back and forth between questions.
@@ -210,7 +209,7 @@ export default function CreateNewQuizPage() {
               onClick={() => !isSubmitting && setDurationMode('per_question')}
             >
               <div className="choice-card-title">
-                <span>⚡</span> Per-Question Timer
+                Per-Question Timer
               </div>
               <div className="choice-card-desc">
                 Each question has its own timer. Sequential navigation only: students must answer within the limit and cannot return to previous questions.
@@ -279,7 +278,7 @@ export default function CreateNewQuizPage() {
           >
             <div>
               <div style={{ fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span>🎓</span> Enable Certificate for this Quiz
+                Enable Certificate for this Quiz
               </div>
               <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                 Students who score above the minimum passing threshold will receive an official certificate of achievement.
@@ -334,16 +333,7 @@ export default function CreateNewQuizPage() {
             disabled={isSubmitting}
             style={{ boxShadow: '0 0 25px rgba(99, 102, 241, 0.4)' }}
           >
-            {isSubmitting ? (
-              <>
-                <span style={{ display: 'inline-block', animation: 'spin 1s infinite linear' }}>⏳</span>
-                Creating Quiz...
-              </>
-            ) : (
-              <>
-                Create Quiz & Add Questions ➔
-              </>
-            )}
+            {isSubmitting ? "Creating Quiz..." : "Create Quiz & Add Questions"}
           </button>
         </div>
       </form>

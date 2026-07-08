@@ -26,8 +26,26 @@ export default function TeacherNavbar({ user }: TeacherNavbarProps) {
       <div className="teacher-nav-container">
         {/* Brand Logo */}
         <Link href="/teacher/quizzes" className="teacher-nav-brand">
-          <span style={{ fontSize: '1.5rem' }}>🎓</span>
-          <span className="text-gradient">Mini LMS Teacher Portal</span>
+          <div
+            style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "8px",
+              background: "#111827",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 900,
+              color: "#fff",
+              fontSize: "1.1rem",
+              boxShadow: "3px 3px 0px #2563eb",
+            }}
+          >
+            Q
+          </div>
+          <span style={{ fontSize: "1.25rem", fontWeight: 900, color: "#111827", letterSpacing: "-0.03em" }}>
+            QUIIZEE <span style={{ fontSize: "0.8rem", background: "#111827", color: "#fff", padding: "0.15rem 0.4rem", borderRadius: "4px", verticalAlign: "middle" }}>&apos;26</span>
+          </span>
         </Link>
 
         {/* Navigation Links */}
@@ -36,13 +54,13 @@ export default function TeacherNavbar({ user }: TeacherNavbarProps) {
             href="/teacher/quizzes"
             className={`teacher-nav-link ${isActive('/teacher/quizzes') ? 'active' : ''}`}
           >
-            📊 My Quizzes
+            My Quizzes
           </Link>
           <Link
             href="/teacher/reviews"
             className={`teacher-nav-link ${isActive('/teacher/reviews') ? 'active' : ''}`}
           >
-            📝 Essay Reviews
+            Essay Reviews
           </Link>
         </div>
 
@@ -59,14 +77,17 @@ export default function TeacherNavbar({ user }: TeacherNavbarProps) {
 
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="btn btn-secondary btn-sm"
+            className="btn btn-sm"
             style={{
-              borderColor: 'rgba(239, 68, 68, 0.3)',
-              color: '#fca5a5',
+              background: '#dc2626',
+              color: '#ffffff',
+              borderColor: '#111827',
+              boxShadow: '2px 2px 0px #111827',
+              fontWeight: 800,
             }}
             title="Sign Out of Teacher Portal"
           >
-            <span>🚪</span> Sign Out
+            Sign Out
           </button>
         </div>
       </div>

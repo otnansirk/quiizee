@@ -123,7 +123,7 @@ function LoginForm() {
               Signing in...
             </span>
           ) : (
-            "Sign In to Portal →"
+            "Sign In to Portal"
           )}
         </button>
       </form>
