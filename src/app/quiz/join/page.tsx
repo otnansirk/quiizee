@@ -191,6 +191,10 @@ function JoinQuizForm() {
           )}
         </button>
       </form>
+
+      <Link href="/" className="btn btn-ghost btn-sm" style={{ color: "#111827", fontWeight: 800,textAlign: "center", marginTop: ".5rem", display: "block" }}>
+        Back to Home
+      </Link>
     </div>
   );
 }
@@ -198,36 +202,6 @@ function JoinQuizForm() {
 export default function JoinQuizPage() {
   return (
     <div className="min-h-screen flex flex-col justify-between" style={{ background: "#ffffff", color: "#111827" }}>
-      {/* Top Navigation */}
-      <header style={{ padding: "1.25rem 0", borderBottom: "2px solid #111827", background: "#ffffff" }}>
-        <div className="container flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "8px",
-                background: "#111827",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 900,
-                color: "#fff",
-                fontSize: "1.1rem",
-                boxShadow: "3px 3px 0px #2563eb",
-              }}
-            >
-              Q
-            </div>
-            <span style={{ fontSize: "1.3rem", fontWeight: 900, color: "#111827", letterSpacing: "-0.04em" }}>
-              QUIIZEE <span style={{ fontSize: "0.85rem", background: "#111827", color: "#fff", padding: "0.15rem 0.4rem", borderRadius: "4px", verticalAlign: "middle" }}>&apos;26</span>
-            </span>
-          </Link>
-          <Link href="/" className="btn btn-ghost btn-sm" style={{ color: "#111827", fontWeight: 800 }}>
-            Back to Home
-          </Link>
-        </div>
-      </header>
 
       {/* Main Content Area */}
       <main className="container animate-fade-in" style={{ padding: "4rem 1.5rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
@@ -258,7 +232,7 @@ export default function JoinQuizPage() {
       </main>
 
       {/* Footer */}
-      <footer style={{ padding: "2.5rem 0", borderTop: "2px solid #111827", textAlign: "center", color: "#4b5563", fontSize: "0.85rem", fontWeight: 700 }}>
+      <footer style={{ padding: ".5rem 0", borderTop: "2px solid #111827", textAlign: "center", color: "#4b5563", fontSize: "0.85rem", fontWeight: 700 }}>
         <div className="container">
           <p>© {new Date().getFullYear()} QUIIZEE &apos;26. ENGINEERED FOR INSTRUCTIONAL EXCELLENCE.</p>
         </div>

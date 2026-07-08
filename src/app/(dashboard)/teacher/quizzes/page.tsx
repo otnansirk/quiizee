@@ -166,7 +166,7 @@ export default function MyQuizzesPage() {
           <button
             onClick={() => setPublishError(null)}
             className="btn btn-ghost btn-sm"
-            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#e12727' }}
+            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#fca5a5' }}
           >
             X
           </button>
@@ -290,8 +290,8 @@ export default function MyQuizzesPage() {
                       style={{
                         margin: 0,
                         background: 'rgba(168, 85, 247, 0.15)',
-                        color: '#c084fc',
-                        border: '1px solid rgba(168, 85, 247, 0.3)',
+                        color: '#9143de',
+                        border: '1px solid rgba(114, 28, 194, 0.822)',
                       }}
                     >
                       Cert ({quiz.certificateMinScore || 70}%)
@@ -344,7 +344,7 @@ export default function MyQuizzesPage() {
                       gridColumn: '1 / -1',
                       borderColor: 'rgba(99, 102, 241, 0.6)',
                       background: 'rgba(99, 102, 241, 0.18)',
-                      color: '#ffffff',
+                      color: '#000000',
                       fontWeight: 700,
                       boxShadow: '0 0 15px rgba(99, 102, 241, 0.2)',
                     }}
@@ -389,8 +389,8 @@ export default function MyQuizzesPage() {
                     className="btn btn-secondary btn-sm"
                     style={{
                       width: '100%',
-                      borderColor: 'rgba(239, 68, 68, 0.3)',
-                      color: '#e12727',
+                      borderColor: 'rgba(239, 68, 68, 0.79)',
+                      color: '#e81717',
                     }}
                   >
                     {deletingId === quiz.id ? 'Deleting...' : 'Delete'}

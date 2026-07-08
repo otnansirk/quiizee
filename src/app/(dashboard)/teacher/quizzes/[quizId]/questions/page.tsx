@@ -732,9 +732,9 @@ export default function QuizQuestionsPage() {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
               gap: '1.5rem',
-              background: 'rgba(20, 20, 35, 0.75)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              background: '#000000',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
             }}
           >
             {/* Stat 1: Total Questions */}
@@ -744,22 +744,24 @@ export default function QuizQuestionsPage() {
                   width: '50px',
                   height: '50px',
                   borderRadius: '12px',
-                  background: 'rgba(99, 102, 241, 0.15)',
-                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  background: 'rgba(99, 102, 241, 0.2)',
+                  border: '1px solid rgba(99, 102, 241, 0.4)',
+                  color: '#818cf8',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '1.5rem',
+                  fontWeight: 800,
                 }}
               >
                 Q
               </div>
               <div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                <div style={{ fontSize: '0.85rem', color: '#d4d4d8', fontWeight: 700, letterSpacing: '0.5px' }}>
                   TOTAL QUESTIONS
                 </div>
-                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                  {totalQuestions} <span style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-muted)' }}>questions</span>
+                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#ffffff' }}>
+                  {totalQuestions} <span style={{ fontSize: '0.9rem', fontWeight: 500, color: '#a1a1aa' }}>questions</span>
                 </div>
               </div>
             </div>
@@ -771,22 +773,24 @@ export default function QuizQuestionsPage() {
                   width: '50px',
                   height: '50px',
                   borderRadius: '12px',
-                  background: 'rgba(168, 85, 247, 0.15)',
-                  border: '1px solid rgba(168, 85, 247, 0.3)',
+                  background: 'rgba(168, 85, 247, 0.2)',
+                  border: '1px solid rgba(168, 85, 247, 0.4)',
+                  color: '#c084fc',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '1.5rem',
+                  fontWeight: 800,
                 }}
               >
                 P
               </div>
               <div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                <div style={{ fontSize: '0.85rem', color: '#d4d4d8', fontWeight: 700, letterSpacing: '0.5px' }}>
                   TOTAL POINTS
                 </div>
-                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                  {totalPoints} <span style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-muted)' }}>pts</span>
+                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#ffffff' }}>
+                  {totalPoints} <span style={{ fontSize: '0.9rem', fontWeight: 500, color: '#a1a1aa' }}>pts</span>
                 </div>
               </div>
             </div>
@@ -798,18 +802,20 @@ export default function QuizQuestionsPage() {
                   width: '50px',
                   height: '50px',
                   borderRadius: '12px',
-                  background: 'rgba(59, 130, 246, 0.15)',
-                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  background: 'rgba(59, 130, 246, 0.2)',
+                  border: '1px solid rgba(59, 130, 246, 0.4)',
+                  color: '#60a5fa',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '1.5rem',
+                  fontWeight: 800,
                 }}
               >
                 T
               </div>
               <div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                <div style={{ fontSize: '0.85rem', color: '#d4d4d8', fontWeight: 700, letterSpacing: '0.5px' }}>
                   DURATION MODE
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.2rem' }}>
@@ -817,17 +823,17 @@ export default function QuizQuestionsPage() {
                     style={{
                       padding: '0.25rem 0.65rem',
                       borderRadius: 'var(--radius-sm)',
-                      background: 'rgba(59, 130, 246, 0.2)',
-                      color: '#60a5fa',
+                      background: 'rgba(59, 130, 246, 0.25)',
+                      color: '#93c5fd',
                       fontSize: '0.85rem',
                       fontWeight: 700,
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      border: '1px solid rgba(59, 130, 246, 0.4)',
                     }}
                   >
                     {quiz.durationMode === 'global' ? 'Global Timer' : 'Per-Question Timer'}
                   </span>
                   {quiz.durationMode === 'global' && quiz.globalDuration && (
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#d4d4d8', fontWeight: 600 }}>
                       ({quiz.globalDuration} min)
                     </span>
                   )}

@@ -408,20 +408,70 @@ body {
 /* 11. Responsive Media Queries */
 @media (max-width: 768px) {
   .title {
-    font-size: 2.25rem;
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
   }
-  
+
   .subtitle {
-    font-size: 1.05rem;
-    margin-bottom: 2rem;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
   }
-  
+
   .card {
-    padding: 1.5rem;
+    padding: 1.1rem;
+    border-radius: var(--radius-lg);
   }
-  
+
   .container {
-    padding: 0 1rem;
+    padding: 0 0.85rem;
+  }
+
+  .btn {
+    padding: 0.55rem 1.1rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-lg {
+    padding: 0.7rem 1.4rem;
+    font-size: 0.95rem;
+  }
+
+  .btn-sm {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  .gap-2 { gap: 0.6rem; }
+  .gap-3 { gap: 0.85rem; }
+  .gap-4 { gap: 1.25rem; }
+
+  .empty-state {
+    padding: 2.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.45rem;
+  }
+
+  .card {
+    padding: 0.85rem;
+    border-width: 2px;
+  }
+
+  .container {
+    padding: 0 0.65rem;
+  }
+
+  .btn {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.82rem;
   }
 }
 

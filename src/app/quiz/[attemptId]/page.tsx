@@ -669,7 +669,7 @@ export default function QuizTakingEnginePage() {
         }
         .quiz-workspace-grid {
           display: grid;
-          grid-template-columns: 320px 1fr;
+          grid-template-columns: 300px 1fr;
           gap: 2rem;
           margin-top: 2rem;
           margin-bottom: 4rem;
@@ -682,7 +682,9 @@ export default function QuizTakingEnginePage() {
         @media (max-width: 900px) {
           .quiz-workspace-grid {
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
           }
           .nav-grid-card {
             position: relative !important;
@@ -691,22 +693,28 @@ export default function QuizTakingEnginePage() {
         }
         .nav-grid-card {
           position: sticky;
-          top: 95px;
+          top: 60px;
           z-index: 30;
         }
         .question-nav-btn {
           display: flex;
           align-items: center;
           justify-content: center;
-          height: 48px;
+          height: 40px;
           border-radius: var(--radius-md);
           font-weight: 700;
-          font-size: 1rem;
+          font-size: 0.9rem;
           cursor: pointer;
           transition: all var(--transition-fast);
           position: relative;
           user-select: none;
           border: 1px solid var(--border);
+        }
+        @media (max-width: 640px) {
+          .question-nav-btn {
+            height: 34px;
+            font-size: 0.8rem;
+          }
         }
         .question-nav-btn:hover {
           transform: translateY(-2px);
@@ -729,90 +737,121 @@ export default function QuizTakingEnginePage() {
           background: rgba(255, 255, 255, 0.04);
           color: var(--text-secondary);
         }
+        /* Controls bar mobile */
+        .controls-bar-inner {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        /* Bottom nav buttons */
+        .nav-btn-prev, .nav-btn-next {
+          padding: 0.5rem 1.1rem;
+          font-size: 0.88rem;
+          font-weight: 700;
+        }
+        @media (max-width: 640px) {
+          .controls-bar-inner {
+            gap: 0.4rem;
+          }
+          .controls-title { font-size: 0.95rem !important; }
+          .controls-meta  { font-size: 0.72rem !important; }
+          .controls-timer { font-size: 0.82rem !important; padding: 0.3rem 0.7rem !important; }
+          .controls-submit { font-size: 0.8rem !important; padding: 0.4rem 0.9rem !important; box-shadow: 2px 2px 0px #111827 !important; }
+          .nav-btn-prev, .nav-btn-next { padding: 0.4rem 0.85rem !important; font-size: 0.8rem !important; }
+        }
       `}} />
 
-      {/* Sticky Top Timer & Header Bar */}
-      <header
+      {/* Sticky Top Timer & Controls Bar */}
+      <div
         style={{
           position: 'sticky',
           top: 0,
           zIndex: 50,
           background: '#ffffff',
           borderBottom: '2px solid #111827',
-          padding: '1rem 0',
+          padding: '0.6rem 0',
         }}
       >
-        <div className="container flex justify-between items-center" style={{ flexWrap: 'wrap', gap: '1rem' }}>
+        <div className="container controls-bar-inner">
           {/* Left: Quiz Title & Student Name */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
             <h1
+              className="controls-title"
               style={{
-                fontSize: '1.35rem',
+                fontSize: '1.1rem',
                 fontWeight: 900,
                 color: '#111827',
                 letterSpacing: '-0.02em',
                 lineHeight: '1.2',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
               }}
             >
               {quiz?.title || 'Live Assessment'}
             </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.2rem' }}>
-              <span style={{ fontSize: '0.85rem', color: '#4b5563', fontWeight: 700 }}>
-                Candidate: <strong style={{ color: '#111827', fontWeight: 900 }}>{studentName}</strong>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.1rem', flexWrap: 'wrap' }}>
+              <span className="controls-meta" style={{ fontSize: '0.8rem', color: '#4b5563', fontWeight: 700 }}>
+                <strong style={{ color: '#111827' }}>{studentName}</strong>
               </span>
-              <span style={{ color: '#111827', fontWeight: 900 }}>|</span>
-              <span style={{ fontSize: '0.85rem', color: '#6b7280', fontWeight: 700 }}>
+              <span style={{ color: '#9ca3af', fontWeight: 700, fontSize: '0.75rem' }}>·</span>
+              <span className="controls-meta" style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700 }}>
                 Attempt #{attempt?.attemptNumber || 1}
               </span>
             </div>
           </div>
 
-          {/* Center/Right: Live Countdown Timer Display */}
+          {/* Center: Live Countdown Timer */}
           {remainingSeconds !== null && (
             <div
-              className={`badge ${timerClass}`}
+              className={`badge controls-timer ${timerClass}`}
               style={{
-                fontSize: '1.05rem',
-                padding: '0.5rem 1.25rem',
+                fontSize: '0.95rem',
+                padding: '0.4rem 1rem',
                 margin: 0,
                 borderRadius: '6px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
+                gap: '0.4rem',
                 fontFamily: 'monospace',
                 fontWeight: 900,
-                letterSpacing: '0.05em',
+                letterSpacing: '0.04em',
                 border: '2px solid #111827',
                 boxShadow: '2px 2px 0px #111827',
                 transition: 'all 0.3s ease',
+                flexShrink: 0,
+                whiteSpace: 'nowrap',
               }}
             >
               {quiz?.durationMode === 'per_question' ? (
-                <span>Q{currentQuestionIndex + 1} Timer: {formatTime(remainingSeconds)} remaining</span>
+                <span>Q{currentQuestionIndex + 1}: {formatTime(remainingSeconds)}</span>
               ) : (
-                <span>{formatTime(remainingSeconds)} remaining</span>
+                <span>{formatTime(remainingSeconds)}</span>
               )}
             </div>
           )}
 
           {/* Right: Submit Quiz Button */}
-          <div>
+          <div style={{ flexShrink: 0 }}>
             <button
               onClick={() => setShowSubmitModal(true)}
               disabled={isSubmitting}
-              className="btn btn-primary"
+              className="btn btn-primary controls-submit"
               style={{
-                padding: '0.65rem 1.5rem',
-                boxShadow: '4px 4px 0px #111827',
+                padding: '0.5rem 1.2rem',
+                boxShadow: '3px 3px 0px #111827',
                 border: '2px solid #111827',
                 fontWeight: 900,
+                fontSize: '0.9rem',
               }}
             >
-              Submit Quiz
+              Submit
             </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Question Timeout Banner */}
       {questionTimeoutBanner && (
@@ -860,7 +899,7 @@ export default function QuizTakingEnginePage() {
             {/* Left Column (or Top Drawer on mobile): Question Navigation Grid - Only show for Global Timer */}
             {quiz?.durationMode !== 'per_question' && (
               <aside className="nav-grid-card">
-                <div className="card" style={{ padding: '1.5rem' }}>
+                <div className="card" style={{ padding: 'clamp(0.75rem, 3vw, 1.5rem)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                     <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                       Question Navigation
@@ -969,7 +1008,7 @@ export default function QuizTakingEnginePage() {
             )}
 
             {/* Right Column: Current Question Display Card */}
-            <div className="card animate-fade-in" style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', minHeight: '520px' }}>
+            <div className="card animate-fade-in" style={{ padding: 'clamp(1rem, 4vw, 2.5rem)', display: 'flex', flexDirection: 'column', minHeight: '400px' }}>
               {/* Header: Question X of Y | Type Badge | Points Badge */}
               <div
                 style={{
@@ -1009,11 +1048,11 @@ export default function QuizTakingEnginePage() {
               {/* Question Text */}
               <h2
                 style={{
-                  fontSize: '1.45rem',
+                  fontSize: 'clamp(1.05rem, 3.5vw, 1.4rem)',
                   fontWeight: 700,
                   color: 'var(--text-primary)',
                   lineHeight: '1.6',
-                  marginBottom: '1.75rem',
+                  marginBottom: '1.25rem',
                 }}
               >
                 {currentQuestion.questionText}
@@ -1105,7 +1144,7 @@ export default function QuizTakingEnginePage() {
 
                 {/* 2. True / False */}
                 {currentQuestion.type === 'true_false' && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     {/* True Card */}
                     {(() => {
                       const currentVal = answers[currentQuestion.id]?.answerText?.toLowerCase();
@@ -1122,9 +1161,9 @@ export default function QuizTakingEnginePage() {
                               flexDirection: 'column',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              padding: '2.5rem 1.5rem',
+                              padding: 'clamp(1rem, 4vw, 2.5rem) 1rem',
                               textAlign: 'center',
-                              gap: '0.85rem',
+                              gap: '0.6rem',
                               borderColor: isTrueSelected ? 'var(--success)' : 'var(--border)',
                               background: isTrueSelected ? 'rgba(34, 197, 94, 0.16)' : 'rgba(20, 20, 32, 0.6)',
                               boxShadow: isTrueSelected ? '0 0 30px rgba(34, 197, 94, 0.25)' : undefined,
@@ -1143,9 +1182,9 @@ export default function QuizTakingEnginePage() {
                               flexDirection: 'column',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              padding: '2.5rem 1.5rem',
+                              padding: 'clamp(1rem, 4vw, 2.5rem) 1rem',
                               textAlign: 'center',
-                              gap: '0.85rem',
+                              gap: '0.6rem',
                               borderColor: isFalseSelected ? 'var(--error)' : 'var(--border)',
                               background: isFalseSelected ? 'rgba(239, 68, 68, 0.16)' : 'rgba(20, 20, 32, 0.6)',
                               boxShadow: isFalseSelected ? '0 0 30px rgba(239, 68, 68, 0.25)' : undefined,
@@ -1218,47 +1257,44 @@ export default function QuizTakingEnginePage() {
               <div
                 style={{
                   borderTop: '1px solid var(--border)',
-                  paddingTop: '1.75rem',
+                  paddingTop: '1rem',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   flexWrap: 'wrap',
-                  gap: '1rem',
+                  gap: '0.75rem',
                 }}
               >
                 {quiz?.durationMode !== 'per_question' ? (
                   <button
                     onClick={() => handleNavigateQuestion(currentQuestionIndex - 1)}
                     disabled={currentQuestionIndex === 0}
-                    className="btn btn-secondary"
-                    style={{ padding: '0.75rem 1.75rem', fontWeight: 700 }}
+                    className="btn btn-secondary nav-btn-prev"
                   >
-                    Previous
+                    ← Prev
                   </button>
                 ) : <div />}
 
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                  Question <strong style={{ color: 'var(--text-primary)' }}>{currentQuestionIndex + 1}</strong> of{' '}
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>{currentQuestionIndex + 1}</strong>
+                  {' / '}
                   <strong style={{ color: 'var(--text-primary)' }}>{questions.length}</strong>
                 </div>
 
                 {currentQuestionIndex < questions.length - 1 ? (
                   <button
                     onClick={handleNextQuestion}
-                    className="btn btn-primary"
-                    style={{ padding: '0.75rem 2rem', fontWeight: 700 }}
+                    className="btn btn-primary nav-btn-next"
                   >
-                    Next
+                    Next →
                   </button>
                 ) : (
                   <button
                     onClick={() => setShowSubmitModal(true)}
-                    className="btn btn-primary"
+                    className="btn btn-primary nav-btn-next"
                     style={{
-                      padding: '0.75rem 2rem',
-                      fontWeight: 800,
                       background: 'var(--accent-gradient)',
-                      boxShadow: '0 0 25px rgba(168, 85, 247, 0.5)',
+                      boxShadow: '0 0 20px rgba(168, 85, 247, 0.5)',
                     }}
                   >
                     Review & Submit
