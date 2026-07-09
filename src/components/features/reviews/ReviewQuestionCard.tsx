@@ -98,7 +98,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                 background: item.isGraded
                   ? "rgba(34, 197, 94, 0.15)"
                   : "rgba(245, 158, 11, 0.15)",
-                color: item.isGraded ? "#86efac" : "#fde047",
+                color: item.isGraded ? "#43c372" : "#fde047",
                 border: `1px solid ${
                   item.isGraded
                     ? "rgba(34, 197, 94, 0.3)"
@@ -120,7 +120,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                 background: item.isCorrect
                   ? "rgba(34, 197, 94, 0.15)"
                   : "rgba(239, 68, 68, 0.15)",
-                color: item.isCorrect ? "#86efac" : "#e12727",
+                color: item.isCorrect ? "#43c372" : "#e12727",
                 border: `1px solid ${
                   item.isCorrect
                     ? "rgba(34, 197, 94, 0.3)"
@@ -326,7 +326,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                 <span
                   className="animate-fade-in"
                   style={{
-                    color: "#86efac",
+                    color: "#43c372",
                     fontWeight: 700,
                     fontSize: "0.95rem",
                     display: "flex",
@@ -397,7 +397,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                   };
                   badgeText = "Student Answer (Correct)";
                   badgeBg = "rgba(34, 197, 94, 0.2)";
-                  badgeColor = "#86efac";
+                  badgeColor = "#43c372";
                 } else if (isSelected && !isOptCorrect) {
                   boxStyle = {
                     ...boxStyle,
@@ -415,7 +415,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                   };
                   badgeText = "Correct Answer";
                   badgeBg = "rgba(34, 197, 94, 0.15)";
-                  badgeColor = "#86efac";
+                  badgeColor = "#43c372";
                 }
 
                 return (
@@ -478,7 +478,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                   style={{
                     fontSize: "1.05rem",
                     fontWeight: 700,
-                    color: item.isCorrect ? "#86efac" : "#e12727",
+                    color: item.isCorrect ? "#43c372" : "#e12727",
                   }}
                 >
                   {item.answerText || "No answer selected"}
@@ -496,7 +496,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                 <div
                   style={{
                     fontSize: "0.75rem",
-                    color: "#86efac",
+                    color: "#43c372",
                     fontWeight: 700,
                     marginBottom: "0.3rem",
                   }}

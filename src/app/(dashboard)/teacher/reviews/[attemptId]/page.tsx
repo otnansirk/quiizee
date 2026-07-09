@@ -361,7 +361,7 @@ export default function InteractiveGradingStudioPage() {
           <div className="flex items-center gap-3">
             <div>
               <strong style={{ fontSize: '1.25rem', display: 'block', color: '#ffffff' }}>Exam Finalized Successfully!</strong>
-              <span style={{ fontSize: '1.05rem', color: '#86efac' }}>{finalizeSuccess}. Redirecting to reviews catalog...</span>
+              <span style={{ fontSize: '1.05rem', color: '#43c372' }}>{finalizeSuccess}. Redirecting to reviews catalog...</span>
             </div>
           </div>
           <Link href="/teacher/reviews" className="btn btn-primary btn-sm" style={{ background: '#22c55e', color: '#000000', fontWeight: 800 }}>

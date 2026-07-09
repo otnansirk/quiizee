@@ -196,7 +196,7 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
                           justifyContent: "center",
                           fontSize: "1rem",
                           fontWeight: 700,
-                          color: status === "graded" ? "#86efac" : "#c084fc",
+                          color: status === "graded" ? "#43c372" : "#c084fc",
                           flexShrink: 0,
                         }}
                       >
@@ -299,7 +299,7 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
                           style={{
                             fontWeight: 800,
                             fontSize: "1.1rem",
-                            color: "#86efac",
+                            color: "#43c372",
                           }}
                         >
                           {total}
@@ -312,7 +312,7 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
                             fontSize: "0.75rem",
                             fontWeight: 700,
                             background: "rgba(34, 197, 94, 0.15)",
-                            color: "#86efac",
+                            color: "#43c372",
                             padding: "0.15rem 0.5rem",
                             borderRadius: "var(--radius-sm)",
                             marginLeft: "0.3rem",

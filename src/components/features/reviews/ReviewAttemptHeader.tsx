@@ -203,7 +203,7 @@ export const ReviewAttemptHeader: React.FC<ReviewAttemptHeaderProps> = ({
               <span
                 style={{
                   fontSize: "0.8rem",
-                  color: "#86efac",
+                  color: "#43c372",
                   fontWeight: 600,
                   display: "flex",
                   alignItems: "center",

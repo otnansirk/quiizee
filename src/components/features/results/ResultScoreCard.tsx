@@ -113,7 +113,7 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
                 percentage >= 70
                   ? "rgba(34, 197, 94, 0.15)"
                   : "rgba(255, 255, 255, 0.15)",
-              color: percentage >= 70 ? "#86efac" : "#FFF",
+              color: percentage >= 70 ? "#43c372" : "#FFF",
               borderColor:
                 percentage >= 70
                   ? "rgba(34, 197, 94, 0.4)"
