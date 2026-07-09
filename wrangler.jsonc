@@ -21,5 +21,10 @@
   },
   "observability": {
     "enabled": true
+  },
+  "vars": {
+    "AUTH_URL": "https://quiizee.krisnantobiyuh.workers.dev",
+    "NEXTAUTH_URL": "https://quiizee.krisnantobiyuh.workers.dev",
+    "GEMINI_API_URL": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
   }
 }
