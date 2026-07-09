@@ -178,7 +178,7 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
             style={{
               fontSize: "1.15rem",
               fontWeight: 800,
-              color: "#fff",
+              color: "#000",
               marginBottom: "0.4rem",
               lineHeight: 1.3,
             }}

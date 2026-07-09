@@ -25,13 +25,12 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
   const qNum = q.questionNumber || index + 1;
 
   // Determine points earned styling
-  const isAnsCorrect = ans?.isCorrect === true;
-  const isAnsIncorrect = ans?.isCorrect === false;
+  const isAnsCorrect = q.type !== "essay" && ans?.isCorrect === true;
+  const isAnsIncorrect = q.type !== "essay" && ans?.isCorrect === false;
   const isAnsPending =
-    ans?.isCorrect === null ||
-    ans?.isCorrect === undefined ||
-    ans?.score === null ||
-    ans?.score === undefined;
+    q.type === "essay"
+      ? !ans || ans.score === null || ans.score === undefined
+      : !ans || ans.isCorrect === null || ans.isCorrect === undefined;
 
   let ptsBadgeStyle: React.CSSProperties = {
     background: "rgba(255, 255, 255, 0.08)",
@@ -42,7 +41,23 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
     ans?.score !== null && ans?.score !== undefined ? ans.score : "Pending"
   } / ${q.points} pts`;
 
-  if (isAnsCorrect) {
+  if (q.type === "essay") {
+    if (!isAnsPending) {
+      ptsBadgeStyle = {
+        background: "rgba(34, 197, 94, 0.15)",
+        color: "#43c372",
+        border: "1px solid rgba(34, 197, 94, 0.4)",
+      };
+      ptsText = `${ans?.score} / ${q.points} pts`;
+    } else {
+      ptsBadgeStyle = {
+        background: "rgba(245, 158, 11, 0.15)",
+        color: "#776610",
+        border: "1px solid rgba(245, 158, 11, 0.4)",
+      };
+      ptsText = `Pending / ${q.points} pts`;
+    }
+  } else if (isAnsCorrect) {
     ptsBadgeStyle = {
       background: "rgba(34, 197, 94, 0.15)",
       color: "#43c372",
@@ -56,12 +71,6 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
       border: "1px solid rgba(239, 68, 68, 0.4)",
     };
     ptsText = `0 / ${q.points} pts`;
-  } else if (q.type === "essay") {
-    ptsBadgeStyle = {
-      background: "rgba(245, 158, 11, 0.15)",
-      color: "#776610",
-      border: "1px solid rgba(245, 158, 11, 0.4)",
-    };
   }
 
   // Type label
