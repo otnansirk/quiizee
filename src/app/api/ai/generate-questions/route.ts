@@ -1,0 +1,183 @@
+import { NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_API_URL =
+  process.env.GEMINI_API_URL ||
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+
+export async function POST(req: Request) {
+  try {
+    // Auth: only teachers
+    const session = await auth();
+    if (!session?.user || session.user.role !== 'teacher') {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!GEMINI_API_KEY) {
+      return NextResponse.json(
+        { success: false, message: 'AI service is not configured. Please set GEMINI_API_KEY in your environment.' },
+        { status: 503 }
+      );
+    }
+
+    const body = await req.json();
+    const {
+      referenceText,
+      questionCount = 5,
+      questionTypes = ['multiple_choice', 'true_false', 'essay'],
+      difficulty = 'medium',
+    } = body;
+
+    if (!referenceText || typeof referenceText !== 'string' || referenceText.trim().length < 20) {
+      return NextResponse.json(
+        { success: false, message: 'Reference text must be at least 20 characters.' },
+        { status: 400 }
+      );
+    }
+
+    if (questionCount < 1 || questionCount > 20) {
+      return NextResponse.json(
+        { success: false, message: 'Question count must be between 1 and 20.' },
+        { status: 400 }
+      );
+    }
+
+    // Build type breakdown instruction
+    const typeList = (questionTypes as string[])
+      .filter((t) => ['multiple_choice', 'true_false', 'essay'].includes(t))
+      .join(', ');
+
+    const prompt = `You are an expert educational assessment designer. Based on the reference material below, generate exactly ${questionCount} quiz questions.
+
+REFERENCE MATERIAL:
+"""
+${referenceText.trim()}
+"""
+
+REQUIREMENTS:
+- Generate exactly ${questionCount} questions
+- Use only these question types: ${typeList}
+- Difficulty level: ${difficulty}
+- Questions must be directly based on the reference material
+- For multiple_choice: provide exactly 4 options, with exactly 1 correct answer
+- For true_false: the answer must be either "true" or "false"
+- For essay: provide a model answer as correctAnswer
+- Points should be: multiple_choice = 1, true_false = 1, essay = 3
+
+RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Use this exact structure:
+{
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "questionText": "...",
+      "points": 1,
+      "correctAnswer": null,
+      "options": [
+        { "optionText": "...", "isCorrect": true },
+        { "optionText": "...", "isCorrect": false },
+        { "optionText": "...", "isCorrect": false },
+        { "optionText": "...", "isCorrect": false }
+      ]
+    },
+    {
+      "type": "true_false",
+      "questionText": "...",
+      "points": 1,
+      "correctAnswer": "true",
+      "options": []
+    },
+    {
+      "type": "essay",
+      "questionText": "...",
+      "points": 3,
+      "correctAnswer": "Model answer: ...",
+      "options": []
+    }
+  ]
+}`;
+
+    const geminiRes = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 4096,
+        },
+      }),
+    });
+
+    if (!geminiRes.ok) {
+      const errBody = await geminiRes.text();
+      console.error('Gemini API error:', errBody);
+      return NextResponse.json(
+        { success: false, message: 'AI service returned an error. Check your API key and quota.' },
+        { status: 502 }
+      );
+    }
+
+    const geminiData = await geminiRes.json();
+    const rawText: string =
+      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    if (!rawText) {
+      return NextResponse.json(
+        { success: false, message: 'AI returned an empty response. Please try again.' },
+        { status: 502 }
+      );
+    }
+
+    // Strip potential markdown code fences
+    const cleaned = rawText
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/\s*```$/i, '')
+      .trim();
+
+    let parsed: { questions: unknown[] };
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      console.error('Failed to parse Gemini JSON:', cleaned);
+      return NextResponse.json(
+        { success: false, message: 'AI returned malformed data. Please try again.' },
+        { status: 502 }
+      );
+    }
+
+    if (!Array.isArray(parsed?.questions) || parsed.questions.length === 0) {
+      return NextResponse.json(
+        { success: false, message: 'AI did not return any questions. Try rephrasing your reference text.' },
+        { status: 502 }
+      );
+    }
+
+    // Sanitize and normalise each question
+    const questions = parsed.questions.map((q: any, idx: number) => ({
+      type: ['multiple_choice', 'true_false', 'essay'].includes(q.type) ? q.type : 'multiple_choice',
+      questionText: String(q.questionText || '').trim(),
+      points: Number(q.points) > 0 ? Number(q.points) : 1,
+      correctAnswer: q.correctAnswer != null ? String(q.correctAnswer) : null,
+      order: idx + 1,
+      options: Array.isArray(q.options)
+        ? q.options.map((opt: any, oidx: number) => ({
+            optionText: String(opt.optionText || '').trim(),
+            isCorrect: Boolean(opt.isCorrect),
+            order: oidx + 1,
+          }))
+        : [],
+    }));
+
+    return NextResponse.json({ success: true, questions });
+  } catch (error) {
+    console.error('Error in generate-questions API:', error);
+    return NextResponse.json(
+      { success: false, message: 'An unexpected error occurred.' },
+      { status: 500 }
+    );
+  }
+}
