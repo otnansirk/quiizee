@@ -97,9 +97,25 @@ export default function QuizTakingEnginePage() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/attempts/${attemptId}`);
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
+        let res: Response | null = null;
+        let errData: any = {};
+        for (let retry = 0; retry < 4; retry++) {
+          res = await fetch(`/api/attempts/${attemptId}`, {
+            cache: 'no-store',
+          });
+          if (res.ok) {
+            break;
+          }
+          errData = await res.json().catch(() => ({}));
+          // If 404 (or server error) occurs right after join, wait and retry up to 3 times
+          if (retry < 3 && (res.status === 404 || res.status >= 500)) {
+            await new Promise((resolve) => setTimeout(resolve, 300 * (retry + 1)));
+            continue;
+          }
+          break;
+        }
+
+        if (!res || !res.ok) {
           throw new Error(errData.error || errData.message || 'Failed to load assessment session. Please verify your access.');
         }
 

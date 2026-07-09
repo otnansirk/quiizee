@@ -3,6 +3,8 @@ import { db } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq, asc } from 'drizzle-orm';
 
+export const dynamic = 'force-dynamic';
+
 interface RouteContext {
   params: Promise<{
     attemptId: string;
@@ -20,11 +22,21 @@ export async function GET(req: Request, { params }: RouteContext) {
       );
     }
 
-    const [attempt] = await db
+    let [attempt] = await db
       .select()
       .from(schema.quizAttempts)
       .where(eq(schema.quizAttempts.id, attemptId))
       .limit(1);
+
+    if (!attempt) {
+      // Small delay and retry to allow newly committed transaction from join API to sync across connections/pool
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      [attempt] = await db
+        .select()
+        .from(schema.quizAttempts)
+        .where(eq(schema.quizAttempts.id, attemptId))
+        .limit(1);
+    }
 
     if (!attempt) {
       return NextResponse.json(
