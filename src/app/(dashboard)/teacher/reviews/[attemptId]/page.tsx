@@ -35,6 +35,50 @@ interface NormalizedItem {
   isGraded: boolean;
 }
 
+interface RawEssayReview {
+  score?: number | string;
+  feedback?: string;
+}
+
+interface RawStudentAnswer {
+  id?: string;
+  questionId?: string;
+  question_id?: string;
+  selectedOptionId?: string | null;
+  selected_option_id?: string | null;
+  answerText?: string | null;
+  answer_text?: string | null;
+  isCorrect?: boolean | null;
+  is_correct?: boolean | null;
+  status?: string;
+  score?: number | string | null;
+  feedback?: string;
+  isGraded?: boolean;
+  essayReview?: RawEssayReview | null;
+}
+
+interface RawQuestion {
+  id?: string;
+  studentAnswerId?: string | null;
+  student_answer_id?: string | null;
+  order?: number;
+  orderNumber?: number;
+  type?: 'multiple_choice' | 'true_false' | 'essay';
+  questionText?: string;
+  question_text?: string;
+  questionImage?: string | null;
+  question_image?: string | null;
+  points?: number | string;
+  maxScore?: number | string;
+  correctAnswer?: string | null;
+  correct_answer?: string | null;
+  options?: ReviewOption[];
+  questionOptions?: ReviewOption[];
+  answer?: RawStudentAnswer | null;
+  studentAnswer?: RawStudentAnswer | null;
+  student_answer?: RawStudentAnswer | null;
+}
+
 export default function InteractiveGradingStudioPage() {
   const params = useParams();
   const router = useRouter();
@@ -117,13 +161,14 @@ export default function InteractiveGradingStudioPage() {
             ? data.data.answers
             : [];
 
-          const normItems: NormalizedItem[] = rawQuestions.map((qObj: any, idx: number) => {
-            const q = qObj.question || qObj;
-            const a =
+          const normItems: NormalizedItem[] = rawQuestions.map((qItem: unknown, idx: number) => {
+            const qObj = qItem as RawQuestion & { question?: RawQuestion };
+            const q: RawQuestion = qObj.question || qObj;
+            const a: RawStudentAnswer | null =
               qObj.answer ||
               qObj.studentAnswer ||
               qObj.student_answer ||
-              rawAnswers.find((ans: any) => ans.questionId === q.id || ans.question_id === q.id) ||
+              rawAnswers.find((ans: RawStudentAnswer) => ans.questionId === q.id || ans.question_id === q.id) ||
               null;
 
             const studentAnswerId = a?.id || q.studentAnswerId || q.student_answer_id || null;
@@ -188,7 +233,10 @@ export default function InteractiveGradingStudioPage() {
           setItems(normItems);
 
           // Initialize essay forms state
-          const initialForms: Record<string, any> = {};
+          const initialForms: Record<
+            string,
+            { score: number | string; feedback: string; saving: boolean; saved: boolean; error: string | null }
+          > = {};
           normItems.forEach((it) => {
             if (it.type === 'essay') {
               initialForms[it.questionId] = {
@@ -205,9 +253,9 @@ export default function InteractiveGradingStudioPage() {
           const errData = await res.json().catch(() => ({}));
           setError(errData.error || errData.message || 'Failed to load attempt review details.');
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch review data:', err);
-        setError('Network error: Unable to load grading studio.');
+        setError(err instanceof Error ? err.message : 'Network error: Unable to load grading studio.');
       } finally {
         setLoading(false);
       }
@@ -261,6 +309,8 @@ export default function InteractiveGradingStudioPage() {
         throw new Error(errData.error || errData.message || 'Failed to save essay grade.');
       }
 
+      const resData = await res.json().catch(() => ({}));
+
       // Update local items state so live score updates immediately
       setItems((prev) =>
         prev.map((it) =>
@@ -275,21 +325,28 @@ export default function InteractiveGradingStudioPage() {
         [item.questionId]: { ...prev[item.questionId], saving: false, saved: true, error: null },
       }));
 
-      // Clear saved checkmark after 3 seconds
-      setTimeout(() => {
-        setEssayForms((prev) =>
-          prev[item.questionId]
-            ? { ...prev, [item.questionId]: { ...prev[item.questionId], saved: false } }
-            : prev
-        );
-      }, 3000);
-    } catch (err: any) {
+      if (resData && resData.allEssaysGraded) {
+        setFinalizeSuccess(`All essay responses graded! Final score automatically calculated.`);
+        setTimeout(() => {
+          router.push('/teacher/reviews');
+        }, 2500);
+      } else {
+        // Clear saved indicator after 3 seconds
+        setTimeout(() => {
+          setEssayForms((prev) =>
+            prev[item.questionId]
+              ? { ...prev, [item.questionId]: { ...prev[item.questionId], saved: false } }
+              : prev
+          );
+        }, 3000);
+      }
+    } catch (err: unknown) {
       setEssayForms((prev) => ({
         ...prev,
         [item.questionId]: {
           ...prev[item.questionId],
           saving: false,
-          error: err.message || 'Network error while saving grade.',
+          error: err instanceof Error ? err.message : 'Network error while saving grade.',
         },
       }));
     }
@@ -331,8 +388,8 @@ export default function InteractiveGradingStudioPage() {
       setTimeout(() => {
         router.push('/teacher/reviews');
       }, 2500);
-    } catch (err: any) {
-      setFinalizeError(err.message || 'Network error while finalizing exam.');
+    } catch (err: unknown) {
+      setFinalizeError(err instanceof Error ? err.message : 'Network error while finalizing exam.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setFinalizing(false);

@@ -112,7 +112,20 @@ export async function GET() {
       }
     }
 
-    const attemptsNeedingReview = attempts.map((attempt) => {
+    const activeAttempts: typeof attempts = [];
+    for (const attempt of attempts) {
+      const ungradedCount = ungradedCountMap.get(attempt.id) || 0;
+      if (essayQuestionIds.length === 0 || ungradedCount === 0) {
+        await db
+          .update(schema.quizAttempts)
+          .set({ status: 'graded', updatedAt: new Date() })
+          .where(eq(schema.quizAttempts.id, attempt.id));
+      } else {
+        activeAttempts.push(attempt);
+      }
+    }
+
+    const attemptsNeedingReview = activeAttempts.map((attempt) => {
       let studentName = 'Unknown Student';
       let studentEmail = 'unknown@example.com';
 

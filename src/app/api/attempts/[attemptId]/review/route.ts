@@ -81,6 +81,21 @@ export async function GET(req: Request, { params }: RouteContext) {
             .where(inArray(schema.essayReviews.studentAnswerId, answerIds))
         : [];
 
+    if (attempt.status === 'submitted') {
+      const essayQuestions = questions.filter((q) => q.type === 'essay');
+      const allEssaysScored = essayQuestions.every((q) => {
+        const ans = studentAnswers.find((a) => a.questionId === q.id);
+        return ans && ans.score !== null && ans.score !== undefined;
+      });
+      if (essayQuestions.length === 0 || allEssaysScored) {
+        await db
+          .update(schema.quizAttempts)
+          .set({ status: 'graded', updatedAt: new Date() })
+          .where(eq(schema.quizAttempts.id, attempt.id));
+        attempt.status = 'graded';
+      }
+    }
+
     let studentName = 'Unknown Student';
     let studentEmail = 'unknown@example.com';
 
@@ -242,7 +257,7 @@ export async function POST(req: Request, { params }: RouteContext) {
       );
     }
 
-    await db.transaction(async (tx) => {
+    const result = await db.transaction(async (tx) => {
       const [existingReview] = await tx
         .select()
         .from(schema.essayReviews)
@@ -281,25 +296,46 @@ export async function POST(req: Request, { params }: RouteContext) {
 
       // Recalculate attempt total score immediately as essays are graded
       const allAnswers = await tx
-        .select({ score: schema.studentAnswers.score })
+        .select({ id: schema.studentAnswers.id, questionId: schema.studentAnswers.questionId, score: schema.studentAnswers.score })
         .from(schema.studentAnswers)
         .where(eq(schema.studentAnswers.attemptId, attempt.id));
 
+      const allQuestions = await tx
+        .select({ id: schema.questions.id, type: schema.questions.type })
+        .from(schema.questions)
+        .where(eq(schema.questions.quizId, attempt.quizId));
+
+      const essayQuestionIds = new Set(
+        allQuestions.filter((q) => q.type === 'essay').map((q) => q.id)
+      );
+
       let totalScoreSum = 0;
+      let allEssaysGraded = true;
+
       for (const ans of allAnswers) {
         totalScoreSum += Number(ans.score || 0);
+        if (essayQuestionIds.has(ans.questionId)) {
+          if (ans.id === studentAnswerId) {
+            // Being graded right now
+          } else if (ans.score === null || ans.score === undefined) {
+            allEssaysGraded = false;
+          }
+        }
       }
 
       await tx
         .update(schema.quizAttempts)
         .set({
           totalScore: totalScoreSum.toString(),
+          status: allEssaysGraded ? 'graded' : 'submitted',
           updatedAt: new Date(),
         })
         .where(eq(schema.quizAttempts.id, attempt.id));
+
+      return { allEssaysGraded, totalScoreSum };
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, allEssaysGraded: result.allEssaysGraded, totalScore: result.totalScoreSum });
   } catch (error) {
     console.error('Error reviewing essay answer:', error);
     return NextResponse.json(

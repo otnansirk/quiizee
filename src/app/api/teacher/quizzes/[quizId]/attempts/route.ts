@@ -58,6 +58,44 @@ export async function GET(req: Request, { params }: RouteContext) {
       return NextResponse.json([]);
     }
 
+    const allQuizQuestions = await db
+      .select()
+      .from(schema.questions)
+      .where(eq(schema.questions.quizId, quizId));
+    const essayQuestions = allQuizQuestions.filter((q) => q.type === 'essay');
+
+    if (attempts.some((a) => a.status === 'submitted')) {
+      const attemptIds = attempts.map((a) => a.id);
+      const allStudentAnswers = await db
+        .select()
+        .from(schema.studentAnswers)
+        .where(inArray(schema.studentAnswers.attemptId, attemptIds));
+
+      for (const att of attempts) {
+        if (att.status === 'submitted') {
+          if (essayQuestions.length === 0) {
+            await db
+              .update(schema.quizAttempts)
+              .set({ status: 'graded', updatedAt: new Date() })
+              .where(eq(schema.quizAttempts.id, att.id));
+            att.status = 'graded';
+          } else {
+            const allEssaysScored = essayQuestions.every((q) => {
+              const ans = allStudentAnswers.find((a) => a.attemptId === att.id && a.questionId === q.id);
+              return ans && ans.score !== null && ans.score !== undefined;
+            });
+            if (allEssaysScored) {
+              await db
+                .update(schema.quizAttempts)
+                .set({ status: 'graded', updatedAt: new Date() })
+                .where(eq(schema.quizAttempts.id, att.id));
+              att.status = 'graded';
+            }
+          }
+        }
+      }
+    }
+
     const userIds = attempts
       .map((a) => a.userId)
       .filter((id): id is string => Boolean(id));
