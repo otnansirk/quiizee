@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, inArray } from 'drizzle-orm';
 
 interface RouteContext {
   params: Promise<{
@@ -66,10 +66,44 @@ export async function GET(req: Request, { params }: RouteContext) {
       })
     );
 
-    const studentAnswers = await db
+    const rawStudentAnswers = await db
       .select()
       .from(schema.studentAnswers)
       .where(eq(schema.studentAnswers.attemptId, attempt.id));
+
+    const answerIds = rawStudentAnswers.map((a) => a.id);
+    const essayReviewsList =
+      answerIds.length > 0
+        ? await db
+            .select()
+            .from(schema.essayReviews)
+            .where(inArray(schema.essayReviews.studentAnswerId, answerIds))
+        : [];
+
+    const studentAnswers = rawStudentAnswers.map((ans) => {
+      const review = essayReviewsList.find((r) => r.studentAnswerId === ans.id);
+      return {
+        ...ans,
+        score: review?.score !== undefined && review?.score !== null ? review.score : ans.score,
+        feedback: review?.feedback || null,
+        isGraded: review !== undefined || (ans.score !== null && ans.score !== undefined),
+      };
+    });
+
+    if (attempt.status === 'submitted') {
+      const essayQuestions = questions.filter((q) => q.type === 'essay');
+      const allEssaysScored = essayQuestions.every((q) => {
+        const ans = studentAnswers.find((a) => a.questionId === q.id);
+        return ans && ans.score !== null && ans.score !== undefined;
+      });
+      if (essayQuestions.length === 0 || allEssaysScored) {
+        await db
+          .update(schema.quizAttempts)
+          .set({ status: 'graded', updatedAt: new Date() })
+          .where(eq(schema.quizAttempts.id, attempt.id));
+        attempt.status = 'graded';
+      }
+    }
 
     let studentName: string | null = null;
     let studentEmail: string | null = null;
@@ -118,6 +152,7 @@ export async function GET(req: Request, { params }: RouteContext) {
       attempt,
       quiz,
       questions,
+      answers: studentAnswers,
       studentAnswers,
       studentName,
       studentEmail,

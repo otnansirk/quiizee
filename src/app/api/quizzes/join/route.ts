@@ -94,57 +94,56 @@ export async function POST(req: Request) {
       );
     }
 
-    const { attemptId, resultCode } = await db.transaction(async (tx) => {
-      let resCode = '';
-      for (let i = 0; i < 5; i++) {
-        const candidate = generateResultCode();
-        const existing = await tx
-          .select({ id: schema.quizAttempts.id })
-          .from(schema.quizAttempts)
-          .where(eq(schema.quizAttempts.resultCode, candidate))
-          .limit(1);
-        if (existing.length === 0) {
-          resCode = candidate;
-          break;
-        }
+    let resCode = '';
+    for (let i = 0; i < 5; i++) {
+      const candidate = generateResultCode();
+      const existing = await db
+        .select({ id: schema.quizAttempts.id })
+        .from(schema.quizAttempts)
+        .where(eq(schema.quizAttempts.resultCode, candidate))
+        .limit(1);
+      if (existing.length === 0) {
+        resCode = candidate;
+        break;
       }
-      if (!resCode) {
-        throw new Error('Failed to generate unique result code');
-      }
+    }
+    if (!resCode) {
+      throw new Error('Failed to generate unique result code');
+    }
 
-      const questions = await tx.query.questions.findMany({
-        where: eq(schema.questions.quizId, quiz.id),
-      });
-
-      const maxScore = questions.reduce((sum, q) => sum + (q.points || 0), 0);
-
-      const [attempt] = await tx
-        .insert(schema.quizAttempts)
-        .values({
-          quizId: quiz.id,
-          userId: userId || null,
-          participantId: participantId || null,
-          resultCode: resCode,
-          attemptNumber: existingCount + 1,
-          startTime: new Date(),
-          maxScore: maxScore.toString(),
-          status: 'in_progress' as const,
-        })
-        .returning();
-
-      if (questions && questions.length > 0) {
-        await tx.insert(schema.studentAnswers).values(
-          questions.map((q) => ({
-            attemptId: attempt.id,
-            questionId: q.id,
-            questionStartedAt: new Date(),
-            status: 'viewing' as const,
-          }))
-        );
-      }
-
-      return { attemptId: attempt.id, resultCode: resCode };
+    const questions = await db.query.questions.findMany({
+      where: eq(schema.questions.quizId, quiz.id),
     });
+
+    const maxScore = questions.reduce((sum, q) => sum + (q.points || 0), 0);
+
+    const [attempt] = await db
+      .insert(schema.quizAttempts)
+      .values({
+        quizId: quiz.id,
+        userId: userId || null,
+        participantId: participantId || null,
+        resultCode: resCode,
+        attemptNumber: existingCount + 1,
+        startTime: new Date(),
+        maxScore: maxScore.toString(),
+        status: 'in_progress' as const,
+      })
+      .returning();
+
+    if (questions && questions.length > 0) {
+      await db.insert(schema.studentAnswers).values(
+        questions.map((q) => ({
+          attemptId: attempt.id,
+          questionId: q.id,
+          questionStartedAt: new Date(),
+          status: 'viewing' as const,
+        }))
+      );
+    }
+
+    const attemptId = attempt.id;
+    const resultCode = resCode;
 
     return NextResponse.json(
       { attemptId, resultCode, durationMode: quiz.durationMode },

@@ -22,20 +22,15 @@ export async function GET(req: Request, { params }: RouteContext) {
       );
     }
 
-    let [attempt] = await db
-      .select()
-      .from(schema.quizAttempts)
-      .where(eq(schema.quizAttempts.id, attemptId))
-      .limit(1);
-
-    if (!attempt) {
-      // Small delay and retry to allow newly committed transaction from join API to sync across connections/pool
-      await new Promise((resolve) => setTimeout(resolve, 200));
+    let attempt;
+    for (let retry = 0; retry < 5; retry++) {
       [attempt] = await db
         .select()
         .from(schema.quizAttempts)
         .where(eq(schema.quizAttempts.id, attemptId))
         .limit(1);
+      if (attempt) break;
+      await new Promise((resolve) => setTimeout(resolve, 150));
     }
 
     if (!attempt) {

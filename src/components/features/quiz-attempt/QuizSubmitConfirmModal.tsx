@@ -172,7 +172,7 @@ export const QuizSubmitConfirmModal: React.FC<QuizSubmitConfirmModalProps> = ({
                 style={{
                   background: "rgba(245, 158, 11, 0.15)",
                   border: "1px solid rgba(245, 158, 11, 0.4)",
-                  color: "#fde047",
+                  color: "#c8aa12",
                   textAlign: "left",
                   marginBottom: "2rem",
                   display: "flex",

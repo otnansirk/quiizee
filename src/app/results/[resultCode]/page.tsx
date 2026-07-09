@@ -32,9 +32,11 @@ interface QuestionReview {
 interface StudentAnswerReview {
   id: string;
   questionId: string;
+  question_id?: string;
   selectedOptionId?: string | null;
   answerText?: string | null;
   isCorrect?: boolean | null;
+  is_correct?: boolean | null;
   score?: number | string | null;
   feedback?: string | null;
   status?: "viewing" | "answered" | "timed_out";
@@ -70,6 +72,7 @@ interface QuizResultData {
   };
   questions: QuestionReview[];
   answers?: StudentAnswerReview[];
+  studentAnswers?: StudentAnswerReview[];
   certificateAvailable?: boolean;
   status?: "in_progress" | "submitted" | "graded";
   totalScore?: number | string | null;
@@ -132,15 +135,14 @@ export default function QuizResultPage() {
   // Helper to find answer for a specific question
   const getAnswerForQuestion = (questionId: string): StudentAnswerReview | undefined => {
     if (!data) return undefined;
-    if (data.answers && Array.isArray(data.answers)) {
-      const found = data.answers.find((a) => a.questionId === questionId);
-      if (found) return found;
-    }
-    if (data.attempt?.studentAnswers && Array.isArray(data.attempt.studentAnswers)) {
-      const found = data.attempt.studentAnswers.find((a) => a.questionId === questionId);
-      if (found) return found;
-    }
-    return undefined;
+    const allAnswers: StudentAnswerReview[] = [
+      ...(Array.isArray(data.studentAnswers) ? data.studentAnswers : []),
+      ...(Array.isArray(data.answers) ? data.answers : []),
+      ...(Array.isArray(data.attempt?.studentAnswers) ? data.attempt.studentAnswers : []),
+    ];
+    return allAnswers.find(
+      (a) => String(a.questionId || a.question_id) === String(questionId)
+    );
   };
 
   // Loading Spinner View
