@@ -38,7 +38,6 @@ export const AttemptsHeaderFilters: React.FC<AttemptsHeaderFiltersProps> = ({
           href="/teacher/quizzes"
           className="btn btn-ghost btn-sm"
           style={{
-            paddingLeft: 0,
             color: "var(--text-secondary)",
             marginBottom: "1rem",
             display: "inline-flex",
