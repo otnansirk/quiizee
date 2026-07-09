@@ -169,7 +169,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                         : "var(--border)",
                       background: isSelected
                         ? "rgba(99, 102, 241, 0.15)"
-                        : "rgba(20, 20, 32, 0.6)",
+                        : "rgba(232, 232, 232, 0.6)",
                       boxShadow: isSelected
                         ? "0 0 25px rgba(99, 102, 241, 0.25)"
                         : undefined,
@@ -202,9 +202,9 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                       style={{
                         flex: 1,
                         fontSize: "1.08rem",
-                        color: isSelected ? "#ffffff" : "var(--text-primary)",
+                        color: isSelected ? "#000000" : "var(--text-primary)",
                         lineHeight: "1.5",
-                        fontWeight: isSelected ? 600 : 400,
+                        fontWeight: isSelected ? 800 : 400,
                       }}
                     >
                       {option.optionText}
@@ -252,7 +252,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                         : "var(--border)",
                       background: isTrueSelected
                         ? "rgba(34, 197, 94, 0.16)"
-                        : "rgba(20, 20, 32, 0.6)",
+                        : "#d4d4d4",
                       boxShadow: isTrueSelected
                         ? "0 0 30px rgba(34, 197, 94, 0.25)"
                         : undefined,
@@ -263,7 +263,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                         fontSize: "1.35rem",
                         fontWeight: 800,
                         color: isTrueSelected
-                          ? "#86efac"
+                          ? "#1a8a43"
                           : "var(--text-primary)",
                       }}
                     >
@@ -291,7 +291,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                         : "var(--border)",
                       background: isFalseSelected
                         ? "rgba(239, 68, 68, 0.16)"
-                        : "rgba(20, 20, 32, 0.6)",
+                        : "rgba(232, 232, 232, 0.6)",
                       boxShadow: isFalseSelected
                         ? "0 0 30px rgba(239, 68, 68, 0.25)"
                         : undefined,
@@ -332,7 +332,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                 padding: "1.25rem",
                 fontSize: "1.05rem",
                 lineHeight: "1.6",
-                background: "rgba(10, 10, 15, 0.7)",
+                background: "rgba(246, 246, 246, 0.7)",
                 resize: "vertical",
                 minHeight: "180px",
                 borderRadius: "var(--radius-lg)",
@@ -365,7 +365,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
               {savingStatus[currentQuestion.id] === "saved" && (
                 <span
                   style={{
-                    color: "#86efac",
+                    color: "#43c372",
                     display: "flex",
                     alignItems: "center",
                     gap: "0.4rem",
@@ -409,7 +409,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
             disabled={currentQuestionIndex === 0}
             className="btn btn-secondary nav-btn-prev"
           >
-            ← Prev
+            Prev
           </button>
         ) : (
           <div />
@@ -436,7 +436,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
             onClick={onNextQuestion}
             className="btn btn-primary nav-btn-next"
           >
-            Next →
+            Next
           </button>
         ) : (
           <button

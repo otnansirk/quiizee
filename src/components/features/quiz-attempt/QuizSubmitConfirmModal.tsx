@@ -82,7 +82,7 @@ export const QuizSubmitConfirmModal: React.FC<QuizSubmitConfirmModalProps> = ({
             {/* Scorecard Summary Stats */}
             <div
               style={{
-                background: "rgba(20, 20, 32, 0.6)",
+                background: "rgb(36, 36, 41)",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius-lg)",
                 padding: "1.25rem",
@@ -106,7 +106,7 @@ export const QuizSubmitConfirmModal: React.FC<QuizSubmitConfirmModalProps> = ({
                   style={{
                     fontSize: "1.5rem",
                     fontWeight: 800,
-                    color: "var(--text-primary)",
+                    color: "#FFFFFF",
                     marginTop: "0.2rem",
                   }}
                 >
@@ -118,7 +118,7 @@ export const QuizSubmitConfirmModal: React.FC<QuizSubmitConfirmModalProps> = ({
                 <div
                   style={{
                     fontSize: "0.8rem",
-                    color: "#86efac",
+                    color: "#43c372",
                     fontWeight: 600,
                     textTransform: "uppercase",
                   }}
@@ -129,7 +129,7 @@ export const QuizSubmitConfirmModal: React.FC<QuizSubmitConfirmModalProps> = ({
                   style={{
                     fontSize: "1.5rem",
                     fontWeight: 800,
-                    color: "#86efac",
+                    color: "#43c372",
                     marginTop: "0.2rem",
                   }}
                 >
@@ -156,7 +156,7 @@ export const QuizSubmitConfirmModal: React.FC<QuizSubmitConfirmModalProps> = ({
                     color:
                       unansweredCount > 0
                         ? "#fde047"
-                        : "var(--text-primary)",
+                        : "#FFFFFF",
                     marginTop: "0.2rem",
                   }}
                 >
@@ -203,7 +203,7 @@ export const QuizSubmitConfirmModal: React.FC<QuizSubmitConfirmModalProps> = ({
                 style={{
                   background: "rgba(34, 197, 94, 0.15)",
                   border: "1px solid rgba(34, 197, 94, 0.4)",
-                  color: "#86efac",
+                  color: "#43c372",
                   textAlign: "left",
                   marginBottom: "2rem",
                   display: "flex",
@@ -252,7 +252,7 @@ export const QuizSubmitConfirmModal: React.FC<QuizSubmitConfirmModalProps> = ({
               >
                 {isSubmitting
                   ? "Submitting..."
-                  : "Yes, Submit Assessment"}
+                  : "Yes, Submit"}
               </button>
             </div>
           </div>

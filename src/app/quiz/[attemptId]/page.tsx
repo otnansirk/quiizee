@@ -734,7 +734,7 @@ export default function QuizTakingEnginePage() {
         }
         .question-nav-btn.answered:not(.active) {
           background: rgba(34, 197, 94, 0.18);
-          color: #86efac;
+          color: #43c372;
           border-color: rgba(34, 197, 94, 0.4);
         }
         .question-nav-btn.unanswered:not(.active) {

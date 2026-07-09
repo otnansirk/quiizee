@@ -45,7 +45,7 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
   if (isAnsCorrect) {
     ptsBadgeStyle = {
       background: "rgba(34, 197, 94, 0.15)",
-      color: "#86efac",
+      color: "#43c372",
       border: "1px solid rgba(34, 197, 94, 0.4)",
     };
     ptsText = `${q.points} / ${q.points} pts`;
@@ -59,7 +59,7 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
   } else if (q.type === "essay") {
     ptsBadgeStyle = {
       background: "rgba(245, 158, 11, 0.15)",
-      color: "#fde047",
+      color: "#776610",
       border: "1px solid rgba(245, 158, 11, 0.4)",
     };
   }
@@ -177,15 +177,15 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
                 q.correctAnswer === opt.id ||
                 q.correctAnswer === opt.text;
 
-              let optionBg = "rgba(20, 20, 32, 0.5)";
+              let optionBg = "rgba(223, 223, 223, 0.5)";
               let optionBorder = "var(--border)";
               let optionColor = "var(--text-secondary)";
               let statusIcon: React.ReactNode = null;
 
               if (isSelected && isThisOptionCorrect) {
-                optionBg = "rgba(34, 197, 94, 0.15)";
+                optionBg = "rgba(34, 197, 94, 0.554)";
                 optionBorder = "rgba(34, 197, 94, 0.6)";
-                optionColor = "#86efac";
+                optionColor = "#43c372";
                 statusIcon = (
                   <span
                     style={{
@@ -213,14 +213,14 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
                   </span>
                 );
               } else if (!isSelected && isThisOptionCorrect) {
-                optionBg = "rgba(34, 197, 94, 0.08)";
+                optionBg = "rgba(34, 197, 94, 0.499)";
                 optionBorder = "1px dashed rgba(34, 197, 94, 0.5)";
-                optionColor = "#86efac";
+                optionColor = "#097731";
                 statusIcon = (
                   <span
                     style={{
                       fontSize: "0.8rem",
-                      color: "#22c55e",
+                      color: "#097731",
                       fontWeight: 600,
                       whiteSpace: "nowrap",
                     }}
@@ -289,7 +289,6 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
         {q.type === "true_false" && (
           <div
             style={{
-              background: "rgba(20, 20, 32, 0.6)",
               border: "1px solid var(--border)",
               borderRadius: "var(--radius-md)",
               padding: "0.75rem 1rem",
@@ -316,7 +315,7 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
                 style={{
                   fontSize: "0.95rem",
                   fontWeight: 700,
-                  color: isAnsCorrect ? "#86efac" : "#e12727",
+                  color: isAnsCorrect ? "#43c372" : "#e12727",
                 }}
               >
                 <span>
@@ -346,7 +345,7 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
                 style={{
                   fontSize: "0.95rem",
                   fontWeight: 700,
-                  color: "#86efac",
+                  color: "#43c372",
                 }}
               >
                 <span>
@@ -365,7 +364,6 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
           <div className="flex flex-col gap-3">
             <div
               style={{
-                background: "rgba(10, 10, 15, 0.7)",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius-md)",
                 padding: "0.75rem 1rem",

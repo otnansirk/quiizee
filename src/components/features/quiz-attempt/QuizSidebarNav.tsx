@@ -162,7 +162,8 @@ export const QuizSidebarNav: React.FC<QuizSidebarNavProps> = ({
                 display: "flex",
                 alignItems: "center",
                 gap: "0.35rem",
-                color: "#86efac",
+                color: "#43c372",
+                fontWeight: 800,
               }}
             >
               Answered
@@ -173,6 +174,7 @@ export const QuizSidebarNav: React.FC<QuizSidebarNavProps> = ({
                 alignItems: "center",
                 gap: "0.35rem",
                 color: "var(--text-secondary)",
+                fontWeight: 800,
               }}
             >
               Unanswered
@@ -183,6 +185,7 @@ export const QuizSidebarNav: React.FC<QuizSidebarNavProps> = ({
                 alignItems: "center",
                 gap: "0.35rem",
                 color: "#818cf8",
+                fontWeight: 800,
               }}
             >
               Active
