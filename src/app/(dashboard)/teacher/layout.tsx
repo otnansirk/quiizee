@@ -10,7 +10,7 @@ export default async function TeacherDashboardLayout({
   const session = await auth();
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-primary)' }}>
+    <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       {/* Top Navigation Bar */}
       <TeacherNavbar user={session?.user} />
 

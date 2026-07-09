@@ -2,24 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-
-interface QuizItem {
-  id: string;
-  title: string;
-  description: string | null;
-  accessCode: string;
-  accessMode: 'public' | 'private';
-  durationMode: 'global' | 'per_question';
-  globalDuration: number | null; // in seconds
-  maxAttempts: number;
-  certificateEnabled: boolean;
-  certificateMinScore: number | null;
-  isPublished: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  questionsCount?: number;
-  questions?: any[];
-}
+import { MyQuizzesHeader } from '@/components/features/quizzes/MyQuizzesHeader';
+import { QuizCard, QuizItem } from '@/components/features/quizzes/QuizCard';
 
 export default function MyQuizzesPage() {
   const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
@@ -140,51 +124,12 @@ export default function MyQuizzesPage() {
 
   return (
     <div className="animate-fade-in">
-      {/* Page Header */}
-      <div className="flex justify-between items-center mb-6" style={{ flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <h1 className="title" style={{ fontSize: '2.5rem', marginBottom: '0.25rem' }}>
-            My Quizzes
-          </h1>
-          <p className="subtitle" style={{ margin: 0, maxWidth: '100%' }}>
-            Create, manage, and publish your assessments
-          </p>
-        </div>
-
-        <Link href="/teacher/quizzes/new" className="btn btn-primary btn-lg" style={{ boxShadow: '0 0 20px rgba(99, 102, 241, 0.4)' }}>
-          Create New Quiz
-        </Link>
-      </div>
-
-      {/* Alert Messages */}
-      {publishError && (
-        <div className="alert alert-error animate-fade-in" style={{ marginBottom: '1.5rem', alignItems: 'flex-start' }}>
-          <div style={{ flex: 1 }}>
-            <strong style={{ display: 'block', marginBottom: '0.25rem' }}>Action Required</strong>
-            <span>{publishError}</span>
-          </div>
-          <button
-            onClick={() => setPublishError(null)}
-            className="btn btn-ghost btn-sm"
-            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#fca5a5' }}
-          >
-            X
-          </button>
-        </div>
-      )}
-
-      {successMsg && (
-        <div className="alert alert-success animate-fade-in" style={{ marginBottom: '1.5rem' }}>
-          <span style={{ flex: 1 }}>{successMsg}</span>
-          <button
-            onClick={() => setSuccessMsg(null)}
-            className="btn btn-ghost btn-sm"
-            style={{ padding: '0.2rem 0.5rem', minWidth: 'auto', color: '#86efac' }}
-          >
-            X
-          </button>
-        </div>
-      )}
+      <MyQuizzesHeader
+        publishError={publishError}
+        successMsg={successMsg}
+        onClearError={() => setPublishError(null)}
+        onClearSuccess={() => setSuccessMsg(null)}
+      />
 
       {/* Loading State */}
       {loading ? (
@@ -210,195 +155,18 @@ export default function MyQuizzesPage() {
       ) : (
         /* Quizzes Grid */
         <div className="quiz-grid">
-          {quizzes.map((quiz) => {
-            const globalMins = quiz.globalDuration ? Math.round(quiz.globalDuration / 60) : null;
-            const isPublished = quiz.isPublished;
-
-            return (
-              <div
-                key={quiz.id}
-                className="card card-hover flex flex-col"
-                style={{
-                  borderLeft: isPublished ? '4px solid var(--success)' : '4px solid var(--warning)',
-                  padding: '1.75rem',
-                }}
-              >
-                {/* Title & Description */}
-                <div style={{ marginBottom: '1.25rem' }}>
-                  <h3
-                    className="card-title"
-                    style={{
-                      fontSize: '1.3rem',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 1,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      marginBottom: '0.5rem',
-                    }}
-                    title={quiz.title}
-                  >
-                    {quiz.title}
-                  </h3>
-                  <p
-                    className="card-description"
-                    style={{
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      minHeight: '2.8rem',
-                    }}
-                    title={quiz.description || 'No description provided.'}
-                  >
-                    {quiz.description || 'No description provided.'}
-                  </p>
-                </div>
-
-                {/* Badges Section */}
-                <div className="flex" style={{ flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.25rem' }}>
-                  {/* Status Badge */}
-                  <span
-                    className={`badge ${isPublished ? 'badge-success' : 'badge-warning'}`}
-                    style={{ margin: 0 }}
-                  >
-                    {isPublished ? 'Published' : 'Draft'}
-                  </span>
-
-                  {/* Access Mode Badge */}
-                  <span
-                    className="badge badge-info"
-                    style={{ margin: 0 }}
-                    title={quiz.accessMode === 'public' ? 'Public: Anyone with access code (Name + Email)' : 'Private: Login Required'}
-                  >
-                    {quiz.accessMode === 'public' ? 'Public' : 'Private'}
-                  </span>
-
-                  {/* Duration Mode Badge */}
-                  <span
-                    className="badge badge-accent"
-                    style={{ margin: 0 }}
-                  >
-                    {quiz.durationMode === 'global'
-                      ? `${globalMins ? `${globalMins} min Global` : 'No Limit'}`
-                      : 'Per-Question'}
-                  </span>
-
-                  {/* Certificate Badge */}
-                  {quiz.certificateEnabled && (
-                    <span
-                      className="badge"
-                      style={{
-                        margin: 0,
-                        background: 'rgba(168, 85, 247, 0.15)',
-                        color: '#9143de',
-                        border: '1px solid rgba(114, 28, 194, 0.822)',
-                      }}
-                    >
-                      Cert ({quiz.certificateMinScore || 70}%)
-                    </span>
-                  )}
-                </div>
-
-                {/* Access Code Box */}
-                <div className="access-code-box">
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.05em' }}>
-                      ACCESS CODE
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: 'monospace',
-                        fontSize: '1.15rem',
-                        fontWeight: 800,
-                        color: 'var(--accent-hover)',
-                        letterSpacing: '0.12em',
-                      }}
-                    >
-                      {quiz.accessCode}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => handleCopyCode(quiz.id, quiz.accessCode)}
-                    className="btn btn-secondary btn-sm"
-                    style={{
-                      padding: '0.4rem 0.85rem',
-                      fontSize: '0.8rem',
-                      background: copiedId === quiz.id ? 'rgba(34, 197, 94, 0.2)' : undefined,
-                      borderColor: copiedId === quiz.id ? 'var(--success)' : undefined,
-                      color: copiedId === quiz.id ? '#86efac' : undefined,
-                    }}
-                    title="Copy access code for students"
-                  >
-                    {copiedId === quiz.id ? 'Copied!' : 'Copy Code'}
-                  </button>
-                </div>
-
-                {/* Action Buttons Footer */}
-                <div className="card-actions-grid">
-                  <Link
-                    href={`/teacher/quizzes/${quiz.id}/attempts`}
-                    className="btn btn-secondary btn-sm"
-                    style={{
-                      width: '100%',
-                      justifyContent: 'center',
-                      gridColumn: '1 / -1',
-                      borderColor: 'rgba(99, 102, 241, 0.6)',
-                      background: 'rgba(99, 102, 241, 0.18)',
-                      color: '#000000',
-                      fontWeight: 700,
-                      boxShadow: '0 0 15px rgba(99, 102, 241, 0.2)',
-                    }}
-                  >
-                    View Attempts
-                  </Link>
-
-                  <Link
-                    href={`/teacher/quizzes/${quiz.id}/edit`}
-                    className="btn btn-secondary btn-sm"
-                    style={{ width: '100%', justifyContent: 'center' }}
-                  >
-                    Edit Settings
-                  </Link>
-
-                  <Link
-                    href={`/teacher/quizzes/${quiz.id}/questions`}
-                    className="btn btn-secondary btn-sm"
-                    style={{
-                      width: '100%',
-                      justifyContent: 'center',
-                      borderColor: 'rgba(99, 102, 241, 0.4)',
-                      color: 'var(--accent-hover)',
-                      background: 'rgba(99, 102, 241, 0.08)',
-                    }}
-                  >
-                    Manage Questions
-                  </Link>
-
-                  <button
-                    onClick={() => handleTogglePublish(quiz)}
-                    disabled={updatingId === quiz.id}
-                    className={`btn btn-sm ${isPublished ? 'btn-secondary' : 'btn-primary'}`}
-                    style={{ width: '100%' }}
-                  >
-                    {updatingId === quiz.id ? 'Updating...' : isPublished ? 'Unpublish' : 'Publish'}
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(quiz)}
-                    disabled={deletingId === quiz.id}
-                    className="btn btn-secondary btn-sm"
-                    style={{
-                      width: '100%',
-                      borderColor: 'rgba(239, 68, 68, 0.79)',
-                      color: '#e81717',
-                    }}
-                  >
-                    {deletingId === quiz.id ? 'Deleting...' : 'Delete'}
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+          {quizzes.map((quiz) => (
+            <QuizCard
+              key={quiz.id}
+              quiz={quiz}
+              copiedId={copiedId}
+              updatingId={updatingId}
+              deletingId={deletingId}
+              onCopyCode={handleCopyCode}
+              onTogglePublish={handleTogglePublish}
+              onDelete={handleDelete}
+            />
+          ))}
         </div>
       )}
     </div>
