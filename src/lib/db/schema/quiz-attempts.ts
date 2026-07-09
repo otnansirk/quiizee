@@ -37,11 +37,11 @@ export const quizAttempts = pgTable('quiz_attempts', {
   id: uuid('id').defaultRandom().primaryKey(),
   quizId: uuid('quiz_id')
     .notNull()
-    .references(() => quizzes.id),
+    .references(() => quizzes.id, { onDelete: 'cascade' }),
   // NOTE: CHECK constraint - either userId or participantId must be set
-  userId: uuid('user_id').references(() => users.id),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
   // NOTE: CHECK constraint - either userId or participantId must be set
-  participantId: uuid('participant_id').references(() => participants.id),
+  participantId: uuid('participant_id').references(() => participants.id, { onDelete: 'cascade' }),
   resultCode: varchar('result_code', { length: 20 }).notNull().unique(),
   attemptNumber: integer('attempt_number').notNull(),
   startTime: timestamp('start_time').notNull(),

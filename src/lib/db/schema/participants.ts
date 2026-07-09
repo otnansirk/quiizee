@@ -12,7 +12,7 @@ export const participants = pgTable(
     id: uuid('id').defaultRandom().primaryKey(),
     quizId: uuid('quiz_id')
       .notNull()
-      .references(() => quizzes.id),
+      .references(() => quizzes.id, { onDelete: 'cascade' }),
     name: varchar('name', { length: 255 }).notNull(),
     email: varchar('email', { length: 255 }).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),

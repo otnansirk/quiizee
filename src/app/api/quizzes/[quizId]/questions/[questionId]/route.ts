@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, inArray } from 'drizzle-orm';
 
 interface RouteContext {
   params: Promise<{
@@ -161,9 +161,34 @@ export async function DELETE(req: Request, { params }: RouteContext) {
     if (error) return error;
     if (!question) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
 
-    await db
-      .delete(schema.questions)
-      .where(and(eq(schema.questions.id, questionId), eq(schema.questions.quizId, quizId)));
+    await db.transaction(async (tx) => {
+      // 1. Find and delete all student answers (and associated essay reviews) for this question
+      const answers = await tx
+        .select({ id: schema.studentAnswers.id })
+        .from(schema.studentAnswers)
+        .where(eq(schema.studentAnswers.questionId, questionId));
+
+      if (answers.length > 0) {
+        const answerIds = answers.map((a) => a.id);
+        await tx
+          .delete(schema.essayReviews)
+          .where(inArray(schema.essayReviews.studentAnswerId, answerIds));
+
+        await tx
+          .delete(schema.studentAnswers)
+          .where(inArray(schema.studentAnswers.id, answerIds));
+      }
+
+      // 2. Delete all question options for this question
+      await tx
+        .delete(schema.questionOptions)
+        .where(eq(schema.questionOptions.questionId, questionId));
+
+      // 3. Delete the question itself
+      await tx
+        .delete(schema.questions)
+        .where(and(eq(schema.questions.id, questionId), eq(schema.questions.quizId, quizId)));
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

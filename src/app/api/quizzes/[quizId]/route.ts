@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, inArray } from 'drizzle-orm';
 
 interface RouteContext {
   params: Promise<{
@@ -189,9 +189,68 @@ export async function DELETE(req: Request, { params }: RouteContext) {
     if (error) return error;
     if (!quiz) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
 
-    await db
-      .delete(schema.quizzes)
-      .where(eq(schema.quizzes.id, quizId));
+    await db.transaction(async (tx) => {
+      // 1. Find all attempts for this quiz
+      const attempts = await tx
+        .select({ id: schema.quizAttempts.id })
+        .from(schema.quizAttempts)
+        .where(eq(schema.quizAttempts.quizId, quizId));
+
+      if (attempts.length > 0) {
+        const attemptIds = attempts.map((a) => a.id);
+        const answers = await tx
+          .select({ id: schema.studentAnswers.id })
+          .from(schema.studentAnswers)
+          .where(inArray(schema.studentAnswers.attemptId, attemptIds));
+
+        if (answers.length > 0) {
+          const answerIds = answers.map((a) => a.id);
+          await tx
+            .delete(schema.essayReviews)
+            .where(inArray(schema.essayReviews.studentAnswerId, answerIds));
+
+          await tx
+            .delete(schema.studentAnswers)
+            .where(inArray(schema.studentAnswers.id, answerIds));
+        }
+
+        await tx
+          .delete(schema.quizAttempts)
+          .where(inArray(schema.quizAttempts.id, attemptIds));
+      }
+
+      // 2. Delete all participants for this quiz
+      await tx
+        .delete(schema.participants)
+        .where(eq(schema.participants.quizId, quizId));
+
+      // 3. Find and delete all questions & their options for this quiz
+      const quizQuestions = await tx
+        .select({ id: schema.questions.id })
+        .from(schema.questions)
+        .where(eq(schema.questions.quizId, quizId));
+
+      if (quizQuestions.length > 0) {
+        const questionIds = quizQuestions.map((q) => q.id);
+        await tx
+          .delete(schema.questionOptions)
+          .where(inArray(schema.questionOptions.questionId, questionIds));
+
+        // Just in case any student answers were not tied to attemptIds
+        await tx
+          .delete(schema.studentAnswers)
+          .where(inArray(schema.studentAnswers.questionId, questionIds));
+      }
+
+      await tx
+        .delete(schema.questions)
+        .where(eq(schema.questions.quizId, quizId));
+
+      // 4. Delete the quiz itself
+      await tx
+        .delete(schema.quizzes)
+        .where(eq(schema.quizzes.id, quizId));
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

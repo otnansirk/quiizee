@@ -32,8 +32,8 @@ export const studentAnswers = pgTable('student_answers', {
     .references(() => quizAttempts.id, { onDelete: 'cascade' }),
   questionId: uuid('question_id')
     .notNull()
-    .references(() => questions.id),
-  selectedOptionId: uuid('selected_option_id').references(() => questionOptions.id),
+    .references(() => questions.id, { onDelete: 'cascade' }),
+  selectedOptionId: uuid('selected_option_id').references(() => questionOptions.id, { onDelete: 'set null' }),
   answerText: text('answer_text'),
   isCorrect: boolean('is_correct'),
   score: decimal('score', { precision: 10, scale: 2 }),
