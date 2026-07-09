@@ -82,7 +82,7 @@ export const MyQuizzesHeader: React.FC<MyQuizzesHeaderProps> = ({
             style={{
               padding: "0.2rem 0.5rem",
               minWidth: "auto",
-              color: "#86efac",
+              color: "#43c372",
             }}
           >
             X

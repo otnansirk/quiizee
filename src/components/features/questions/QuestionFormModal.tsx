@@ -849,7 +849,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                       fontSize: "1.05rem",
                       fontWeight: 700,
                       marginBottom: "0.25rem",
-                      color: "#fef08a",
+                      color: "#928313",
                     }}
                   >
                     Manual Review Required
@@ -858,7 +858,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                     style={{
                       fontSize: "0.9rem",
                       lineHeight: 1.5,
-                      color: "#fde047",
+                      color: "#928313",
                       opacity: 0.9,
                     }}
                   >

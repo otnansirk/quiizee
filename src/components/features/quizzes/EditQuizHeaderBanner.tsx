@@ -94,7 +94,7 @@ export const EditQuizHeaderBanner: React.FC<EditQuizHeaderBannerProps> = ({
           <button
             onClick={onClearSuccess}
             className="btn btn-ghost btn-sm"
-            style={{ padding: "0.2rem 0.5rem", minWidth: "auto", color: "#86efac" }}
+            style={{ padding: "0.2rem 0.5rem", minWidth: "auto", color: "#43c372" }}
           >
             X
           </button>

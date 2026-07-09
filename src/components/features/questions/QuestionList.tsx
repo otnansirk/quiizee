@@ -34,24 +34,6 @@ export const QuestionList: React.FC<QuestionListProps> = ({
             background: "rgba(20, 20, 35, 0.4)",
           }}
         >
-          <div
-            style={{
-              width: "80px",
-              height: "80px",
-              borderRadius: "20px",
-              background: "rgba(99, 102, 241, 0.1)",
-              border: "1px solid rgba(99, 102, 241, 0.25)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "2.5rem",
-              margin: "0 auto 1.5rem",
-              color: "var(--accent)",
-              boxShadow: "0 0 30px rgba(99, 102, 241, 0.15)",
-            }}
-          >
-            Q
-          </div>
           <h2
             style={{
               fontSize: "1.5rem",

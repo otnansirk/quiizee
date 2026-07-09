@@ -171,7 +171,7 @@ export const QuizCard: React.FC<QuizCardProps> = ({
             background:
               copiedId === quiz.id ? "rgba(34, 197, 94, 0.2)" : undefined,
             borderColor: copiedId === quiz.id ? "var(--success)" : undefined,
-            color: copiedId === quiz.id ? "#86efac" : undefined,
+            color: copiedId === quiz.id ? "#43c372" : undefined,
           }}
           title="Copy access code for students"
         >
