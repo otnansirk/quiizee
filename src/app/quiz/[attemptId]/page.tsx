@@ -3,6 +3,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { QuizHeaderTimer } from '@/components/features/quiz-attempt/QuizHeaderTimer';
+import { QuizSidebarNav } from '@/components/features/quiz-attempt/QuizSidebarNav';
+import { QuizQuestionDisplay } from '@/components/features/quiz-attempt/QuizQuestionDisplay';
+import { QuizSubmitConfirmModal } from '@/components/features/quiz-attempt/QuizSubmitConfirmModal';
 
 interface QuestionOption {
   id: string;
@@ -764,121 +768,19 @@ export default function QuizTakingEnginePage() {
       `}} />
 
       {/* Sticky Top Timer & Controls Bar */}
-      <div
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 50,
-          background: '#ffffff',
-          borderBottom: '2px solid #111827',
-          padding: '0.6rem 0',
-        }}
-      >
-        <div className="container controls-bar-inner">
-          {/* Left: Quiz Title & Student Name */}
-          <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
-            <h1
-              className="controls-title"
-              style={{
-                fontSize: '1.1rem',
-                fontWeight: 900,
-                color: '#111827',
-                letterSpacing: '-0.02em',
-                lineHeight: '1.2',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {quiz?.title || 'Live Assessment'}
-            </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.1rem', flexWrap: 'wrap' }}>
-              <span className="controls-meta" style={{ fontSize: '0.8rem', color: '#4b5563', fontWeight: 700 }}>
-                <strong style={{ color: '#111827' }}>{studentName}</strong>
-              </span>
-              <span style={{ color: '#9ca3af', fontWeight: 700, fontSize: '0.75rem' }}>·</span>
-              <span className="controls-meta" style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700 }}>
-                Attempt #{attempt?.attemptNumber || 1}
-              </span>
-            </div>
-          </div>
-
-          {/* Center: Live Countdown Timer */}
-          {remainingSeconds !== null && (
-            <div
-              className={`badge controls-timer ${timerClass}`}
-              style={{
-                fontSize: '0.95rem',
-                padding: '0.4rem 1rem',
-                margin: 0,
-                borderRadius: '6px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                fontFamily: 'monospace',
-                fontWeight: 900,
-                letterSpacing: '0.04em',
-                border: '2px solid #111827',
-                boxShadow: '2px 2px 0px #111827',
-                transition: 'all 0.3s ease',
-                flexShrink: 0,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {quiz?.durationMode === 'per_question' ? (
-                <span>Q{currentQuestionIndex + 1}: {formatTime(remainingSeconds)}</span>
-              ) : (
-                <span>{formatTime(remainingSeconds)}</span>
-              )}
-            </div>
-          )}
-
-          {/* Right: Submit Quiz Button */}
-          <div style={{ flexShrink: 0 }}>
-            <button
-              onClick={() => setShowSubmitModal(true)}
-              disabled={isSubmitting}
-              className="btn btn-primary controls-submit"
-              style={{
-                padding: '0.5rem 1.2rem',
-                boxShadow: '3px 3px 0px #111827',
-                border: '2px solid #111827',
-                fontWeight: 900,
-                fontSize: '0.9rem',
-              }}
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Question Timeout Banner */}
-      {questionTimeoutBanner && (
-        <div
-          className="animate-fade-in"
-          style={{
-            position: 'fixed',
-            top: '80px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 100,
-            background: 'rgba(239, 68, 68, 0.95)',
-            color: '#ffffff',
-            padding: '0.85rem 1.75rem',
-            borderRadius: 'var(--radius-full)',
-            boxShadow: '0 10px 30px rgba(239, 68, 68, 0.5)',
-            fontWeight: 800,
-            fontSize: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.65rem',
-            border: '2px solid rgba(255, 255, 255, 0.3)',
-          }}
-        >
-          <span>{questionTimeoutBanner}</span>
-        </div>
-      )}
+      <QuizHeaderTimer
+        quizTitle={quiz?.title || 'Live Assessment'}
+        studentName={studentName}
+        attemptNumber={attempt?.attemptNumber || 1}
+        remainingSeconds={remainingSeconds}
+        durationMode={quiz?.durationMode}
+        currentQuestionIndex={currentQuestionIndex}
+        timerClass={timerClass}
+        questionTimeoutBanner={questionTimeoutBanner}
+        formatTime={formatTime}
+        isSubmitting={isSubmitting}
+        onSubmitClick={() => setShowSubmitModal(true)}
+      />
 
       {/* Main Workspace (2-Column Responsive Layout) */}
       <main className="container flex-1">
@@ -896,605 +798,49 @@ export default function QuizTakingEnginePage() {
           </div>
         ) : (
           <div className={`quiz-workspace-grid ${quiz?.durationMode === 'per_question' ? 'single-col' : ''}`}>
-            {/* Left Column (or Top Drawer on mobile): Question Navigation Grid - Only show for Global Timer */}
-            {quiz?.durationMode !== 'per_question' && (
-              <aside className="nav-grid-card">
-                <div className="card" style={{ padding: 'clamp(0.75rem, 3vw, 1.5rem)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                      Question Navigation
-                    </h3>
-                    <span className="badge badge-accent" style={{ margin: 0, fontSize: '0.75rem' }}>
-                      {questions.length} Qs
-                    </span>
-                  </div>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: '1.4' }}>
-                    Click any number to jump directly to that question.
-                  </p>
-
-                  {/* Grid of Numbered Buttons */}
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(5, 1fr)',
-                      gap: '0.6rem',
-                    }}
-                  >
-                    {questions.map((q, idx) => {
-                      const isActive = idx === currentQuestionIndex;
-                      const isAnswered = isQuestionAnswered(q.id, q.type);
-                      let btnClass = 'unanswered';
-                      if (isActive) btnClass = 'active';
-                      else if (isAnswered) btnClass = 'answered';
-
-                      return (
-                        <button
-                          key={q.id}
-                          onClick={() => handleNavigateQuestion(idx)}
-                          className={`question-nav-btn ${btnClass}`}
-                          title={`Question ${idx + 1} (${q.type.replace('_', ' ')}) - ${isAnswered ? 'Answered' : 'Unanswered'}`}
-                        >
-                          <span>{idx + 1}</span>
-                          {isAnswered && !isActive && (
-                            <span
-                              style={{
-                                position: 'absolute',
-                                top: '4px',
-                                right: '4px',
-                                width: '6px',
-                                height: '6px',
-                                borderRadius: '50%',
-                                background: '#22c55e',
-                                boxShadow: '0 0 6px #22c55e',
-                              }}
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Summary Counter & Progress Bar */}
-                  <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)' }}>
-                    <div className="flex justify-between items-center" style={{ marginBottom: '0.6rem', fontSize: '0.85rem' }}>
-                      <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Completion</span>
-                      <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>
-                        {answeredCount} / {totalCount} answered
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '8px',
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        borderRadius: 'var(--radius-full)',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: `${progressPct}%`,
-                          height: '100%',
-                          background: 'var(--accent-gradient)',
-                          transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                          borderRadius: 'var(--radius-full)',
-                          boxShadow: '0 0 12px rgba(99, 102, 241, 0.6)',
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginTop: '1rem',
-                        fontSize: '0.72rem',
-                        color: 'var(--text-muted)',
-                        fontWeight: 600,
-                      }}
-                    >
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#86efac' }}>
-                        Answered
-                      </span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-secondary)' }}>
-                        Unanswered
-                      </span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#818cf8' }}>
-                        Active
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </aside>
-            )}
+            {/* Left Column (or Top Drawer on mobile): Question Navigation Grid */}
+            <QuizSidebarNav
+              questions={questions}
+              currentQuestionIndex={currentQuestionIndex}
+              durationMode={quiz?.durationMode}
+              answeredCount={answeredCount}
+              totalCount={totalCount}
+              progressPct={progressPct}
+              isQuestionAnswered={isQuestionAnswered}
+              onNavigateQuestion={handleNavigateQuestion}
+            />
 
             {/* Right Column: Current Question Display Card */}
-            <div className="card animate-fade-in" style={{ padding: 'clamp(1rem, 4vw, 2.5rem)', display: 'flex', flexDirection: 'column', minHeight: '400px' }}>
-              {/* Header: Question X of Y | Type Badge | Points Badge */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '1rem',
-                  paddingBottom: '1.25rem',
-                  borderBottom: '1px solid var(--border)',
-                  marginBottom: '1.75rem',
-                }}
-              >
-                <div>
-                  <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                    Question {currentQuestionIndex + 1}{' '}
-                  </span>
-                  <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                    of {questions.length}
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
-                  <span className="badge badge-info" style={{ margin: 0 }}>
-                    {currentQuestion.type === 'multiple_choice'
-                      ? 'Multiple Choice'
-                      : currentQuestion.type === 'true_false'
-                      ? 'True or False'
-                      : 'Essay'}
-                  </span>
-                  <span className="badge badge-accent" style={{ margin: 0, fontWeight: 800 }}>
-                    {currentQuestion.points} pt{currentQuestion.points === 1 ? '' : 's'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Question Text */}
-              <h2
-                style={{
-                  fontSize: 'clamp(1.05rem, 3.5vw, 1.4rem)',
-                  fontWeight: 700,
-                  color: 'var(--text-primary)',
-                  lineHeight: '1.6',
-                  marginBottom: '1.25rem',
-                }}
-              >
-                {currentQuestion.questionText}
-              </h2>
-
-              {/* Question Image Preview */}
-              {currentQuestion.questionImage && (
-                <div
-                  style={{
-                    marginBottom: '2rem',
-                    borderRadius: 'var(--radius-lg)',
-                    overflow: 'hidden',
-                    border: '1px solid var(--border)',
-                    maxHeight: '420px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    padding: '1rem',
-                  }}
-                >
-                  <img
-                    src={currentQuestion.questionImage}
-                    alt={`Question ${currentQuestionIndex + 1} Figure`}
-                    style={{ maxWidth: '100%', maxHeight: '380px', objectFit: 'contain', borderRadius: 'var(--radius-sm)' }}
-                  />
-                </div>
-              )}
-
-              {/* Interactive Answer Inputs */}
-              <div style={{ flex: 1, marginBottom: '2.5rem' }}>
-                {/* 1. Multiple Choice */}
-                {currentQuestion.type === 'multiple_choice' && currentQuestion.options && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {currentQuestion.options.map((option, idx) => {
-                      const isSelected = answers[currentQuestion.id]?.selectedOptionId === option.id;
-                      const letter = String.fromCharCode(65 + idx); // A, B, C, D...
-
-                      return (
-                        <div
-                          key={option.id}
-                          onClick={() => handleSelectOption(currentQuestion.id, option.id)}
-                          className={`choice-card ${isSelected ? 'selected' : ''}`}
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: '1.25rem',
-                            padding: '1.25rem 1.5rem',
-                            borderColor: isSelected ? 'var(--accent)' : 'var(--border)',
-                            background: isSelected ? 'rgba(99, 102, 241, 0.15)' : 'rgba(20, 20, 32, 0.6)',
-                            boxShadow: isSelected ? '0 0 25px rgba(99, 102, 241, 0.25)' : undefined,
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: '40px',
-                              height: '40px',
-                              borderRadius: '50%',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontWeight: 800,
-                              fontSize: '1.05rem',
-                              background: isSelected ? 'var(--accent-gradient)' : 'rgba(255, 255, 255, 0.08)',
-                              color: isSelected ? '#ffffff' : 'var(--text-secondary)',
-                              border: isSelected ? 'none' : '1px solid var(--border)',
-                              flexShrink: 0,
-                              transition: 'all var(--transition-fast)',
-                            }}
-                          >
-                            {letter}
-                          </div>
-                          <div
-                            style={{
-                              flex: 1,
-                              fontSize: '1.08rem',
-                              color: isSelected ? '#ffffff' : 'var(--text-primary)',
-                              lineHeight: '1.5',
-                              fontWeight: isSelected ? 600 : 400,
-                            }}
-                          >
-                            {option.optionText}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* 2. True / False */}
-                {currentQuestion.type === 'true_false' && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                    {/* True Card */}
-                    {(() => {
-                      const currentVal = answers[currentQuestion.id]?.answerText?.toLowerCase();
-                      const isTrueSelected = currentVal === 'true';
-                      const isFalseSelected = currentVal === 'false';
-
-                      return (
-                        <>
-                          <div
-                            onClick={() => handleSelectTrueFalse(currentQuestion.id, 'true')}
-                            className={`choice-card ${isTrueSelected ? 'selected' : ''}`}
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              padding: 'clamp(1rem, 4vw, 2.5rem) 1rem',
-                              textAlign: 'center',
-                              gap: '0.6rem',
-                              borderColor: isTrueSelected ? 'var(--success)' : 'var(--border)',
-                              background: isTrueSelected ? 'rgba(34, 197, 94, 0.16)' : 'rgba(20, 20, 32, 0.6)',
-                              boxShadow: isTrueSelected ? '0 0 30px rgba(34, 197, 94, 0.25)' : undefined,
-                            }}
-                          >
-                            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: isTrueSelected ? '#86efac' : 'var(--text-primary)' }}>
-                              True
-                            </div>
-                          </div>
-
-                          <div
-                            onClick={() => handleSelectTrueFalse(currentQuestion.id, 'false')}
-                            className={`choice-card ${isFalseSelected ? 'selected' : ''}`}
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              padding: 'clamp(1rem, 4vw, 2.5rem) 1rem',
-                              textAlign: 'center',
-                              gap: '0.6rem',
-                              borderColor: isFalseSelected ? 'var(--error)' : 'var(--border)',
-                              background: isFalseSelected ? 'rgba(239, 68, 68, 0.16)' : 'rgba(20, 20, 32, 0.6)',
-                              boxShadow: isFalseSelected ? '0 0 30px rgba(239, 68, 68, 0.25)' : undefined,
-                            }}
-                          >
-                            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: isFalseSelected ? '#e12727' : 'var(--text-primary)' }}>
-                              False
-                            </div>
-                          </div>
-                        </>
-                      );
-                    })()}
-                  </div>
-                )}
-
-                {/* 3. Essay */}
-                {currentQuestion.type === 'essay' && (
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <textarea
-                      rows={7}
-                      placeholder="Type your comprehensive answer here..."
-                      value={answers[currentQuestion.id]?.answerText || ''}
-                      onChange={e => handleEssayChange(currentQuestion.id, e.target.value)}
-                      onBlur={e => handleEssayBlur(currentQuestion.id, e.target.value)}
-                      className="input"
-                      style={{
-                        width: '100%',
-                        padding: '1.25rem',
-                        fontSize: '1.05rem',
-                        lineHeight: '1.6',
-                        background: 'rgba(10, 10, 15, 0.7)',
-                        resize: 'vertical',
-                        minHeight: '180px',
-                        borderRadius: 'var(--radius-lg)',
-                      }}
-                    />
-                    {/* Saving Status Indicator */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        alignItems: 'center',
-                        marginTop: '0.75rem',
-                        minHeight: '1.5rem',
-                        fontSize: '0.85rem',
-                        fontWeight: 600,
-                      }}
-                    >
-                      {savingStatus[currentQuestion.id] === 'saving' && (
-                        <span style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          Saving response...
-                        </span>
-                      )}
-                      {savingStatus[currentQuestion.id] === 'saved' && (
-                        <span style={{ color: '#86efac', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          Saved securely
-                        </span>
-                      )}
-                      {savingStatus[currentQuestion.id] === 'error' && (
-                        <span style={{ color: '#e12727', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          Error saving. Will retry on next edit.
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Bottom Navigation Footer inside Card */}
-              <div
-                style={{
-                  borderTop: '1px solid var(--border)',
-                  paddingTop: '1rem',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '0.75rem',
-                }}
-              >
-                {quiz?.durationMode !== 'per_question' ? (
-                  <button
-                    onClick={() => handleNavigateQuestion(currentQuestionIndex - 1)}
-                    disabled={currentQuestionIndex === 0}
-                    className="btn btn-secondary nav-btn-prev"
-                  >
-                    ← Prev
-                  </button>
-                ) : <div />}
-
-                <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>{currentQuestionIndex + 1}</strong>
-                  {' / '}
-                  <strong style={{ color: 'var(--text-primary)' }}>{questions.length}</strong>
-                </div>
-
-                {currentQuestionIndex < questions.length - 1 ? (
-                  <button
-                    onClick={handleNextQuestion}
-                    className="btn btn-primary nav-btn-next"
-                  >
-                    Next →
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setShowSubmitModal(true)}
-                    className="btn btn-primary nav-btn-next"
-                    style={{
-                      background: 'var(--accent-gradient)',
-                      boxShadow: '0 0 20px rgba(168, 85, 247, 0.5)',
-                    }}
-                  >
-                    Review & Submit
-                  </button>
-                )}
-              </div>
-            </div>
+            <QuizQuestionDisplay
+              currentQuestion={currentQuestion}
+              currentQuestionIndex={currentQuestionIndex}
+              totalQuestions={questions.length}
+              answers={answers}
+              savingStatus={savingStatus}
+              durationMode={quiz?.durationMode}
+              onSelectOption={handleSelectOption}
+              onSelectTrueFalse={handleSelectTrueFalse}
+              onEssayChange={handleEssayChange}
+              onEssayBlur={handleEssayBlur}
+              onPrevQuestion={() => handleNavigateQuestion(currentQuestionIndex - 1)}
+              onNextQuestion={handleNextQuestion}
+              onReviewSubmit={() => setShowSubmitModal(true)}
+            />
           </div>
         )}
       </main>
 
-      {/* Submit Confirmation Modal Overlay */}
-      {showSubmitModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.82)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1.5rem',
-            animation: 'fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
-          <div
-            className="card animate-fade-in"
-            style={{
-              maxWidth: '540px',
-              width: '100%',
-              textAlign: 'center',
-              padding: '2.75rem 2rem',
-              border: '1px solid rgba(99, 102, 241, 0.4)',
-              boxShadow: '0 0 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(99, 102, 241, 0.25)',
-            }}
-          >
-            <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
-              Submit Assessment?
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '1.05rem' }}>
-              You are about to finalize and submit your responses for scoring.
-            </p>
-
-            {/* Scorecard Summary Stats */}
-            <div
-              style={{
-                background: 'rgba(20, 20, 32, 0.6)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '1.25rem',
-                marginBottom: '1.75rem',
-                display: 'flex',
-                justifyContent: 'space-around',
-              }}
-            >
-              <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
-                  Total Questions
-                </div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.2rem' }}>
-                  {totalCount}
-                </div>
-              </div>
-              <div style={{ width: '1px', background: 'var(--border)' }} />
-              <div>
-                <div style={{ fontSize: '0.8rem', color: '#86efac', fontWeight: 600, textTransform: 'uppercase' }}>
-                  Answered
-                </div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#86efac', marginTop: '0.2rem' }}>
-                  {answeredCount}
-                </div>
-              </div>
-              <div style={{ width: '1px', background: 'var(--border)' }} />
-              <div>
-                <div style={{ fontSize: '0.8rem', color: unansweredCount > 0 ? '#fde047' : 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
-                  Unanswered
-                </div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: unansweredCount > 0 ? '#fde047' : 'var(--text-primary)', marginTop: '0.2rem' }}>
-                  {unansweredCount}
-                </div>
-              </div>
-            </div>
-
-            {/* Amber Warning or Emerald Success */}
-            {unansweredCount > 0 ? (
-              <div
-                className="alert"
-                style={{
-                  background: 'rgba(245, 158, 11, 0.15)',
-                  border: '1px solid rgba(245, 158, 11, 0.4)',
-                  color: '#fde047',
-                  textAlign: 'left',
-                  marginBottom: '2rem',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '0.75rem',
-                }}
-              >
-                <div>
-                  <strong style={{ display: 'block', marginBottom: '0.2rem' }}>Incomplete Assessment Warning</strong>
-                  <span>
-                    You have <strong>{unansweredCount} unanswered question{unansweredCount === 1 ? '' : 's'}</strong>! Any unanswered items will be automatically scored as 0 points.
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div
-                className="alert"
-                style={{
-                  background: 'rgba(34, 197, 94, 0.15)',
-                  border: '1px solid rgba(34, 197, 94, 0.4)',
-                  color: '#86efac',
-                  textAlign: 'left',
-                  marginBottom: '2rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                }}
-              >
-                <span>
-                  <strong>All Set!</strong> You have provided an answer for every question in this assessment.
-                </span>
-              </div>
-            )}
-
-            {/* Modal Actions */}
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button
-                onClick={() => setShowSubmitModal(false)}
-                disabled={isSubmitting}
-                className="btn btn-secondary btn-lg"
-                style={{ flex: 1, minWidth: '160px', justifyContent: 'center' }}
-              >
-                Keep Working
-              </button>
-              <button
-                onClick={handleManualSubmit}
-                disabled={isSubmitting}
-                className="btn btn-primary btn-lg"
-                style={{
-                  flex: 1,
-                  minWidth: '200px',
-                  justifyContent: 'center',
-                  boxShadow: '0 0 25px rgba(99, 102, 241, 0.5)',
-                }}
-              >
-                {isSubmitting ? 'Submitting...' : 'Yes, Submit Assessment'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Auto-Submission Modal Overlay */}
-      {showAutoSubmitModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.88)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            zIndex: 110,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1.5rem',
-            animation: 'fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
-          <div
-            className="card animate-fade-in"
-            style={{
-              maxWidth: '480px',
-              width: '100%',
-              textAlign: 'center',
-              padding: '3rem 2rem',
-              border: '1px solid rgba(239, 68, 68, 0.5)',
-              boxShadow: '0 0 50px rgba(239, 68, 68, 0.3)',
-            }}
-          >
-            <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
-              Time&apos;s Up!
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '2rem', lineHeight: '1.6' }}>
-              Your allocated time has expired. Submitting your assessment automatically...
-            </p>
-            <div className="spinner" style={{ width: '42px', height: '42px', margin: '0 auto' }}></div>
-          </div>
-        </div>
-      )}
+      {/* Submit Confirmation Modals */}
+      <QuizSubmitConfirmModal
+        showSubmitModal={showSubmitModal}
+        showAutoSubmitModal={showAutoSubmitModal}
+        totalCount={totalCount}
+        answeredCount={answeredCount}
+        unansweredCount={unansweredCount}
+        isSubmitting={isSubmitting}
+        onKeepWorking={() => setShowSubmitModal(false)}
+        onConfirmSubmit={handleManualSubmit}
+      />
     </div>
   );
 }

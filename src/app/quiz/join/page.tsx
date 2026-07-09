@@ -3,6 +3,9 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { AppFooter } from "@/components/organisms/AppFooter";
+import { BackLink } from "@/components/molecules/BackLink";
+import { Spinner } from "@/components/atoms/Spinner";
 
 function JoinQuizForm() {
   const router = useRouter();
@@ -192,9 +195,9 @@ function JoinQuizForm() {
         </button>
       </form>
 
-      <Link href="/" className="btn btn-ghost btn-sm" style={{ color: "#111827", fontWeight: 800,textAlign: "center", marginTop: ".5rem", display: "block" }}>
-        Back to Home
-      </Link>
+      <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+        <BackLink href="/" label="Back to Home" variant="ghost" style={{ color: "#111827", fontWeight: 800 }} />
+      </div>
     </div>
   );
 }
@@ -221,7 +224,7 @@ export default function JoinQuizPage() {
           <Suspense
             fallback={
               <div className="card text-center" style={{ padding: "4rem 2rem" }}>
-                <div className="spinner" />
+                <Spinner />
                 <p style={{ color: "#4b5563", marginTop: "1rem", fontWeight: 700 }}>Loading assessment portal...</p>
               </div>
             }
@@ -232,11 +235,7 @@ export default function JoinQuizPage() {
       </main>
 
       {/* Footer */}
-      <footer style={{ padding: ".5rem 0", borderTop: "2px solid #111827", textAlign: "center", color: "#4b5563", fontSize: "0.85rem", fontWeight: 700 }}>
-        <div className="container">
-          <p>© {new Date().getFullYear()} QUIIZEE &apos;26. ENGINEERED FOR INSTRUCTIONAL EXCELLENCE.</p>
-        </div>
-      </footer>
+      <AppFooter padding=".5rem 0" />
     </div>
   );
 }
