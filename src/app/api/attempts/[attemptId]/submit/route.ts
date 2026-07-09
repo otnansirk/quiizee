@@ -161,7 +161,7 @@ export async function POST(req: Request, { params }: RouteContext) {
       }
 
       const statusVal: 'submitted' | 'graded' = hasEssays ? 'submitted' : 'graded';
-      const scoreVal: string | null = hasEssays ? null : totalScore.toString();
+      const scoreVal: string = totalScore.toString();
 
       await tx
         .update(schema.quizAttempts)

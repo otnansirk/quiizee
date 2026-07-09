@@ -259,6 +259,7 @@ export default function QuizResultPage() {
             percentage={percentage}
             isCertificateAvailable={Boolean(isCertificateAvailable)}
             resultCode={resultCode}
+            status={status}
           />
 
           {/* Detailed Question Breakdown Section */}

@@ -8,6 +8,7 @@ export interface ResultScoreCardProps {
   percentage: number | null;
   isCertificateAvailable?: boolean;
   resultCode: string;
+  status?: "in_progress" | "submitted" | "graded";
 }
 
 export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
@@ -16,6 +17,7 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
   percentage,
   isCertificateAvailable,
   resultCode,
+  status,
 }) => {
   return (
     <div
@@ -55,7 +57,7 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
             marginBottom: "0.5rem",
           }}
         >
-          Total Score Earned
+          {status === "submitted" ? "Current Auto-Graded Score" : "Total Score Earned"}
         </div>
 
         {numTotalScore !== null ? (
@@ -68,7 +70,7 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
               style={{
                 fontSize: "clamp(1.9rem, 7vw, 4rem)",
                 fontWeight: 900,
-                color: "#20a250",
+                color: status === "submitted" ? "#fde047" : "#20a250",
                 lineHeight: 1,
                 letterSpacing: "-0.03em",
                 filter: "drop-shadow(0 0 15px rgba(255, 255, 255, 0.4))",
@@ -101,7 +103,29 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
           </div>
         )}
 
-        {percentage !== null ? (
+        {status === "submitted" ? (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem" }}>
+            <div
+              className="badge badge-warning"
+              style={{
+                fontSize: "0.78rem",
+                padding: "0.25rem 0.65rem",
+                fontWeight: 700,
+                margin: 0,
+                background: "rgba(245, 158, 11, 0.15)",
+                color: "#fde047",
+                borderColor: "rgba(245, 158, 11, 0.4)",
+              }}
+            >
+              Pending Essay Review
+            </div>
+            {percentage !== null && (
+              <div style={{ fontSize: "0.82rem", color: "#e2e8f0", fontWeight: 600 }}>
+                Auto-graded accuracy: {percentage}% (+ up to remaining points after teacher review)
+              </div>
+            )}
+          </div>
+        ) : percentage !== null ? (
           <div
             className="badge badge-accent"
             style={{

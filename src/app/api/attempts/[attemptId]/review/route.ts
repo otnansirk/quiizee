@@ -278,6 +278,25 @@ export async function POST(req: Request, { params }: RouteContext) {
           updatedAt: new Date(),
         })
         .where(eq(schema.studentAnswers.id, studentAnswerId));
+
+      // Recalculate attempt total score immediately as essays are graded
+      const allAnswers = await tx
+        .select({ score: schema.studentAnswers.score })
+        .from(schema.studentAnswers)
+        .where(eq(schema.studentAnswers.attemptId, attempt.id));
+
+      let totalScoreSum = 0;
+      for (const ans of allAnswers) {
+        totalScoreSum += Number(ans.score || 0);
+      }
+
+      await tx
+        .update(schema.quizAttempts)
+        .set({
+          totalScore: totalScoreSum.toString(),
+          updatedAt: new Date(),
+        })
+        .where(eq(schema.quizAttempts.id, attempt.id));
     });
 
     return NextResponse.json({ success: true });
