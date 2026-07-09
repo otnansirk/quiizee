@@ -39,45 +39,50 @@ export const ToastStack: React.FC<ToastStackProps> = ({ toasts }) => {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="toast-item"
+          className="toast-item animate-fade-in"
           style={{
             pointerEvents: "auto",
-            padding: "1rem 1.5rem",
+            padding: "1rem 1.25rem",
             borderRadius: "var(--radius-md)",
-            background: "rgba(20, 20, 35, 0.95)",
-            backdropFilter: "blur(16px)",
-            border: `1px solid ${
-              toast.type === "success"
-                ? "rgba(34, 197, 94, 0.4)"
-                : toast.type === "error"
-                ? "rgba(239, 68, 68, 0.4)"
-                : "rgba(99, 102, 241, 0.4)"
-            }`,
-            boxShadow:
-              "0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.15)",
+            background: "var(--bg-primary)",
+            border: "2px solid var(--border)",
+            boxShadow: "var(--shadow-md)",
             display: "flex",
             alignItems: "center",
-            gap: "0.75rem",
+            gap: "0.85rem",
             color: "var(--text-primary)",
             fontSize: "0.95rem",
-            fontWeight: 500,
-            maxWidth: "400px",
+            fontWeight: 600,
+            maxWidth: "420px",
+            minWidth: "280px",
           }}
         >
-          <span
+          <div
             style={{
+              padding: "0.25rem 0.65rem",
+              borderRadius: "4px",
+              background:
+                toast.type === "success"
+                  ? "var(--success)"
+                  : toast.type === "error"
+                  ? "var(--error)"
+                  : "var(--accent)",
+              color: "#ffffff",
               fontWeight: 800,
-              textTransform: "uppercase",
               fontSize: "0.75rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              flexShrink: 0,
+              border: "1.5px solid var(--border)",
             }}
           >
             {toast.type === "success"
-              ? "[SUCCESS]"
+              ? "SUCCESS"
               : toast.type === "error"
-              ? "[ERROR]"
-              : "[INFO]"}
-          </span>
-          <span>{toast.message}</span>
+              ? "ERROR"
+              : "INFO"}
+          </div>
+          <span style={{ flex: 1, lineHeight: 1.4 }}>{toast.message}</span>
         </div>
       ))}
     </div>,

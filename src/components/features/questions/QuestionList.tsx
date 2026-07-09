@@ -30,8 +30,8 @@ export const QuestionList: React.FC<QuestionListProps> = ({
           style={{
             padding: "4.5rem 2rem",
             textAlign: "center",
-            border: "2px dashed rgba(255, 255, 255, 0.12)",
-            background: "rgba(20, 20, 35, 0.4)",
+            border: "2px dashed var(--border)",
+            background: "var(--bg-secondary)",
           }}
         >
           <h2
