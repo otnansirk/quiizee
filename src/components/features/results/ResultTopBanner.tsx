@@ -131,7 +131,7 @@ export const ResultTopBanner: React.FC<ResultTopBannerProps> = ({
             display: "flex",
             alignItems: "center",
             gap: "0.75rem",
-            color: "#fde047",
+            color: "#806e16",
             fontSize: "0.9rem",
             lineHeight: 1.5,
           }}
