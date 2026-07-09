@@ -38,7 +38,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
       }
     : {
         background: "rgba(59, 130, 246, 0.15)",
-        color: "#93c5fd",
+        color: "#3066a3",
         border: "1px solid rgba(59, 130, 246, 0.3)",
       };
 
@@ -46,6 +46,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
     <div
       className="card"
       style={{
+        marginBottom: "1.5rem",
         padding: "2rem",
         borderLeft: isEssay
           ? "4px solid var(--warning)"
@@ -143,7 +144,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
         style={{
           fontSize: "1.15rem",
           fontWeight: 600,
-          color: "var(--text-primary)",
+          color: "#ffffffd9",
           marginBottom: "1.25rem",
           lineHeight: "1.6",
         }}
@@ -186,19 +187,19 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
               style={{
                 display: "block",
                 marginBottom: "0.6rem",
-                color: "var(--text-secondary)",
+                color: "#ffffffa5",
               }}
             >
               <span>Student&apos;s Written Response:</span>
             </label>
             <div
               style={{
-                background: "rgba(10, 10, 15, 0.85)",
+                background: "rgba(10, 10, 15, 0.664)",
                 border: "1px solid rgba(255, 255, 255, 0.12)",
                 borderRadius: "var(--radius-md)",
                 padding: "1.25rem",
                 color: item.answerText
-                  ? "var(--text-primary)"
+                  ? "#ffffffe3"
                   : "var(--text-muted)",
                 fontStyle: item.answerText ? "normal" : "italic",
                 fontSize: "1rem",
@@ -206,6 +207,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                 whiteSpace: "pre-wrap",
                 minHeight: "110px",
                 boxShadow: "inset 0 2px 8px rgba(0, 0, 0, 0.3)",
+                marginBottom: "0.5rem",
               }}
             >
               {item.answerText ||
@@ -248,7 +250,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
               <div className="form-group" style={{ margin: 0 }}>
                 <label
                   className="label"
-                  style={{ color: "var(--text-primary)" }}
+                  style={{ color: "#ffffffa5" }}
                 >
                   Points (Max {item.maxPoints})
                 </label>
@@ -258,6 +260,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                   max={item.maxPoints}
                   step="0.5"
                   value={form.score}
+                  autoFocus={true}
                   onChange={(e) =>
                     onFormChange(item.questionId, {
                       score: e.target.value,
@@ -274,6 +277,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                       ? "var(--error)"
                       : "rgba(99, 102, 241, 0.4)",
                     background: "rgba(10, 10, 15, 0.9)",
+                    color: "#ffffffe3",
                   }}
                 />
               </div>
@@ -282,7 +286,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
               <div className="form-group" style={{ margin: 0 }}>
                 <label
                   className="label"
-                  style={{ color: "var(--text-primary)" }}
+                  style={{ color: "#ffffffa5" }}
                 >
                   Instructor Feedback & Comments (Optional)
                 </label>
@@ -320,7 +324,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
             {/* Save Button & Status */}
             <div
               className="flex justify-end items-center gap-4 mt-4 pt-4"
-              style={{ borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}
+              style={{ marginTop: "1.5rem" }}
             >
               {form.saved && (
                 <span
@@ -456,7 +460,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
             >
               <div
                 style={{
-                  background: "rgba(10, 10, 15, 0.6)",
+                  background: "rgba(202, 202, 202, 0.6)",
                   border: `1px solid ${
                     item.isCorrect ? "var(--success)" : "var(--error)"
                   }`,

@@ -69,8 +69,6 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ item }) => {
       style={{
         borderLeft: "4px solid var(--warning)",
         padding: "1.75rem",
-        background:
-          "linear-gradient(145deg, rgba(26, 26, 46, 0.8) 0%, rgba(20, 20, 36, 0.9) 100%)",
       }}
     >
       <div>
@@ -126,11 +124,11 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ item }) => {
         {/* Student Info Box */}
         <div
           style={{
-            background: "rgba(10, 10, 15, 0.6)",
+            background: "rgb(0 0 0 / 86%)",
             border: "1px solid var(--border)",
             borderRadius: "var(--radius-md)",
             padding: "1rem",
-            marginBottom: "1.25rem",
+            margin: "1.25rem 0",
           }}
         >
           <div className="flex items-center gap-3 mb-2">
@@ -157,7 +155,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ item }) => {
                 style={{
                   fontWeight: 700,
                   fontSize: "1.05rem",
-                  color: "var(--text-primary)",
+                  color: "#ffffffe3",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -169,7 +167,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ item }) => {
               <div
                 style={{
                   fontSize: "0.8rem",
-                  color: "var(--text-muted)",
+                  color: "#ffffffae",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -184,7 +182,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ item }) => {
           <div
             style={{
               fontSize: "0.8rem",
-              color: "var(--text-secondary)",
+              color: "#ffffff9d",
               borderTop: "1px solid rgba(255, 255, 255, 0.06)",
               paddingTop: "0.6rem",
               display: "flex",
@@ -198,7 +196,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ item }) => {
 
         {/* Stats Section */}
         <div
-          className="flex justify-between items-center gap-2 mb-6"
+          className="mb-6"
           style={{
             background: "rgba(255, 255, 255, 0.03)",
             padding: "0.75rem 1rem",
@@ -209,7 +207,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ item }) => {
           <div
             className="flex items-center gap-2"
             style={{
-              color: "#fde047",
+              color: "#a79127",
               fontSize: "0.9rem",
               fontWeight: 600,
             }}

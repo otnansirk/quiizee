@@ -43,7 +43,7 @@ export const ReviewAttemptHeader: React.FC<ReviewAttemptHeaderProps> = ({
         className="btn btn-ghost btn-sm"
         style={{
           paddingLeft: 0,
-          color: "var(--text-secondary)",
+          color: "#ffffffe3",
           marginBottom: "1.25rem",
           display: "inline-flex",
           alignItems: "center",
@@ -66,7 +66,7 @@ export const ReviewAttemptHeader: React.FC<ReviewAttemptHeaderProps> = ({
               style={{
                 fontSize: "1.85rem",
                 fontWeight: 800,
-                color: "var(--text-primary)",
+                color: "#ffffffe3",
                 margin: 0,
               }}
             >
@@ -81,7 +81,7 @@ export const ReviewAttemptHeader: React.FC<ReviewAttemptHeaderProps> = ({
                 fontSize: "0.85rem",
                 fontWeight: 700,
                 background: "rgba(255, 255, 255, 0.08)",
-                color: "var(--text-primary)",
+                color: "#ffffffe3",
                 padding: "0.25rem 0.65rem",
                 borderRadius: "var(--radius-sm)",
                 border: "1px solid var(--border)",
@@ -93,7 +93,7 @@ export const ReviewAttemptHeader: React.FC<ReviewAttemptHeaderProps> = ({
           <p
             style={{
               margin: 0,
-              color: "var(--text-secondary)",
+              color: "#ffffffba",
               fontSize: "1.05rem",
               fontWeight: 500,
             }}
@@ -136,7 +136,7 @@ export const ReviewAttemptHeader: React.FC<ReviewAttemptHeaderProps> = ({
               style={{
                 fontSize: "1.6rem",
                 fontWeight: 800,
-                color: "var(--text-primary)",
+                color: "#ffffffe3",
               }}
             >
               <span className="text-gradient">{runningTotal}</span>{" "}
