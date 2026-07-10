@@ -68,7 +68,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
         }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as any;
 
       if (!res.ok) {
         throw new Error(data.error || "Failed to generate questions from AI.");

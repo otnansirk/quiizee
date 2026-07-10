@@ -39,7 +39,7 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
       if (!res.ok) {
         let errText = "Failed to generate certificate.";
         try {
-          const errData = await res.json();
+          const errData = (await res.json().catch(() => ({}))) as any;
           if (errData?.error) errText = errData.error;
         } catch {
           errText = `Server returned status ${res.status}`;

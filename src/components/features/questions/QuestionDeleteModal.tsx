@@ -36,7 +36,7 @@ export const QuestionDeleteModal: React.FC<QuestionDeleteModalProps> = ({
       );
 
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
+        const errData = (await res.json().catch(() => ({}))) as any;
         throw new Error(errData.message || "Failed to delete question");
       }
 
