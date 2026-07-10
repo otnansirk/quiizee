@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { z } from 'zod';
+
+const startQuestionSchema = z.object({
+  questionId: z.string().min(1, 'questionId is required'),
+});
 
 interface RouteContext {
   params: Promise<{
@@ -10,6 +15,7 @@ interface RouteContext {
 }
 
 export async function POST(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const { attemptId } = await params;
     if (!attemptId) {
@@ -19,15 +25,15 @@ export async function POST(req: Request, { params }: RouteContext) {
       );
     }
 
-    const body = await req.json().catch(() => ({}));
-    const { questionId } = body;
-
-    if (!questionId) {
+    const rawBody = await req.json().catch(() => ({}));
+    const parseResult = startQuestionSchema.safeParse(rawBody);
+    if (!parseResult.success) {
       return NextResponse.json(
-        { success: false, message: 'questionId is required' },
+        { success: false, message: 'Invalid request body', errors: parseResult.error.flatten() },
         { status: 400 }
       );
     }
+    const { questionId } = parseResult.data;
 
     const [attempt] = await db
       .select()

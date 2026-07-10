@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
+
+const submitAttemptSchema = z.object({
+  isAutoSubmitted: z.boolean().optional(),
+});
 
 interface RouteContext {
   params: Promise<{
@@ -10,6 +15,7 @@ interface RouteContext {
 }
 
 export async function POST(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const { attemptId } = await params;
     if (!attemptId) {
@@ -21,9 +27,10 @@ export async function POST(req: Request, { params }: RouteContext) {
 
     let isAutoSubmitted = false;
     try {
-      const body = await req.json();
-      if (body && body.isAutoSubmitted !== undefined) {
-        isAutoSubmitted = Boolean(body.isAutoSubmitted);
+      const rawBody = await req.json().catch(() => ({}));
+      const parseResult = submitAttemptSchema.safeParse(rawBody);
+      if (parseResult.success && parseResult.data.isAutoSubmitted !== undefined) {
+        isAutoSubmitted = parseResult.data.isAutoSubmitted;
       }
     } catch {
       // Body might be empty or invalid JSON

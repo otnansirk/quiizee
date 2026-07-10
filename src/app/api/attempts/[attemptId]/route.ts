@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq, asc } from 'drizzle-orm';
 
@@ -12,6 +12,7 @@ interface RouteContext {
 }
 
 export async function GET(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const { attemptId } = await params;
 
