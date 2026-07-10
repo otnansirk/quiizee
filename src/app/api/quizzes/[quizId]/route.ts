@@ -106,6 +106,9 @@ export async function PUT(req: Request, { params }: RouteContext) {
       maxAttempts,
       certificateEnabled,
       certificateMinScore,
+      certificateSignerName,
+      certificateSignerRole,
+      certificateSignatureUrl,
       isPublished,
     } = body;
 
@@ -137,6 +140,9 @@ export async function PUT(req: Request, { params }: RouteContext) {
     if (maxAttempts !== undefined) updateData.maxAttempts = maxAttempts !== null ? Number(maxAttempts) : 1;
     if (certificateEnabled !== undefined) updateData.certificateEnabled = certificateEnabled === true || certificateEnabled === 'true';
     if (certificateMinScore !== undefined) updateData.certificateMinScore = certificateMinScore !== null ? Number(certificateMinScore) : null;
+    if (certificateSignerName !== undefined) updateData.certificateSignerName = certificateSignerName !== null ? certificateSignerName.trim() : null;
+    if (certificateSignerRole !== undefined) updateData.certificateSignerRole = certificateSignerRole !== null ? certificateSignerRole.trim() : null;
+    if (certificateSignatureUrl !== undefined) updateData.certificateSignatureUrl = certificateSignatureUrl !== null ? certificateSignatureUrl.trim() : null;
 
     if (isPublished !== undefined) {
       const publishing = isPublished === true || isPublished === 'true';

@@ -65,6 +65,9 @@ export async function POST(req: Request) {
       maxAttempts,
       certificateEnabled,
       certificateMinScore,
+      certificateSignerName,
+      certificateSignerRole,
+      certificateSignatureUrl,
     } = body;
 
     // Validate required fields
@@ -127,6 +130,9 @@ export async function POST(req: Request) {
         maxAttempts: maxAttempts !== undefined && maxAttempts !== null ? Number(maxAttempts) : 1,
         certificateEnabled: certificateEnabled === true || certificateEnabled === 'true',
         certificateMinScore: certificateMinScore !== undefined && certificateMinScore !== null ? Number(certificateMinScore) : null,
+        certificateSignerName: certificateSignerName ? certificateSignerName.trim() : null,
+        certificateSignerRole: certificateSignerRole ? certificateSignerRole.trim() : null,
+        certificateSignatureUrl: certificateSignatureUrl ? certificateSignatureUrl.trim() : null,
       })
       .returning();
 

@@ -16,6 +16,9 @@ export default function CreateNewQuizPage() {
   const [maxAttempts, setMaxAttempts] = useState<number | string>(1);
   const [certificateEnabled, setCertificateEnabled] = useState<boolean>(false);
   const [certificateMinScore, setCertificateMinScore] = useState<number | string>(70);
+  const [certificateSignerName, setCertificateSignerName] = useState<string>('');
+  const [certificateSignerRole, setCertificateSignerRole] = useState<string>('');
+  const [certificateSignatureUrl, setCertificateSignatureUrl] = useState<string>('');
 
   // UI State
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,6 +54,9 @@ export default function CreateNewQuizPage() {
       maxAttempts: Math.max(1, Number(maxAttempts) || 1),
       certificateEnabled,
       certificateMinScore: certificateEnabled ? Math.min(100, Math.max(1, Number(certificateMinScore) || 70)) : null,
+      certificateSignerName: certificateEnabled && certificateSignerName ? certificateSignerName.trim() : null,
+      certificateSignerRole: certificateEnabled && certificateSignerRole ? certificateSignerRole.trim() : null,
+      certificateSignatureUrl: certificateEnabled && certificateSignatureUrl ? certificateSignatureUrl.trim() : null,
       accessCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
       isPublished: false,
     };
@@ -296,27 +302,95 @@ export default function CreateNewQuizPage() {
             </label>
           </div>
 
-          {/* Conditional Input: Minimum Score (%) */}
+          {/* Conditional Inputs when Certificate is Enabled */}
           {certificateEnabled && (
-            <div className="form-group animate-fade-in" style={{ marginTop: '1.25rem', maxWidth: '300px' }}>
-              <label className="label" htmlFor="certificateMinScore">
-                Minimum Passing Score (%) <span style={{ color: 'var(--error)' }}>*</span>
-              </label>
-              <input
-                id="certificateMinScore"
-                type="number"
-                min="1"
-                max="100"
-                className="input"
-                value={certificateMinScore}
-                onChange={(e) => setCertificateMinScore(e.target.value)}
-                required={certificateEnabled}
-                disabled={isSubmitting}
-                placeholder="70"
-              />
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Percentage score required to unlock the certificate (e.g. 70 for 70%).
-              </span>
+            <div
+              className="animate-fade-in"
+              style={{
+                marginTop: '1.25rem',
+                padding: '1.25rem',
+                background: 'rgba(255, 255, 255, 0.02)',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.25rem',
+              }}
+            >
+              <div className="form-group" style={{ maxWidth: '300px' }}>
+                <label className="label" htmlFor="certificateMinScore">
+                  Minimum Passing Score (%) <span style={{ color: 'var(--error)' }}>*</span>
+                </label>
+                <input
+                  id="certificateMinScore"
+                  type="number"
+                  min="1"
+                  max="100"
+                  className="input"
+                  value={certificateMinScore}
+                  onChange={(e) => setCertificateMinScore(e.target.value)}
+                  required={certificateEnabled}
+                  disabled={isSubmitting}
+                  placeholder="70"
+                />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  Percentage score required to unlock the certificate (e.g. 70 for 70%).
+                </span>
+              </div>
+
+              <div className="form-group">
+                <label className="label" htmlFor="certificateSignerName">
+                  Signer Name (Defaults to signed-in name if blank)
+                </label>
+                <input
+                  id="certificateSignerName"
+                  type="text"
+                  className="input"
+                  value={certificateSignerName}
+                  onChange={(e) => setCertificateSignerName(e.target.value)}
+                  disabled={isSubmitting}
+                  placeholder="e.g., Dr. Jane Smith"
+                />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  Name displayed on the signature line of the completion certificate.
+                </span>
+              </div>
+
+              <div className="form-group">
+                <label className="label" htmlFor="certificateSignerRole">
+                  Signer Role / Title (Optional)
+                </label>
+                <input
+                  id="certificateSignerRole"
+                  type="text"
+                  className="input"
+                  value={certificateSignerRole}
+                  onChange={(e) => setCertificateSignerRole(e.target.value)}
+                  disabled={isSubmitting}
+                  placeholder="e.g., Lead Instructor & Course Director"
+                />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  Title displayed right underneath the signer&apos;s name.
+                </span>
+              </div>
+
+              <div className="form-group">
+                <label className="label" htmlFor="certificateSignatureUrl">
+                  Signature Image URL (Optional)
+                </label>
+                <input
+                  id="certificateSignatureUrl"
+                  type="url"
+                  className="input"
+                  value={certificateSignatureUrl}
+                  onChange={(e) => setCertificateSignatureUrl(e.target.value)}
+                  disabled={isSubmitting}
+                  placeholder="e.g., https://example.com/signature.png"
+                />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  Direct URL to a PNG or JPG image of the instructor&apos;s signature (transparent background recommended).
+                </span>
+              </div>
             </div>
           )}
         </div>
