@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
@@ -75,6 +75,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ resultCode: string }> }
 ) {
+  const db = getDb();
   try {
     const resolvedParams = await params;
     const { resultCode } = resolvedParams;

@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq, and, asc, inArray } from 'drizzle-orm';
+import { z } from 'zod';
+
+const reviewAttemptSchema = z.object({
+  studentAnswerId: z.string().min(1, 'studentAnswerId is required'),
+  score: z.union([z.number(), z.string()]),
+  feedback: z.string().nullable().optional(),
+});
 
 interface RouteContext {
   params: Promise<{
@@ -11,6 +18,7 @@ interface RouteContext {
 }
 
 export async function GET(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const session = await auth();
     if (!session?.user || session.user.role !== 'teacher') {
@@ -143,6 +151,7 @@ export async function GET(req: Request, { params }: RouteContext) {
 }
 
 export async function POST(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const session = await auth();
     if (!session?.user || session.user.role !== 'teacher' || !session.user.id) {
@@ -193,8 +202,15 @@ export async function POST(req: Request, { params }: RouteContext) {
       );
     }
 
-    const body = await req.json();
-    const { studentAnswerId, score, feedback } = body;
+    const rawBody = await req.json().catch(() => ({}));
+    const parseResult = reviewAttemptSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid request body', errors: parseResult.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const { studentAnswerId, score, feedback } = parseResult.data;
 
     if (!studentAnswerId || score === undefined || score === null) {
       return NextResponse.json(
