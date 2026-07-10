@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ==========================================================================
    MINI LMS — GLOBAL STYLES & DESIGN SYSTEM
    Editorial Graphic Portfolio Aesthetic (design2.jpg)
@@ -25,8 +29,18 @@ html {
   --bg-card: #ffffff;
   --bg-card-hover: #ffffff;
   --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-muted: #6b7280;
+  --text-secondary: #374151; /* High contrast dark grey */
+  --text-muted: #4b5563; /* High contrast medium dark grey */
+  
+  /* Semantic Tokens for Tailwind */
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --primary-hover: #1d4ed8;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #111827;
+  --secondary-hover: #e5e7eb;
+  --muted: #f9fafb;
+  --accent-foreground: #ffffff;
   
   /* Solid Vibrant Accents (No Gradients!) */
   --accent: #2563eb; /* Royal Blue */
