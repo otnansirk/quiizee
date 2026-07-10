@@ -16,19 +16,37 @@ export async function GET(
       return NextResponse.json({ error: "Result code is required" }, { status: 400 });
     }
 
-    // 1. Fetch attempt
-    const attempt = await db.query.quizAttempts.findFirst({
-      where: eq(schema.quizAttempts.resultCode, resultCode),
-    });
+    // 1. Fetch attempt with retry for transient connection issues
+    let attempt = null;
+    for (let r = 0; r < 3; r++) {
+      try {
+        attempt = await db.query.quizAttempts.findFirst({
+          where: eq(schema.quizAttempts.resultCode, resultCode),
+        });
+        if (attempt !== undefined) break;
+      } catch (dbErr) {
+        if (r === 2) throw dbErr;
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+    }
 
     if (!attempt) {
       return NextResponse.json({ error: "Result not found" }, { status: 404 });
     }
 
-    // 2. Fetch quiz
-    const quiz = await db.query.quizzes.findFirst({
-      where: eq(schema.quizzes.id, attempt.quizId),
-    });
+    // 2. Fetch quiz with retry
+    let quiz = null;
+    for (let r = 0; r < 3; r++) {
+      try {
+        quiz = await db.query.quizzes.findFirst({
+          where: eq(schema.quizzes.id, attempt.quizId),
+        });
+        if (quiz !== undefined) break;
+      } catch (dbErr) {
+        if (r === 2) throw dbErr;
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+    }
 
     if (!quiz) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
@@ -36,10 +54,39 @@ export async function GET(
 
     // 3. Verify certificate eligibility
     if (attempt.status !== "graded" || !quiz.certificateEnabled) {
-      return NextResponse.json(
-        { error: "Certificate is not available for this assessment attempt." },
-        { status: 403 }
-      );
+      const errorMsg = "Certificate is not available for this assessment attempt.";
+      if (request.headers.get("accept")?.includes("text/html")) {
+        return new NextResponse(
+          `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certificate Unavailable - Mini LMS</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #FAF9F6; color: #111827; font-family: Inter, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
+    .card { background: #FFFFFF; border: 3px solid #111827; border-radius: 24px; padding: 3rem 2.5rem; max-width: 500px; width: 100%; text-align: center; box-shadow: 8px 8px 0px #111827; position: relative; }
+    .badge { display: inline-block; background: #EF4444; color: #FFFFFF; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; padding: 0.35rem 0.85rem; border: 2px solid #111827; border-radius: 6px; margin-bottom: 1.5rem; box-shadow: 3px 3px 0px #111827; }
+    .title { font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em; color: #111827; margin: 0 0 1rem 0; line-height: 1.1; }
+    .msg { color: #374151; font-size: 1rem; line-height: 1.6; font-weight: 600; margin-bottom: 2.5rem; }
+    .btn { display: block; width: 100%; background: #4F46E5; color: #FFFFFF; padding: 1rem 1.5rem; border: 3px solid #111827; border-radius: 12px; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1rem; letter-spacing: 0.05em; box-shadow: 5px 5px 0px #111827; transition: transform 0.15s, box-shadow 0.15s; }
+    .btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0px #111827; background: #4338CA; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">01 &nbsp;|&nbsp; Notice</div>
+    <h1 class="title">Certificate<br/>Unavailable</h1>
+    <div class="msg">${errorMsg}</div>
+    <a href="/results/${encodeURIComponent(resultCode)}" class="btn">Return to Result Summary</a>
+  </div>
+</body>
+</html>`,
+          { status: 403, headers: { "Content-Type": "text/html" } }
+        );
+      }
+      return NextResponse.json({ error: errorMsg }, { status: 403 });
     }
 
     const totalScoreNum = Number(attempt.totalScore || 0);
@@ -311,10 +358,54 @@ export async function GET(
         "Content-Disposition": `inline; filename="Certificate-${attempt.resultCode}.pdf"`,
       },
     });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Error generating PDF certificate:", err);
+    let errorMessage = err instanceof Error && err.message ? err.message : "An unexpected database or system error occurred while generating your completion certificate.";
+    if (
+      errorMessage.toLowerCase().includes("select ") ||
+      errorMessage.toLowerCase().includes("failed query") ||
+      errorMessage.toLowerCase().includes("postgres") ||
+      errorMessage.toLowerCase().includes("password authentication") ||
+      errorMessage.toLowerCase().includes("syntax error")
+    ) {
+      errorMessage = "We encountered a temporary database connection issue while generating your completion certificate. Please try again in a few moments.";
+    }
+    const isHtml = request.headers.get("accept")?.includes("text/html");
+
+    if (isHtml) {
+      return new NextResponse(
+        `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certificate Generation Error - Mini LMS</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #FAF9F6; color: #111827; font-family: Inter, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
+    .card { background: #FFFFFF; border: 3px solid #111827; border-radius: 24px; padding: 3rem 2.5rem; max-width: 500px; width: 100%; text-align: center; box-shadow: 8px 8px 0px #111827; position: relative; }
+    .badge { display: inline-block; background: #EF4444; color: #FFFFFF; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; padding: 0.35rem 0.85rem; border: 2px solid #111827; border-radius: 6px; margin-bottom: 1.5rem; box-shadow: 3px 3px 0px #111827; }
+    .title { font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em; color: #111827; margin: 0 0 1rem 0; line-height: 1.1; }
+    .msg { color: #374151; font-size: 1rem; line-height: 1.6; font-weight: 600; margin-bottom: 2.5rem; word-break: break-word; }
+    .btn { display: block; width: 100%; background: #4F46E5; color: #FFFFFF; padding: 1rem 1.5rem; border: 3px solid #111827; border-radius: 12px; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 1rem; letter-spacing: 0.05em; box-shadow: 5px 5px 0px #111827; transition: transform 0.15s, box-shadow 0.15s; }
+    .btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0px #111827; background: #4338CA; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">02 &nbsp;|&nbsp; Error</div>
+    <h1 class="title">System<br/>Notice</h1>
+    <div class="msg">${errorMessage}</div>
+    <a href="/" class="btn">Return to Results</a>
+  </div>
+</body>
+</html>`,
+        { status: 500, headers: { "Content-Type": "text/html" } }
+      );
+    }
+
     return NextResponse.json(
-      { error: "An unexpected error occurred while generating the certificate." },
+      { error: errorMessage },
       { status: 500 }
     );
   }

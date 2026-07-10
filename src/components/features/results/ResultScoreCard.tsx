@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 export interface ResultScoreCardProps {
   numTotalScore: number | null;
@@ -19,6 +19,61 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
   resultCode,
   status,
 }) => {
+  const [loadingCert, setLoadingCert] = useState<boolean>(false);
+  const [certError, setCertError] = useState<string | null>(null);
+
+  const handleDownloadCertificate = async () => {
+    setLoadingCert(true);
+    setCertError(null);
+    try {
+      const res = await fetch(`/api/results/${encodeURIComponent(resultCode)}/certificate`);
+      if (!res.ok) {
+        let errText = "Failed to generate certificate.";
+        try {
+          const errData = await res.json();
+          if (errData?.error) errText = errData.error;
+        } catch {
+          errText = `Server returned status ${res.status}`;
+        }
+        if (
+          errText.toLowerCase().includes("select ") ||
+          errText.toLowerCase().includes("failed query") ||
+          errText.toLowerCase().includes("postgres") ||
+          errText.toLowerCase().includes("password authentication") ||
+          errText.toLowerCase().includes("syntax error")
+        ) {
+          errText = "We encountered a temporary database connection issue while generating your completion certificate. Please try again in a few moments.";
+        }
+        setCertError(errText);
+        setLoadingCert(false);
+        return;
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Certificate-${resultCode}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err: unknown) {
+      console.error("Error downloading certificate:", err);
+      let clientMsg = err instanceof Error && err.message ? err.message : "Network error while downloading certificate.";
+      if (
+        clientMsg.toLowerCase().includes("select ") ||
+        clientMsg.toLowerCase().includes("failed query") ||
+        clientMsg.toLowerCase().includes("postgres") ||
+        clientMsg.toLowerCase().includes("password authentication")
+      ) {
+        clientMsg = "We encountered a temporary network or database issue while generating your certificate. Please try again.";
+      }
+      setCertError(clientMsg);
+    } finally {
+      setLoadingCert(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -196,22 +251,45 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
             You earned a Certificate of Completion for demonstrating mastery in
             this assessment!
           </p>
+
+          {certError && (
+            <div
+              style={{
+                background: "#FFFFFF",
+                border: "3px solid #111827",
+                boxShadow: "4px 4px 0px #EF4444",
+                color: "#111827",
+                padding: "1rem 1.25rem",
+                borderRadius: "16px",
+                fontSize: "0.88rem",
+                fontWeight: 700,
+                marginBottom: "1.25rem",
+                width: "100%",
+                wordBreak: "break-word",
+                textAlign: "left",
+              }}
+            >
+              <div style={{ color: "#EF4444", fontWeight: 900, textTransform: "uppercase", fontSize: "0.72rem", letterSpacing: "0.1em", marginBottom: "0.25rem" }}>
+                Notice | System Alert
+              </div>
+              {certError}
+            </div>
+          )}
+
           <button
             type="button"
-            onClick={() => {
-              window.open(
-                `/api/results/${encodeURIComponent(resultCode)}/certificate`,
-                "_blank"
-              );
-            }}
+            disabled={loadingCert}
+            onClick={handleDownloadCertificate}
             className="btn btn-primary btn-block"
             style={{
               background: "linear-gradient(135deg, #a855f7 0%, #6366f1 100%)",
               boxShadow: "0 4px 15px rgba(168, 85, 247, 0.5)",
               fontWeight: 700,
+              opacity: loadingCert ? 0.7 : 1,
+              cursor: loadingCert ? "not-allowed" : "pointer",
             }}
           >
-            Download PDF Certificate
+            {loadingCert ? "Generating PDF Certificate..." : "Download PDF Certificate"}
           </button>
         </div>
       )}
