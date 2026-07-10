@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ReviewAttemptHeader } from '@/components/features/reviews/ReviewAttemptHeader';
 import { ReviewQuestionCard } from '@/components/features/reviews/ReviewQuestionCard';
+import { ScoreFinalizeConfirmModal } from '@/components/features/reviews/ScoreFinalizeConfirmModal';
 
 interface ReviewOption {
   id: string;
@@ -109,6 +110,7 @@ export default function InteractiveGradingStudioPage() {
   const [finalizing, setFinalizing] = useState<boolean>(false);
   const [finalizeError, setFinalizeError] = useState<string | null>(null);
   const [finalizeSuccess, setFinalizeSuccess] = useState<string | null>(null);
+  const [isFinalizeModalOpen, setIsFinalizeModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (!attemptId) return;
@@ -353,17 +355,17 @@ export default function InteractiveGradingStudioPage() {
   };
 
   // Handle finalizing the exam
-  const handleFinalize = async () => {
+  const handleFinalize = () => {
     if (ungradedCount > 0) {
       setFinalizeError(`You still have ${ungradedCount} ungraded essay question(s). Please assign scores to all essays before finalizing.`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    if (!window.confirm(`Are you ready to finalize this exam score?\n\nFinal Score: ${runningTotal} / ${displayMax} points.\n\nThis will lock the grade and make results available to the student.`)) {
-      return;
-    }
+    setIsFinalizeModalOpen(true);
+  };
 
+  const executeFinalize = async () => {
     setFinalizing(true);
     setFinalizeError(null);
     try {
@@ -381,6 +383,7 @@ export default function InteractiveGradingStudioPage() {
         throw new Error(errData.error || errData.message || 'Failed to finalize exam score.');
       }
 
+      setIsFinalizeModalOpen(false);
       setFinalizeSuccess(`Exam graded! Final score: ${runningTotal} / ${displayMax}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -389,6 +392,7 @@ export default function InteractiveGradingStudioPage() {
         router.push('/teacher/reviews');
       }, 2500);
     } catch (err: unknown) {
+      setIsFinalizeModalOpen(false);
       setFinalizeError(err instanceof Error ? err.message : 'Network error while finalizing exam.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
@@ -511,6 +515,16 @@ export default function InteractiveGradingStudioPage() {
           })}
         </div>
       )}
+
+      {/* Score Finalize Confirmation Modal */}
+      <ScoreFinalizeConfirmModal
+        isOpen={isFinalizeModalOpen}
+        runningTotal={runningTotal}
+        displayMax={displayMax}
+        isFinalizing={finalizing}
+        onClose={() => setIsFinalizeModalOpen(false)}
+        onConfirm={executeFinalize}
+      />
     </div>
   );
 }
