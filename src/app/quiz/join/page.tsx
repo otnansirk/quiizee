@@ -50,7 +50,7 @@ function JoinQuizForm() {
         }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as any;
 
       if (!res.ok || (!data.success && !data.attemptId && !data.id && !data.attempt?.id)) {
         if (res.status === 401) {

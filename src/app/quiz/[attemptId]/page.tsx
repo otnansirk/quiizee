@@ -106,7 +106,7 @@ export default function QuizTakingEnginePage() {
           if (res.ok) {
             break;
           }
-          errData = await res.json().catch(() => ({}));
+          errData = (await res.json().catch(() => ({}))) as any;
           // If 404 (or server error) occurs right after join, wait and retry up to 3 times
           if (retry < 3 && (res.status === 404 || res.status >= 500)) {
             await new Promise((resolve) => setTimeout(resolve, 300 * (retry + 1)));
@@ -119,7 +119,7 @@ export default function QuizTakingEnginePage() {
           throw new Error(errData.error || errData.message || 'Failed to load assessment session. Please verify your access.');
         }
 
-        const rawData = await res.json();
+        const rawData = (await res.json()) as any;
         const attemptData: AttemptInfo = rawData.attempt || rawData.data || rawData;
 
         if (!attemptData || !attemptData.id) {
@@ -240,7 +240,7 @@ export default function QuizTakingEnginePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isAutoSubmitted: true }),
       });
-      const data = await res.json().catch(() => ({}));
+      const data = (await res.json().catch(() => ({}))) as any;
       const resultCode = data.resultCode || attempt?.resultCode || attemptId;
       router.replace(`/results/${resultCode}`);
     } catch (err) {
@@ -260,7 +260,7 @@ export default function QuizTakingEnginePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isAutoSubmitted: false }),
       });
-      const data = await res.json().catch(() => ({}));
+      const data = (await res.json().catch(() => ({}))) as any;
       const resultCode = data.resultCode || attempt?.resultCode || attemptId;
       router.replace(`/results/${resultCode}`);
     } catch (err) {
@@ -382,7 +382,7 @@ export default function QuizTakingEnginePage() {
           body: JSON.stringify({ questionId: currentQ.id }),
         });
         if (!res.ok || !isMounted) return;
-        const data = await res.json();
+        const data = (await res.json()) as any;
         if (!data || !data.questionStartedAt || !isMounted) return;
 
         const startedAt = new Date(data.questionStartedAt).getTime();

@@ -111,7 +111,7 @@ export default function QuizResultPage() {
           return;
         }
 
-        const resultJson = await res.json();
+        const resultJson = (await res.json()) as any;
         setData(resultJson);
         setLoading(false);
       } catch (err) {
