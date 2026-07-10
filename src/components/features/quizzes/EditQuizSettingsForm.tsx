@@ -76,13 +76,13 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
               fontSize: "0.85rem",
             }}
           >
-            <span style={{ color: "var(--text-muted)", marginRight: "0.5rem" }}>
+            <span style={{ color: "#FFFFF5", marginRight: "0.5rem" }}>
               Code:
             </span>
             <strong
               style={{
                 fontFamily: "monospace",
-                color: "var(--accent-hover)",
+                color: "#FFFFFF",
                 letterSpacing: "0.1em",
               }}
             >
