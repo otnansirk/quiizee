@@ -1,27 +1,52 @@
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
-const connectionString = process.env.DATABASE_URL!;
+export function getDb() {
+  let connectionString = process.env.DATABASE_URL;
+  try {
+    const { env } = getCloudflareContext();
+    if (env && (env as any).HYPERDRIVE) {
+      try {
+        const hyperdriveStr = (env as any).HYPERDRIVE.connectionString;
+        if (hyperdriveStr) {
+          connectionString = hyperdriveStr;
+        }
+      } catch {
+        // Fallback to process.env.DATABASE_URL during local dev / static build
+      }
+    }
+  } catch {
+    // Not running in Cloudflare context or during initial build
+  }
 
-const globalForDb = globalThis as unknown as {
-  postgresClient: ReturnType<typeof postgres> | undefined;
-};
+  if (!connectionString) {
+    throw new Error('DATABASE_URL or HYPERDRIVE connection string is not defined');
+  }
 
-const client = globalForDb.postgresClient ?? postgres(connectionString, {
-  prepare: false,
-  fetch_types: false,
-  max: 3,
-  idle_timeout: 5,
-  connect_timeout: 10,
-  max_lifetime: 60,
-  onclose: function (connId) {
-    // Suppress unhandled close errors
-  },
-});
+  let finalConnectionString = connectionString;
+  if (
+    typeof finalConnectionString === 'string' &&
+    finalConnectionString.includes('supabase.com') &&
+    !finalConnectionString.includes('pgbouncer=true')
+  ) {
+    try {
+      const urlObj = new URL(finalConnectionString);
+      if (urlObj.port === '5432') {
+        urlObj.port = '6543';
+      }
+      urlObj.searchParams.set('pgbouncer', 'true');
+      finalConnectionString = urlObj.toString();
+    } catch {
+      // Ignore URL parse error
+    }
+  }
 
-// if (process.env.NODE_ENV !== 'production') {
-  globalForDb.postgresClient = client;
-// }
+  const client = postgres(finalConnectionString, {
+    prepare: false,
+    max: 1,
+  });
 
-export const db = drizzle(client, { schema });
+  return drizzle(client, { schema });
+}

@@ -22,6 +22,13 @@
   "observability": {
     "enabled": true
   },
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "2d07aaca2af846d7a43481dd29315b0e",
+      "localConnectionString": "postgresql://postgres.edunmxvcycpogjzzwvgt:4UlfXpZTfocFzAIg@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+    }
+  ],
   "vars": {
     "AUTH_URL": "https://quiizee.krisnantobiyuh.workers.dev",
     "NEXTAUTH_URL": "https://quiizee.krisnantobiyuh.workers.dev",
