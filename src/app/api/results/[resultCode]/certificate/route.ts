@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import fs from "fs/promises";
+import path from "path";
 
 function handleErrorResponse(request: NextRequest, resultCode: string, errorMsg: string, status: number) {
   const isHtml = request.headers.get("accept")?.includes("text/html");
@@ -266,42 +268,64 @@ export async function GET(
       color: rgb(0.5, 0.5, 0.55),
     });
 
-    // Bottom Center: Official Seal Graphic
+    // Bottom Center: Official Seal / Verified Badge Image
     const sealX = width / 2;
     const sealY = 95;
-    page.drawCircle({
-      x: sealX,
-      y: sealY,
-      size: 36,
-      color: rgb(0.98, 0.92, 0.75),
-      borderColor: rgb(0.85, 0.65, 0.13),
-      borderWidth: 2,
-    });
-    page.drawCircle({
-      x: sealX,
-      y: sealY,
-      size: 30,
-      borderColor: rgb(0.85, 0.65, 0.13),
-      borderWidth: 1,
-    });
-    const sealText1 = "OFFICIAL";
-    const sealText2 = "CERTIFIED";
-    const w1 = fontBold.widthOfTextAtSize(sealText1, 9);
-    const w2 = fontBold.widthOfTextAtSize(sealText2, 9);
-    page.drawText(sealText1, {
-      x: sealX - w1 / 2,
-      y: sealY + 4,
-      size: 9,
-      font: fontBold,
-      color: rgb(0.6, 0.45, 0.05),
-    });
-    page.drawText(sealText2, {
-      x: sealX - w2 / 2,
-      y: sealY - 8,
-      size: 9,
-      font: fontBold,
-      color: rgb(0.6, 0.45, 0.05),
-    });
+    const badgeSize = 100;
+
+    try {
+      let pngBytes: Uint8Array | ArrayBuffer;
+      try {
+        const badgePath = path.join(process.cwd(), "public", "verified-badge.png");
+        pngBytes = await fs.readFile(badgePath);
+      } catch {
+        const res = await fetch(new URL("/verified-badge.png", request.url));
+        if (!res.ok) throw new Error("Failed to fetch verified-badge.png");
+        pngBytes = await res.arrayBuffer();
+      }
+      const badgeImage = await pdfDoc.embedPng(pngBytes);
+      page.drawImage(badgeImage, {
+        x: sealX - badgeSize / 2,
+        y: sealY - badgeSize / 2,
+        width: badgeSize,
+        height: badgeSize,
+      });
+    } catch (badgeErr) {
+      console.warn("Could not load verified-badge.png, drawing fallback seal:", badgeErr);
+      page.drawCircle({
+        x: sealX,
+        y: sealY,
+        size: 36,
+        color: rgb(0.98, 0.92, 0.75),
+        borderColor: rgb(0.85, 0.65, 0.13),
+        borderWidth: 2,
+      });
+      page.drawCircle({
+        x: sealX,
+        y: sealY,
+        size: 30,
+        borderColor: rgb(0.85, 0.65, 0.13),
+        borderWidth: 1,
+      });
+      const sealText1 = "OFFICIAL";
+      const sealText2 = "CERTIFIED";
+      const w1 = fontBold.widthOfTextAtSize(sealText1, 9);
+      const w2 = fontBold.widthOfTextAtSize(sealText2, 9);
+      page.drawText(sealText1, {
+        x: sealX - w1 / 2,
+        y: sealY + 4,
+        size: 9,
+        font: fontBold,
+        color: rgb(0.6, 0.45, 0.05),
+      });
+      page.drawText(sealText2, {
+        x: sealX - w2 / 2,
+        y: sealY - 8,
+        size: 9,
+        font: fontBold,
+        color: rgb(0.6, 0.45, 0.05),
+      });
+    }
 
     // Bottom Right: Instructor Signature Block
     const sigLineStartX = width - 260;
