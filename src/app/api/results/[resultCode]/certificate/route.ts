@@ -18,6 +18,59 @@ function handleErrorResponse(request: NextRequest, resultCode: string, errorMsg:
   return NextResponse.json({ error: errorMsg }, { status });
 }
 
+async function fetchAssetBuffer(assetPathOrUrl: string, request: NextRequest): Promise<ArrayBuffer | null> {
+  const isRelative = assetPathOrUrl.startsWith("/");
+  let isSelfDomain = false;
+  try {
+    const reqHost = new URL(request.url).host;
+    const targetHost = new URL(assetPathOrUrl, request.url).host;
+    if (reqHost === targetHost) isSelfDomain = true;
+  } catch {}
+
+  // 1. If running in Cloudflare Workers / OpenNext, try env.ASSETS or env.WORKER_SELF_REFERENCE
+  if (isRelative || isSelfDomain) {
+    try {
+      const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+      const { env } = await getCloudflareContext({ async: true });
+      if (env) {
+        const targetUrl = new URL(assetPathOrUrl, request.url);
+        if ((env as any).ASSETS) {
+          const res = await (env as any).ASSETS.fetch(targetUrl);
+          if (res && res.ok) return await res.arrayBuffer();
+        }
+        if ((env as any).WORKER_SELF_REFERENCE) {
+          const res = await (env as any).WORKER_SELF_REFERENCE.fetch(targetUrl);
+          if (res && res.ok) return await res.arrayBuffer();
+        }
+      }
+    } catch {
+      // Not in Cloudflare runtime or context unavailable
+    }
+
+    // 2. Try local filesystem (when running in Node.js / local dev)
+    try {
+      const relativePath = isRelative ? assetPathOrUrl : new URL(assetPathOrUrl).pathname;
+      const cleanPath = relativePath.replace(/^\/+/, "");
+      const filePath = path.join(process.cwd(), "public", cleanPath);
+      const fileBuffer = await fs.readFile(filePath);
+      return fileBuffer.buffer.slice(fileBuffer.byteOffset, fileBuffer.byteOffset + fileBuffer.byteLength);
+    } catch {
+      // Not in Node runtime or file not found locally
+    }
+  }
+
+  // 3. Fallback to standard HTTP fetch
+  try {
+    const targetUrl = isRelative ? new URL(assetPathOrUrl, request.url).toString() : assetPathOrUrl;
+    const res = await fetch(targetUrl);
+    if (res.ok) return await res.arrayBuffer();
+  } catch (err) {
+    console.warn(`Standard fetch failed for ${assetPathOrUrl}:`, err);
+  }
+
+  return null;
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ resultCode: string }> }
@@ -274,15 +327,8 @@ export async function GET(
     const badgeSize = 100;
 
     try {
-      let pngBytes: Uint8Array | ArrayBuffer;
-      try {
-        const badgePath = path.join(process.cwd(), "public", "verified-badge.png");
-        pngBytes = await fs.readFile(badgePath);
-      } catch {
-        const res = await fetch(new URL("/verified-badge.png", request.url));
-        if (!res.ok) throw new Error("Failed to fetch verified-badge.png");
-        pngBytes = await res.arrayBuffer();
-      }
+      const pngBytes = await fetchAssetBuffer("/verified-badge.png", request);
+      if (!pngBytes) throw new Error("Failed to load verified-badge.png via fetchAssetBuffer");
       const badgeImage = await pdfDoc.embedPng(pngBytes);
       page.drawImage(badgeImage, {
         x: sealX - badgeSize / 2,
@@ -334,17 +380,13 @@ export async function GET(
 
     if (quiz.certificateSignatureUrl) {
       try {
-        let sigUrl = quiz.certificateSignatureUrl;
-        if (sigUrl.startsWith("/")) {
-          sigUrl = new URL(sigUrl, request.url).toString();
-        }
-        const sigRes = await fetch(sigUrl);
-        if (sigRes.ok) {
-          const sigBytes = await sigRes.arrayBuffer();
+        const sigBytes = await fetchAssetBuffer(quiz.certificateSignatureUrl, request);
+        if (sigBytes) {
           let sigImg;
-          if (sigUrl.toLowerCase().endsWith(".jpg") || sigUrl.toLowerCase().endsWith(".jpeg")) {
+          const lowerUrl = quiz.certificateSignatureUrl.toLowerCase();
+          if (lowerUrl.endsWith(".jpg") || lowerUrl.endsWith(".jpeg")) {
             sigImg = await pdfDoc.embedJpg(sigBytes);
-          } else if (sigUrl.toLowerCase().endsWith(".png")) {
+          } else if (lowerUrl.endsWith(".png")) {
             sigImg = await pdfDoc.embedPng(sigBytes);
           } else {
             try { sigImg = await pdfDoc.embedPng(sigBytes); } catch { sigImg = await pdfDoc.embedJpg(sigBytes); }
