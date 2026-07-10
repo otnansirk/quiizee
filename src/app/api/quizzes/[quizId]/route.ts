@@ -1,8 +1,24 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq, asc, inArray } from 'drizzle-orm';
+import { z } from 'zod';
+
+const updateQuizSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().nullable().optional(),
+  accessMode: z.string().optional(),
+  durationMode: z.string().optional(),
+  globalDuration: z.union([z.number(), z.string()]).nullable().optional(),
+  maxAttempts: z.union([z.number(), z.string()]).nullable().optional(),
+  certificateEnabled: z.union([z.boolean(), z.string()]).optional(),
+  certificateMinScore: z.union([z.number(), z.string()]).optional(),
+  certificateSignerName: z.string().nullable().optional(),
+  certificateSignerRole: z.string().nullable().optional(),
+  certificateSignatureUrl: z.string().nullable().optional(),
+  isPublished: z.union([z.boolean(), z.string()]).optional(),
+});
 
 interface RouteContext {
   params: Promise<{
@@ -11,6 +27,7 @@ interface RouteContext {
 }
 
 async function checkTeacherAndQuiz(quizId: string) {
+  const db = getDb();
   const session = await auth();
   if (!session?.user || session.user.role !== 'teacher') {
     return {
@@ -49,6 +66,7 @@ async function checkTeacherAndQuiz(quizId: string) {
 }
 
 export async function GET(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const { quizId } = await params;
     const { error, quiz } = await checkTeacherAndQuiz(quizId);
@@ -90,13 +108,21 @@ export async function GET(req: Request, { params }: RouteContext) {
 }
 
 export async function PUT(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const { quizId } = await params;
     const { error, quiz } = await checkTeacherAndQuiz(quizId);
     if (error) return error;
     if (!quiz) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
 
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => ({}));
+    const parseResult = updateQuizSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid request body', errors: parseResult.error.flatten() },
+        { status: 400 }
+      );
+    }
     const {
       title,
       description,
@@ -110,7 +136,7 @@ export async function PUT(req: Request, { params }: RouteContext) {
       certificateSignerRole,
       certificateSignatureUrl,
       isPublished,
-    } = body;
+    } = parseResult.data;
 
     const updateData: Partial<schema.NewQuiz> = {
       updatedAt: new Date(),
@@ -189,6 +215,7 @@ export async function PATCH(req: Request, context: RouteContext) {
 }
 
 export async function DELETE(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const { quizId } = await params;
     const { error, quiz } = await checkTeacherAndQuiz(quizId);

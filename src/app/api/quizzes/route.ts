@@ -1,11 +1,27 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq, desc, inArray } from 'drizzle-orm';
 import { generateAccessCode } from '@/lib/utils';
+import { z } from 'zod';
+
+const createQuizSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().nullable().optional(),
+  accessMode: z.string().optional(),
+  durationMode: z.string().optional(),
+  globalDuration: z.union([z.number(), z.string()]).nullable().optional(),
+  maxAttempts: z.union([z.number(), z.string()]).nullable().optional(),
+  certificateEnabled: z.union([z.boolean(), z.string()]).optional(),
+  certificateMinScore: z.union([z.number(), z.string()]).optional(),
+  certificateSignerName: z.string().nullable().optional(),
+  certificateSignerRole: z.string().nullable().optional(),
+  certificateSignatureUrl: z.string().nullable().optional(),
+});
 
 export async function GET() {
+  const db = getDb();
   try {
     const session = await auth();
     if (!session?.user || session.user.role !== 'teacher') {
@@ -52,6 +68,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const db = getDb();
   try {
     const session = await auth();
     if (!session?.user || session.user.role !== 'teacher') {
@@ -61,7 +78,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => ({}));
+    const parseResult = createQuizSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid request body', errors: parseResult.error.flatten() },
+        { status: 400 }
+      );
+    }
     const {
       title,
       description,
@@ -74,7 +98,7 @@ export async function POST(req: Request) {
       certificateSignerName,
       certificateSignerRole,
       certificateSignatureUrl,
-    } = body;
+    } = parseResult.data;
 
     // Validate required fields
     if (!title || !accessMode || !durationMode) {

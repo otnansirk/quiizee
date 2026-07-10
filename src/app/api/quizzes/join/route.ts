@@ -1,13 +1,28 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { generateResultCode } from '@/lib/utils';
+import { z } from 'zod';
+
+const joinQuizSchema = z.object({
+  accessCode: z.string().min(1, 'accessCode is required'),
+  name: z.string().optional(),
+  email: z.string().optional(),
+});
 
 export async function POST(req: Request) {
+  const db = getDb();
   try {
-    const body = await req.json();
-    const { accessCode, name, email } = body;
+    const rawBody = await req.json().catch(() => ({}));
+    const parseResult = joinQuizSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid request body', errors: parseResult.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const { accessCode, name, email } = parseResult.data;
 
     if (!accessCode || typeof accessCode !== 'string') {
       return NextResponse.json(
