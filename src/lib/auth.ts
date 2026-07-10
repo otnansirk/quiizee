@@ -62,6 +62,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           };
         } catch (error) {
           console.error('[AUTH] ERROR CAUGHT:', error, Date.now());
+          if (error instanceof Error && error.cause) {
+            console.error('[AUTH] ERROR CAUSE:', error.cause);
+          }
           return null;
         }
       },
