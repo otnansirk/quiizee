@@ -3,7 +3,17 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
-export function getDb() {
+declare global {
+  // eslint-disable-next-line no-var
+  var __quiizee_pg_client__: postgres.Sql | undefined;
+}
+
+type DbInstance = ReturnType<typeof drizzle<typeof schema>>;
+
+let cachedDb: DbInstance | null = null;
+let cachedConnectionString: string | null = null;
+
+export function getDb(): DbInstance {
   let connectionString = process.env.DATABASE_URL;
   try {
     const { env } = getCloudflareContext();
@@ -43,10 +53,31 @@ export function getDb() {
     }
   }
 
+  // Reuse cached database client within this Cloudflare Worker isolate if the connection string matches
+  if (cachedDb && cachedConnectionString === finalConnectionString) {
+    return cachedDb;
+  }
+
+  // If connection string changed or old client exists in globalThis, clean it up
+  if (globalThis.__quiizee_pg_client__) {
+    try {
+      globalThis.__quiizee_pg_client__.end({ timeout: 1 });
+    } catch {
+      // Ignore cleanup errors
+    }
+  }
+
   const client = postgres(finalConnectionString, {
     prepare: false,
     max: 1,
+    idle_timeout: 20,
+    connect_timeout: 10,
+    fetch_types: false,
   });
 
-  return drizzle(client, { schema });
+  globalThis.__quiizee_pg_client__ = client;
+  cachedConnectionString = finalConnectionString;
+  cachedDb = drizzle(client, { schema });
+
+  return cachedDb;
 }
