@@ -19,7 +19,7 @@ export default function MyQuizzesPage() {
     try {
       const res = await fetch('/api/quizzes');
       if (res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as any;
         if (Array.isArray(data)) {
           setQuizzes(data);
         } else if (data && Array.isArray(data.quizzes)) {
@@ -75,7 +75,7 @@ export default function MyQuizzesPage() {
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        const data = (await res.json().catch(() => ({}))) as any;
         const errText = data.error || data.message || `Failed to ${quiz.isPublished ? 'unpublish' : 'publish'} quiz.`;
         setPublishError(`Cannot publish "${quiz.title}": ${errText}`);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -110,7 +110,7 @@ export default function MyQuizzesPage() {
         setSuccessMsg(`Quiz "${quiz.title}" deleted successfully.`);
         await fetchQuizzes();
       } else {
-        const data = await res.json().catch(() => ({}));
+        const data = (await res.json().catch(() => ({}))) as any;
         setPublishError(`Failed to delete quiz: ${data.error || 'Unknown error'}`);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }

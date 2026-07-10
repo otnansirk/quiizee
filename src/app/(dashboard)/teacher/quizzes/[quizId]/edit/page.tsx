@@ -48,7 +48,7 @@ export default function EditQuizPage() {
         if (!res.ok) {
           throw new Error('Failed to load quiz details or quiz not found.');
         }
-        const data = await res.json();
+        const data = (await res.json()) as any;
         const q = data.quiz || data.data || data;
 
         setTitle(q.title || '');
@@ -94,7 +94,7 @@ export default function EditQuizPage() {
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        const data = (await res.json().catch(() => ({}))) as any;
         throw new Error(data.error || data.message || `Failed to ${isPublished ? 'unpublish' : 'publish'} quiz.`);
       }
 
@@ -154,7 +154,7 @@ export default function EditQuizPage() {
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        const data = (await res.json().catch(() => ({}))) as any;
         throw new Error(data.error || data.message || 'Failed to save quiz changes.');
       }
 

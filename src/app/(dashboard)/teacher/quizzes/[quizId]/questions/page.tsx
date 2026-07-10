@@ -96,7 +96,7 @@ export default function QuizQuestionsPage() {
         }
         throw new Error(`Failed to load quiz details (${res.status})`);
       }
-      const data: QuizData = await res.json();
+      const data = (await res.json()) as QuizData;
       setQuiz(data);
 
       const sortedQuestions = (data.questions || []).slice().sort((a, b) => a.order - b.order);
@@ -131,7 +131,7 @@ export default function QuizQuestionsPage() {
       });
 
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
+        const errData = (await res.json().catch(() => ({}))) as any;
         throw new Error(errData.message || `Failed to ${targetPublishState ? 'publish' : 'unpublish'} quiz`);
       }
 

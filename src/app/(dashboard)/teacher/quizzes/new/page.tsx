@@ -69,11 +69,11 @@ export default function CreateNewQuizPage() {
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        const data = (await res.json().catch(() => ({}))) as any;
         throw new Error(data.error || data.message || 'Failed to create quiz.');
       }
 
-      const data = await res.json();
+      const data = (await res.json()) as any;
       const newQuizId = data.id || data.data?.id || data.quiz?.id;
 
       if (newQuizId) {
