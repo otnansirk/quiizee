@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { MyQuizzesHeader } from '@/components/features/quizzes/MyQuizzesHeader';
 import { QuizCard, QuizItem } from '@/components/features/quizzes/QuizCard';
+import { QuizDeleteModal } from '@/components/features/quizzes/QuizDeleteModal';
 
 export default function MyQuizzesPage() {
   const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
@@ -13,6 +14,8 @@ export default function MyQuizzesPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [quizToDelete, setQuizToDelete] = useState<QuizItem | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   const fetchQuizzes = async () => {
     setLoading(true);
@@ -94,32 +97,9 @@ export default function MyQuizzesPage() {
     }
   };
 
-  const handleDelete = async (quiz: QuizItem) => {
-    if (!window.confirm(`Are you sure you want to delete "${quiz.title}"?\n\nAll associated questions, options, and student attempts will be permanently deleted.`)) {
-      return;
-    }
-
-    setDeletingId(quiz.id);
-    setPublishError(null);
-    setSuccessMsg(null);
-    try {
-      const res = await fetch(`/api/quizzes/${quiz.id}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        setSuccessMsg(`Quiz "${quiz.title}" deleted successfully.`);
-        await fetchQuizzes();
-      } else {
-        const data = (await res.json().catch(() => ({}))) as any;
-        setPublishError(`Failed to delete quiz: ${data.error || 'Unknown error'}`);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    } catch (err: any) {
-      setPublishError(`Network error: ${err.message}`);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } finally {
-      setDeletingId(null);
-    }
+  const handleDelete = (quiz: QuizItem) => {
+    setQuizToDelete(quiz);
+    setIsDeleteModalOpen(true);
   };
 
   return (
@@ -169,6 +149,24 @@ export default function MyQuizzesPage() {
           ))}
         </div>
       )}
+
+      {/* Quiz Delete Confirmation Modal */}
+      <QuizDeleteModal
+        isOpen={isDeleteModalOpen}
+        quizToDelete={quizToDelete}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setQuizToDelete(null);
+        }}
+        onSuccess={(deletedQuiz) => {
+          setSuccessMsg(`Quiz "${deletedQuiz.title}" deleted successfully.`);
+          fetchQuizzes();
+        }}
+        onError={(msg) => {
+          setPublishError(`Failed to delete quiz: ${msg}`);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
     </div>
   );
 }
