@@ -14,10 +14,30 @@ const createQuizSchema = z.object({
   globalDuration: z.union([z.number(), z.string()]).nullable().optional(),
   maxAttempts: z.union([z.number(), z.string()]).nullable().optional(),
   certificateEnabled: z.union([z.boolean(), z.string()]).optional(),
-  certificateMinScore: z.union([z.number(), z.string()]).optional(),
+  certificateMinScore: z.union([z.number(), z.string()]).nullable().optional(),
   certificateSignerName: z.string().nullable().optional(),
   certificateSignerRole: z.string().nullable().optional(),
   certificateSignatureUrl: z.string().nullable().optional(),
+}).superRefine((data, ctx) => {
+  const isCertEnabled = data.certificateEnabled === true || data.certificateEnabled === 'true';
+  if (isCertEnabled) {
+    if (data.certificateMinScore === null || data.certificateMinScore === undefined || data.certificateMinScore === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Certificate minimum score is required when certificate is enabled.',
+        path: ['certificateMinScore'],
+      });
+    } else {
+      const num = Number(data.certificateMinScore);
+      if (isNaN(num) || num < 1 || num > 100) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Certificate minimum score must be a number between 1 and 100.',
+          path: ['certificateMinScore'],
+        });
+      }
+    }
+  }
 });
 
 export async function GET() {
