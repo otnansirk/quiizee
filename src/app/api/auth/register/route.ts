@@ -1,13 +1,28 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { z } from "zod";
+
+const registerUserSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Valid email is required"),
+  password: z.string().min(1, "Password is required"),
+});
 
 export async function POST(req: Request) {
+  const db = getDb();
   try {
-    const body = await req.json();
-    const { name, email, password } = body;
+    const rawBody = await req.json().catch(() => ({}));
+    const parseResult = registerUserSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { success: false, message: "Missing required fields: name, email, or password", errors: parseResult.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const { name, email, password } = parseResult.data;
 
     if (!name || !email || !password) {
       return NextResponse.json(
