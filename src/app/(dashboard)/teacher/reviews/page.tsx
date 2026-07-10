@@ -16,7 +16,7 @@ export default function EssayReviewsPage() {
     try {
       const res = await fetch('/api/teacher/reviews');
       if (res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as any;
         if (Array.isArray(data)) {
           setReviews(data);
         } else if (data && Array.isArray(data.reviews)) {
@@ -29,7 +29,7 @@ export default function EssayReviewsPage() {
           setReviews([]);
         }
       } else {
-        const errData = await res.json().catch(() => ({}));
+        const errData = (await res.json().catch(() => ({}))) as any;
         console.error('Failed to fetch essay reviews:', errData);
         setReviews([]);
       }

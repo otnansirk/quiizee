@@ -119,7 +119,7 @@ export default function InteractiveGradingStudioPage() {
       try {
         const res = await fetch(`/api/attempts/${attemptId}/review`);
         if (res.ok) {
-          const data = await res.json();
+          const data = (await res.json()) as any;
 
           // Extract basic info
           const att = data.attempt || data.data?.attempt || {};
@@ -250,7 +250,7 @@ export default function InteractiveGradingStudioPage() {
           });
           setEssayForms(initialForms);
         } else {
-          const errData = await res.json().catch(() => ({}));
+          const errData = (await res.json().catch(() => ({}))) as any;
           setError(errData.error || errData.message || 'Failed to load attempt review details.');
         }
       } catch (err: unknown) {
@@ -305,11 +305,11 @@ export default function InteractiveGradingStudioPage() {
       });
 
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
+        const errData = (await res.json().catch(() => ({}))) as any;
         throw new Error(errData.error || errData.message || 'Failed to save essay grade.');
       }
 
-      const resData = await res.json().catch(() => ({}));
+      const resData = (await res.json().catch(() => ({}))) as any;
 
       // Update local items state so live score updates immediately
       setItems((prev) =>
@@ -377,7 +377,7 @@ export default function InteractiveGradingStudioPage() {
       });
 
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
+        const errData = (await res.json().catch(() => ({}))) as any;
         throw new Error(errData.error || errData.message || 'Failed to finalize exam score.');
       }
 

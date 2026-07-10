@@ -25,7 +25,7 @@ export default function AttemptHistoryPage() {
     try {
       const res = await fetch(`/api/teacher/quizzes/${quizId}/attempts`);
       if (res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as any;
         if (data && data.quizTitle) {
           setQuizTitle(data.quizTitle);
         } else if (data && data.quiz?.title) {
@@ -42,7 +42,7 @@ export default function AttemptHistoryPage() {
           setAttempts([]);
         }
       } else {
-        const errData = await res.json().catch(() => ({}));
+        const errData = (await res.json().catch(() => ({}))) as any;
         setError(errData.error || errData.message || 'Failed to load attempt history.');
         setAttempts([]);
       }
