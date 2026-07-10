@@ -7,9 +7,9 @@ export function getDb() {
   let connectionString = process.env.DATABASE_URL;
   try {
     const { env } = getCloudflareContext();
-    if (env && (env as any).HYPERDRIVE) {
+    if (env && env.HYPERDRIVE) {
       try {
-        const hyperdriveStr = (env as any).HYPERDRIVE.connectionString;
+        const hyperdriveStr = env.HYPERDRIVE.connectionString;
         if (hyperdriveStr) {
           connectionString = hyperdriveStr;
         }
