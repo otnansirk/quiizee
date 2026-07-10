@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 export interface ResultScoreCardProps {
   numTotalScore: number | null;
@@ -19,8 +20,16 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
   resultCode,
   status,
 }) => {
+  const searchParams = useSearchParams();
   const [loadingCert, setLoadingCert] = useState<boolean>(false);
   const [certError, setCertError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const paramErr = searchParams?.get("certError");
+    if (paramErr) {
+      setCertError(paramErr);
+    }
+  }, [searchParams]);
 
   const handleDownloadCertificate = async () => {
     setLoadingCert(true);
@@ -255,24 +264,105 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
           {certError && (
             <div
               style={{
-                background: "#FFFFFF",
-                border: "3px solid #111827",
-                boxShadow: "4px 4px 0px #EF4444",
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 9999,
+                backgroundColor: "#FAF9F6",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "1.5rem",
                 color: "#111827",
-                padding: "1rem 1.25rem",
-                borderRadius: "16px",
-                fontSize: "0.88rem",
-                fontWeight: 700,
-                marginBottom: "1.25rem",
-                width: "100%",
-                wordBreak: "break-word",
-                textAlign: "left",
+                fontFamily: "Inter, -apple-system, sans-serif",
               }}
             >
-              <div style={{ color: "#EF4444", fontWeight: 900, textTransform: "uppercase", fontSize: "0.72rem", letterSpacing: "0.1em", marginBottom: "0.25rem" }}>
-                Notice | System Alert
+              <div
+                style={{
+                  background: "#FFFFFF",
+                  border: "3px solid #111827",
+                  borderRadius: "24px",
+                  padding: "3rem 2.5rem",
+                  maxWidth: "500px",
+                  width: "100%",
+                  textAlign: "center",
+                  boxShadow: "8px 8px 0px #111827",
+                  position: "relative",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    background: "#EF4444",
+                    color: "#FFFFFF",
+                    fontSize: "0.75rem",
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.15em",
+                    padding: "0.35rem 0.85rem",
+                    border: "2px solid #111827",
+                    borderRadius: "6px",
+                    marginBottom: "1.5rem",
+                    boxShadow: "3px 3px 0px #111827",
+                  }}
+                >
+                  01 &nbsp;|&nbsp; Notice
+                </div>
+                <h1
+                  style={{
+                    fontSize: "2.2rem",
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    letterSpacing: "-0.04em",
+                    color: "#111827",
+                    margin: "0 0 1rem 0",
+                    lineHeight: 1.1,
+                  }}
+                >
+                  Certificate<br />Notice
+                </h1>
+                <div
+                  style={{
+                    color: "#374151",
+                    fontSize: "1rem",
+                    lineHeight: 1.6,
+                    fontWeight: 600,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {certError}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCertError(null);
+                    if (typeof window !== "undefined" && window.history.replaceState) {
+                      window.history.replaceState({}, "", `/results/${encodeURIComponent(resultCode)}`);
+                    }
+                  }}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    background: "#4F46E5",
+                    color: "#FFFFFF",
+                    padding: "1rem 1.5rem",
+                    border: "3px solid #111827",
+                    borderRadius: "12px",
+                    textDecoration: "none",
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    fontSize: "1rem",
+                    letterSpacing: "0.05em",
+                    boxShadow: "5px 5px 0px #111827",
+                    cursor: "pointer",
+                    transition: "transform 0.15s, box-shadow 0.15s",
+                  }}
+                >
+                  Return to Results
+                </button>
               </div>
-              {certError}
             </div>
           )}
 

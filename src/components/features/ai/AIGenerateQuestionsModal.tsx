@@ -580,7 +580,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                   }}
                   className="btn btn-secondary btn-sm"
                 >
-                  ← Re-generate
+                  Re-generate
                 </button>
               </div>
             </div>
