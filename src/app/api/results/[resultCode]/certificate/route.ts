@@ -260,7 +260,7 @@ export async function GET(
       font: fontBold,
       color: rgb(0.39, 0.4, 0.95),
     });
-    page.drawText("Verify online at QUIIZEE '26 Assessment Platform", {
+    page.drawText("Verify online at QUIIZEE '26", {
       x: 75,
       y: 72,
       size: 9,
