@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, inArray } from 'drizzle-orm';
 import { generateAccessCode } from '@/lib/utils';
 
 export async function GET() {
@@ -21,19 +21,25 @@ export async function GET() {
       .where(eq(schema.quizzes.teacherId, session.user.id))
       .orderBy(desc(schema.quizzes.createdAt));
 
-    const quizzesWithCount = await Promise.all(
-      teacherQuizzes.map(async (quiz) => {
-        const quizQuestions = await db
-          .select({ id: schema.questions.id })
-          .from(schema.questions)
-          .where(eq(schema.questions.quizId, quiz.id));
+    if (teacherQuizzes.length === 0) {
+      return NextResponse.json([]);
+    }
 
-        return {
-          ...quiz,
-          questionCount: quizQuestions.length,
-        };
-      })
-    );
+    const quizIds = teacherQuizzes.map((q) => q.id);
+    const allQuestions = await db
+      .select({ id: schema.questions.id, quizId: schema.questions.quizId })
+      .from(schema.questions)
+      .where(inArray(schema.questions.quizId, quizIds));
+
+    const countByQuizId = allQuestions.reduce((acc, q) => {
+      acc[q.quizId] = (acc[q.quizId] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const quizzesWithCount = teacherQuizzes.map((quiz) => ({
+      ...quiz,
+      questionCount: countByQuizId[quiz.id] || 0,
+    }));
 
     return NextResponse.json(quizzesWithCount);
   } catch (error) {
