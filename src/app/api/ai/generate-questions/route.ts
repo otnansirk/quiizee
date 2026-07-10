@@ -1,5 +1,13 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
+import { z } from 'zod';
+
+const generateQuestionsSchema = z.object({
+  referenceText: z.string().optional(),
+  questionCount: z.number().optional().default(5),
+  questionTypes: z.array(z.string()).optional().default(['multiple_choice', 'true_false', 'essay']),
+  difficulty: z.string().optional().default('medium'),
+});
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_API_URL =
@@ -21,7 +29,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => ({}));
+    const parseResult = generateQuestionsSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid request body', errors: parseResult.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const body = parseResult.data;
     const {
       referenceText,
       questionCount = 5,
@@ -120,7 +136,7 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
       );
     }
 
-    const geminiData = await geminiRes.json();
+    const geminiData = (await geminiRes.json()) as any;
     const rawText: string =
       geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 

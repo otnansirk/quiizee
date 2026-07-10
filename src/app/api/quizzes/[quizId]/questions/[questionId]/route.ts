@@ -1,8 +1,26 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
+import { z } from 'zod';
+
+const optionInputSchema = z.object({
+  optionText: z.string().optional(),
+  isCorrect: z.boolean().optional(),
+  order: z.number().optional(),
+});
+
+const updateQuestionSchema = z.object({
+  type: z.string().optional(),
+  questionText: z.string().optional(),
+  questionImage: z.string().nullable().optional(),
+  duration: z.union([z.number(), z.string()]).nullable().optional(),
+  points: z.union([z.number(), z.string()]).nullable().optional(),
+  order: z.union([z.number(), z.string()]).optional(),
+  correctAnswer: z.string().nullable().optional(),
+  options: z.array(optionInputSchema).optional(),
+});
 
 interface RouteContext {
   params: Promise<{
@@ -18,6 +36,7 @@ interface OptionInput {
 }
 
 async function checkTeacherAndQuestion(quizId: string, questionId: string) {
+  const db = getDb();
   const session = await auth();
   if (!session?.user || session.user.role !== 'teacher') {
     return {
@@ -71,13 +90,21 @@ async function checkTeacherAndQuestion(quizId: string, questionId: string) {
 }
 
 export async function PUT(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const { quizId, questionId } = await params;
     const { error, question } = await checkTeacherAndQuestion(quizId, questionId);
     if (error) return error;
     if (!question) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
 
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => ({}));
+    const parseResult = updateQuestionSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid request body', errors: parseResult.error.flatten() },
+        { status: 400 }
+      );
+    }
     const {
       type,
       questionText,
@@ -87,7 +114,7 @@ export async function PUT(req: Request, { params }: RouteContext) {
       order,
       correctAnswer,
       options,
-    } = body;
+    } = parseResult.data;
 
     if (type !== undefined && !['multiple_choice', 'true_false', 'essay'].includes(type)) {
       return NextResponse.json(
@@ -155,6 +182,7 @@ export async function PATCH(req: Request, context: RouteContext) {
 }
 
 export async function DELETE(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const { quizId, questionId } = await params;
     const { error, question } = await checkTeacherAndQuestion(quizId, questionId);

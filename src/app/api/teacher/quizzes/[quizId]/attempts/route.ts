@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { eq, desc, inArray } from 'drizzle-orm';
 
@@ -11,6 +11,7 @@ interface RouteContext {
 }
 
 export async function GET(req: Request, { params }: RouteContext) {
+  const db = getDb();
   try {
     const session = await auth();
     if (!session?.user || session.user.role !== 'teacher') {
