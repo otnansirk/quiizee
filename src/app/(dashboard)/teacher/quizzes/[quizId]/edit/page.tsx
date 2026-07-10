@@ -25,6 +25,9 @@ export default function EditQuizPage() {
   const [maxAttempts, setMaxAttempts] = useState<number | string>(1);
   const [certificateEnabled, setCertificateEnabled] = useState<boolean>(false);
   const [certificateMinScore, setCertificateMinScore] = useState<number | string>(70);
+  const [certificateSignerName, setCertificateSignerName] = useState<string>('');
+  const [certificateSignerRole, setCertificateSignerRole] = useState<string>('');
+  const [certificateSignatureUrl, setCertificateSignatureUrl] = useState<string>('');
   const [isPublished, setIsPublished] = useState<boolean>(false);
   const [questionsCount, setQuestionsCount] = useState<number>(0);
 
@@ -57,6 +60,9 @@ export default function EditQuizPage() {
         setMaxAttempts(q.maxAttempts || 1);
         setCertificateEnabled(q.certificateEnabled || false);
         setCertificateMinScore(q.certificateMinScore || 70);
+        setCertificateSignerName(q.certificateSignerName || '');
+        setCertificateSignerRole(q.certificateSignerRole || '');
+        setCertificateSignatureUrl(q.certificateSignatureUrl || '');
         setIsPublished(Boolean(q.isPublished));
         setQuestionsCount(q.questionsCount ?? (Array.isArray(q.questions) ? q.questions.length : 0));
       } catch (err: any) {
@@ -134,6 +140,9 @@ export default function EditQuizPage() {
       maxAttempts: Math.max(1, Number(maxAttempts) || 1),
       certificateEnabled,
       certificateMinScore: certificateEnabled ? Math.min(100, Math.max(1, Number(certificateMinScore) || 70)) : null,
+      certificateSignerName: certificateEnabled && certificateSignerName ? certificateSignerName.trim() : null,
+      certificateSignerRole: certificateEnabled && certificateSignerRole ? certificateSignerRole.trim() : null,
+      certificateSignatureUrl: certificateEnabled && certificateSignatureUrl ? certificateSignatureUrl.trim() : null,
       isPublished,
     };
 
@@ -205,6 +214,9 @@ export default function EditQuizPage() {
         maxAttempts={maxAttempts}
         certificateEnabled={certificateEnabled}
         certificateMinScore={certificateMinScore}
+        certificateSignerName={certificateSignerName}
+        certificateSignerRole={certificateSignerRole}
+        certificateSignatureUrl={certificateSignatureUrl}
         isSubmitting={isSubmitting}
         onTitleChange={setTitle}
         onDescriptionChange={setDescription}
@@ -213,6 +225,9 @@ export default function EditQuizPage() {
         onMaxAttemptsChange={setMaxAttempts}
         onCertificateEnabledChange={setCertificateEnabled}
         onCertificateMinScoreChange={setCertificateMinScore}
+        onCertificateSignerNameChange={setCertificateSignerName}
+        onCertificateSignerRoleChange={setCertificateSignerRole}
+        onCertificateSignatureUrlChange={setCertificateSignatureUrl}
         onSubmit={handleSubmit}
       />
     </div>

@@ -331,6 +331,41 @@ export async function GET(
     const sigLineStartX = width - 260;
     const sigLineEndX = width - 75;
     const sigCenter = (sigLineStartX + sigLineEndX) / 2;
+
+    if (quiz.certificateSignatureUrl) {
+      try {
+        let sigUrl = quiz.certificateSignatureUrl;
+        if (sigUrl.startsWith("/")) {
+          sigUrl = new URL(sigUrl, request.url).toString();
+        }
+        const sigRes = await fetch(sigUrl);
+        if (sigRes.ok) {
+          const sigBytes = await sigRes.arrayBuffer();
+          let sigImg;
+          if (sigUrl.toLowerCase().endsWith(".jpg") || sigUrl.toLowerCase().endsWith(".jpeg")) {
+            sigImg = await pdfDoc.embedJpg(sigBytes);
+          } else if (sigUrl.toLowerCase().endsWith(".png")) {
+            sigImg = await pdfDoc.embedPng(sigBytes);
+          } else {
+            try { sigImg = await pdfDoc.embedPng(sigBytes); } catch { sigImg = await pdfDoc.embedJpg(sigBytes); }
+          }
+          if (sigImg) {
+            const maxW = sigLineEndX - sigLineStartX - 10;
+            const maxH = 55;
+            const dims = sigImg.scaleToFit(maxW, maxH);
+            page.drawImage(sigImg, {
+              x: sigCenter - dims.width / 2,
+              y: 108,
+              width: dims.width,
+              height: dims.height,
+            });
+          }
+        }
+      } catch (sigErr) {
+        console.warn("Could not fetch or embed certificateSignatureUrl:", sigErr);
+      }
+    }
+
     page.drawLine({
       start: { x: sigLineStartX, y: 105 },
       end: { x: sigLineEndX, y: 105 },
@@ -338,8 +373,9 @@ export async function GET(
       color: rgb(0.4, 0.4, 0.45),
     });
 
-    const teacherWidth = fontBold.widthOfTextAtSize(teacherName, 13);
-    page.drawText(teacherName, {
+    const finalSignerName = quiz.certificateSignerName || teacherName || "Instructor";
+    const teacherWidth = fontBold.widthOfTextAtSize(finalSignerName, 13);
+    page.drawText(finalSignerName, {
       x: sigCenter - teacherWidth / 2,
       y: 88,
       size: 13,
@@ -347,7 +383,7 @@ export async function GET(
       color: rgb(0.15, 0.15, 0.25),
     });
 
-    const roleText = "Assessment Administrator";
+    const roleText = quiz.certificateSignerRole || "Assessment Administrator";
     const roleWidth = fontRegular.widthOfTextAtSize(roleText, 10);
     page.drawText(roleText, {
       x: sigCenter - roleWidth / 2,
