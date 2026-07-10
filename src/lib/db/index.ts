@@ -11,7 +11,7 @@ export function getDb() {
 
   const client = postgres(connectionString, {
     prepare: false,
-    max: 1,
+    max: 5,
     connect_timeout: 5,
     idle_timeout: 5,
   });
