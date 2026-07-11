@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, and, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 
 const optionInputSchema = z.object({
@@ -89,27 +89,26 @@ export async function GET(req: Request, { params }: RouteContext) {
       .where(eq(schema.questions.quizId, quizId))
       .orderBy(asc(schema.questions.order));
 
-    const questionsWithOptions = await Promise.all(
-      quizQuestions.map(async (question) => {
-        const options = await db
-          .select()
-          .from(schema.questionOptions)
-          .where(eq(schema.questionOptions.questionId, question.id))
-          .orderBy(asc(schema.questionOptions.order));
+    const questionIds = quizQuestions.map((q) => q.id);
+    const allOptions =
+      questionIds.length > 0
+        ? await db
+            .select()
+            .from(schema.questionOptions)
+            .where(inArray(schema.questionOptions.questionId, questionIds))
+            .orderBy(asc(schema.questionOptions.order))
+        : [];
 
-        const studentAnswers = await db
-          .select({ id: schema.studentAnswers.id })
-          .from(schema.studentAnswers)
-          .where(eq(schema.studentAnswers.questionId, question.id));
+    const optionsByQuestionId = allOptions.reduce((acc, opt) => {
+      if (!acc[opt.questionId]) acc[opt.questionId] = [];
+      acc[opt.questionId].push(opt);
+      return acc;
+    }, {} as Record<string, typeof allOptions>);
 
-        return {
-          ...question,
-          options,
-          hasSubmissions: studentAnswers.length > 0,
-          submissionsCount: studentAnswers.length,
-        };
-      })
-    );
+    const questionsWithOptions = quizQuestions.map((question) => ({
+      ...question,
+      options: optionsByQuestionId[question.id] || [],
+    }));
 
     return NextResponse.json(questionsWithOptions);
   } catch (error) {
@@ -128,6 +127,24 @@ export async function POST(req: Request, { params }: RouteContext) {
     const { error, quiz } = await checkTeacherAndQuiz(quizId);
     if (error) return error;
     if (!quiz) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
+
+    const existingAttempts = await db
+      .select({ id: schema.quizAttempts.id })
+      .from(schema.quizAttempts)
+      .where(
+        and(
+          eq(schema.quizAttempts.quizId, quizId),
+          inArray(schema.quizAttempts.status, ['submitted', 'graded'])
+        )
+      )
+      .limit(1);
+
+    if (existingAttempts.length > 0) {
+      return NextResponse.json(
+        { success: false, message: "Cannot add new questions because one or more students have already submitted attempts for this quiz." },
+        { status: 403 }
+      );
+    }
 
     const rawBody = await req.json().catch(() => ({}));
     const parseResult = createQuestionSchema.safeParse(rawBody);

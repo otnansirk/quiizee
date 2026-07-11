@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
-import { eq, asc, inArray } from 'drizzle-orm';
+import { eq, asc, inArray, and } from 'drizzle-orm';
 import { z } from 'zod';
 
 const updateQuizSchema = z.object({
@@ -99,30 +99,41 @@ export async function GET(req: Request, { params }: RouteContext) {
       .where(eq(schema.questions.quizId, quizId))
       .orderBy(asc(schema.questions.order));
 
-    const questionsWithOptions = await Promise.all(
-      quizQuestions.map(async (question) => {
-        const options = await db
-          .select()
-          .from(schema.questionOptions)
-          .where(eq(schema.questionOptions.questionId, question.id))
-          .orderBy(asc(schema.questionOptions.order));
+    const quizSubmittedAttempts = await db
+      .select({ id: schema.quizAttempts.id })
+      .from(schema.quizAttempts)
+      .where(
+        and(
+          eq(schema.quizAttempts.quizId, quizId),
+          inArray(schema.quizAttempts.status, ['submitted', 'graded'])
+        )
+      );
 
-        const studentAnswers = await db
-          .select({ id: schema.studentAnswers.id })
-          .from(schema.studentAnswers)
-          .where(eq(schema.studentAnswers.questionId, question.id));
+    const questionIds = quizQuestions.map((q) => q.id);
+    const allOptions =
+      questionIds.length > 0
+        ? await db
+            .select()
+            .from(schema.questionOptions)
+            .where(inArray(schema.questionOptions.questionId, questionIds))
+            .orderBy(asc(schema.questionOptions.order))
+        : [];
 
-        return {
-          ...question,
-          options,
-          hasSubmissions: studentAnswers.length > 0,
-          submissionsCount: studentAnswers.length,
-        };
-      })
-    );
+    const optionsByQuestionId = allOptions.reduce((acc, opt) => {
+      if (!acc[opt.questionId]) acc[opt.questionId] = [];
+      acc[opt.questionId].push(opt);
+      return acc;
+    }, {} as Record<string, typeof allOptions>);
+
+    const questionsWithOptions = quizQuestions.map((question) => ({
+      ...question,
+      options: optionsByQuestionId[question.id] || [],
+    }));
 
     return NextResponse.json({
       ...quiz,
+      hasSubmissions: quizSubmittedAttempts.length > 0,
+      submissionsCount: quizSubmittedAttempts.length,
       questions: questionsWithOptions,
     });
   } catch (error) {
