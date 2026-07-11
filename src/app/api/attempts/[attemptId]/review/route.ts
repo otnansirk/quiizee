@@ -69,11 +69,26 @@ export async function GET(req: Request, { params }: RouteContext) {
       );
     }
 
-    const questions = await db
+    const quizQuestions = await db
       .select()
       .from(schema.questions)
       .where(eq(schema.questions.quizId, quiz.id))
       .orderBy(asc(schema.questions.order));
+
+    const questions = await Promise.all(
+      quizQuestions.map(async (question) => {
+        const options = await db
+          .select()
+          .from(schema.questionOptions)
+          .where(eq(schema.questionOptions.questionId, question.id))
+          .orderBy(asc(schema.questionOptions.order));
+
+        return {
+          ...question,
+          options,
+        };
+      })
+    );
 
     const studentAnswers = await db
       .select()

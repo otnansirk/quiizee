@@ -181,7 +181,12 @@ export async function POST(req: Request, { params }: RouteContext) {
           duration: duration !== undefined && duration !== null ? Number(duration) : null,
           points: points !== undefined && points !== null ? Number(points) : 1,
           order: Number(questionOrder),
-          correctAnswer: correctAnswer !== undefined && correctAnswer !== null ? String(correctAnswer) : null,
+          correctAnswer:
+            correctAnswer !== undefined && correctAnswer !== null
+              ? String(correctAnswer)
+              : type === 'multiple_choice' && Array.isArray(options)
+              ? String((options as OptionInput[]).find((o) => o.isCorrect)?.optionText || '').trim() || null
+              : null,
         })
         .returning();
 

@@ -172,15 +172,29 @@ export default function InteractiveGradingStudioPage() {
             const questionText = q.questionText || q.question_text || 'No question prompt';
             const questionImage = q.questionImage || q.question_image || null;
             const maxPoints = Number(q.points ?? q.maxScore ?? 1);
-            const correctAnswer = q.correctAnswer || q.correct_answer || null;
             const options = Array.isArray(q.options)
               ? q.options
               : Array.isArray(q.questionOptions)
               ? q.questionOptions
               : [];
 
-            const selectedOptionId = a?.selectedOptionId || a?.selected_option_id || null;
-            const answerText = a?.answerText || a?.answer_text || null;
+            const selectedOptionId =
+              a?.selectedOptionId || a?.selected_option_id || null;
+            const selectedOption = options.find(
+              (o: any) =>
+                String(o.id) === String(selectedOptionId) ||
+                String(o.id) === String(a?.selectedOptionId)
+            );
+            const answerText =
+              a?.answerText ||
+              a?.answer_text ||
+              (selectedOption ? selectedOption.optionText : null);
+
+            const correctOption = options.find((o: any) => o.isCorrect);
+            const correctAnswer =
+              q.correctAnswer ||
+              q.correct_answer ||
+              (correctOption ? correctOption.optionText : null);
             const isCorrect = a?.isCorrect !== undefined ? a.isCorrect : a?.is_correct !== undefined ? a.is_correct : null;
             const status = a?.status || 'answered';
 

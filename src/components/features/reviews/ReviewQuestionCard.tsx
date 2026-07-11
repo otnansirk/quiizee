@@ -221,7 +221,7 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
                   opt.id === item.correctAnswer;
                 const letter = String.fromCharCode(65 + idx);
 
-                let boxClass = "flex items-center justify-between p-4 rounded-md border border-border bg-[#141420]/40 transition-all";
+                let boxClass = "flex items-center justify-between p-4 rounded-md border border-border bg-gray-200 transition-all";
                 let badgeText = "";
                 let badgeClass = "";
 

@@ -134,7 +134,17 @@ export async function PUT(req: Request, { params }: RouteContext) {
       if (duration !== undefined) updateData.duration = duration !== null ? Number(duration) : null;
       if (points !== undefined) updateData.points = points !== null ? Number(points) : 1;
       if (order !== undefined) updateData.order = Number(order);
-      if (correctAnswer !== undefined) updateData.correctAnswer = correctAnswer !== null ? String(correctAnswer) : null;
+      if (correctAnswer !== undefined) {
+        updateData.correctAnswer = correctAnswer !== null ? String(correctAnswer) : null;
+      } else if (
+        (type !== undefined ? type : question.type) === 'multiple_choice' &&
+        Array.isArray(options)
+      ) {
+        const correctOptText = String(
+          (options as OptionInput[]).find((o) => o.isCorrect)?.optionText || ''
+        ).trim();
+        updateData.correctAnswer = correctOptText || null;
+      }
 
       await tx
         .update(schema.questions)

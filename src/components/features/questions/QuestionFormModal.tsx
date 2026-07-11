@@ -176,11 +176,15 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
       };
 
       if (formType === "multiple_choice") {
+        const correctOpt = formOptions.find((opt) => opt.isCorrect);
         payload.options = formOptions.map((opt, idx) => ({
           optionText: opt.optionText.trim(),
           isCorrect: opt.isCorrect,
           order: idx + 1,
         }));
+        payload.correctAnswer = correctOpt
+          ? correctOpt.optionText.trim()
+          : null;
       } else if (formType === "true_false") {
         payload.correctAnswer = formCorrectAnswer;
       }
