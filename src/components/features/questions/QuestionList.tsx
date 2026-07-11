@@ -25,46 +25,21 @@ export const QuestionList: React.FC<QuestionListProps> = ({
     <section>
       {questions.length === 0 ? (
         /* Empty State Card */
-        <div
-          className="card"
-          style={{
-            padding: "4.5rem 2rem",
-            textAlign: "center",
-            border: "2px dashed var(--border)",
-            background: "var(--bg-secondary)",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: 700,
-              color: "var(--text-primary)",
-              marginBottom: "0.5rem",
-            }}
-          >
+        <div className="card py-18 px-8 text-center border-2 border-dashed border-border bg-secondary rounded-2xl shadow-lg">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             No questions added yet
           </h2>
-          <p
-            style={{
-              color: "var(--text-secondary)",
-              maxWidth: "480px",
-              margin: "0 auto 2rem",
-              fontSize: "1rem",
-              lineHeight: 1.6,
-            }}
-          >
+          <p className="text-muted-foreground max-w-[480px] mx-auto mb-8 text-base leading-relaxed">
             Start building your interactive assessment by adding multiple
             choice, true/false, or essay questions.
           </p>
-          <button onClick={onAddFirst} className="btn btn-primary btn-lg">
+          <button onClick={onAddFirst} className="btn btn-primary btn-lg font-bold shadow-lg shadow-primary/30">
             Add Your First Question
           </button>
         </div>
       ) : (
         /* Populated Questions List */
-        <div
-          style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-        >
+        <div className="flex flex-col gap-6">
           {questions.map((q, idx) => (
             <QuestionCardItem
               key={q.id}

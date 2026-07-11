@@ -51,145 +51,64 @@ export const QuestionDeleteModal: React.FC<QuestionDeleteModalProps> = ({
 
   return (
     <ModalPortal isOpen={isOpen}>
-      <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(5, 5, 10, 0.8)",
-        backdropFilter: "blur(10px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1.5rem",
-        zIndex: 1050,
-      }}
-    >
-      <div
-        className="modal-content card"
-        style={{
-          width: "100%",
-          maxWidth: "420px",
-          padding: "1.5rem",
-          textAlign: "center",
-          background: "var(--bg-secondary)",
-          border: "1px solid rgba(239, 68, 68, 0.3)",
-          boxShadow:
-            "0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(239, 68, 68, 0.2)",
-        }}
-      >
-        <div
-          style={{
-            width: "44px",
-            height: "44px",
-            borderRadius: "12px",
-            background: "rgba(239, 68, 68, 0.15)",
-            color: "#ef4444",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "1rem",
-            fontWeight: 900,
-            margin: "0 auto 0.75rem",
-            border: "1px solid rgba(239, 68, 68, 0.3)",
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ display: "block" }}
-          >
-            <path d="M3 6h18" />
-            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-            <line x1="10" y1="11" x2="10" y2="17" />
-            <line x1="14" y1="11" x2="14" y2="17" />
-          </svg>
-        </div>
-        <h3
-          style={{
-            fontSize: "1.2rem",
-            fontWeight: 800,
-            marginBottom: "0.35rem",
-            color: "var(--text-primary)",
-          }}
-        >
-          Delete Question?
-        </h3>
-        <p
-          style={{
-            color: "var(--text-secondary)",
-            marginBottom: "1.25rem",
-            fontSize: "0.85rem",
-            lineHeight: 1.4,
-          }}
-        >
-          Are you sure you want to delete this question? This action cannot be
-          undone and will remove all associated student answers.
-        </p>
-        <div
-          style={{
-            padding: "0.85rem",
-            background: "rgba(0, 0, 0, 0.3)",
-            borderRadius: "var(--radius-md)",
-            marginBottom: "2rem",
-            textAlign: "left",
-            border: "1px solid var(--border)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: "0.8rem",
-              color: "var(--text-muted)",
-              marginBottom: "0.25rem",
-            }}
-          >
-            QUESTION PREVIEW
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-6 z-[1050]">
+        <div className="modal-content card animate-fade-in w-full max-w-[420px] p-6 text-center bg-secondary border border-error/30 shadow-2xl shadow-error/20">
+          <div className="w-11 h-11 rounded-xl bg-error/15 text-error flex items-center justify-center text-base font-black mx-auto mb-3 border border-error/30">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="block"
+            >
+              <path d="M3 6h18" />
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+              <line x1="10" y1="11" x2="10" y2="17" />
+              <line x1="14" y1="11" x2="14" y2="17" />
+            </svg>
           </div>
-          <div
-            style={{
-              fontWeight: 600,
-              color: "var(--text-primary)",
-              fontSize: "0.95rem",
-            }}
-          >
-            {questionToDelete.questionText.length > 80
-              ? questionToDelete.questionText.substring(0, 80) + "..."
-              : questionToDelete.questionText}
+          <h3 className="text-lg font-extrabold mb-1.5 text-foreground">
+            Delete Question?
+          </h3>
+          <p className="text-muted-foreground mb-5 text-sm leading-relaxed">
+            Are you sure you want to delete this question? This action cannot be
+            undone and will remove all associated student answers.
+          </p>
+          <div className="p-3.5 bg-black/30 rounded-xl mb-6 text-left border border-border">
+            <div className="text-xs text-muted-foreground font-semibold mb-1 uppercase tracking-wider">
+              QUESTION PREVIEW
+            </div>
+            <div className="font-semibold text-foreground text-sm leading-normal">
+              {questionToDelete.questionText.length > 80
+                ? questionToDelete.questionText.substring(0, 80) + "..."
+                : questionToDelete.questionText}
+            </div>
           </div>
-        </div>
 
-        <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
-          <button
-            onClick={onClose}
-            disabled={isDeleting}
-            className="btn btn-secondary"
-            style={{ flex: 1 }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleDeleteQuestion}
-            disabled={isDeleting}
-            className="btn"
-            style={{
-              flex: 1,
-              background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
-              color: "#ffffff",
-              boxShadow: "0 4px 15px rgba(239, 68, 68, 0.35)",
-            }}
-          >
-            {isDeleting ? "Deleting..." : "Delete"}
-          </button>
+          <div className="flex gap-4 justify-center">
+            <button
+              onClick={onClose}
+              disabled={isDeleting}
+              className="btn btn-secondary flex-1 py-2.5"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteQuestion}
+              disabled={isDeleting}
+              className="btn flex-1 py-2.5 bg-gradient-to-br from-error to-red-600 text-white shadow-md shadow-error/35 font-semibold"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
     </ModalPortal>
   );
 };

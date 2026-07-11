@@ -215,696 +215,377 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
 
   return (
     <ModalPortal isOpen={isOpen}>
-      <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(5, 5, 10, 0.8)",
-        backdropFilter: "blur(12px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1.5rem",
-        zIndex: 1000,
-      }}
-    >
-      <div
-        className="modal-content card"
-        style={{
-          width: "100%",
-          maxWidth: "760px",
-          maxHeight: "90vh",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          padding: 0,
-          background: "var(--bg-secondary)",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
-          boxShadow:
-            "0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(99, 102, 241, 0.2)",
-        }}
-      >
-        {/* Modal Header (Fixed at top) */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0.85rem 1.5rem",
-            borderBottom: "1px solid var(--border)",
-            background: "var(--bg-secondary)",
-            flexShrink: 0,
-          }}
-        >
-          <div>
-            <h2
-              style={{
-                fontSize: "1.15rem",
-                fontWeight: 800,
-                color: "var(--text-primary)",
-              }}
-            >
-              {questionToEdit
-                ? `Edit Question #${questionToEdit.order || ""}`
-                : "Add New Question"}
-            </h2>
-            <p
-              style={{
-                fontSize: "0.78rem",
-                color: "var(--text-secondary)",
-                marginTop: "0.15rem",
-              }}
-            >
-              Configure your question text, type, points, and grading rules.
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="btn btn-ghost btn-sm"
-            style={{ padding: "0.35rem 0.5rem", fontSize: "1.1rem", lineHeight: 1 }}
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Scrollable Modal Body */}
-        <div
-          className="custom-scrollbar"
-          style={{
-            overflowY: "auto",
-            flex: 1,
-            padding: "1.25rem 1.5rem 1.75rem 1.5rem",
-          }}
-        >
-          {/* Error Banner */}
-        {formError && (
-          <div
-            className="alert alert-error animate-fade-in"
-            style={{ marginBottom: "1.5rem" }}
-          >
-            <span>{formError}</span>
-          </div>
-        )}
-
-        {/* Modal Form */}
-        <form
-          onSubmit={handleSaveQuestion}
-          style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-        >
-          {/* 1. Question Type Selector */}
-          <div>
-            <label
-              className="label"
-              style={{ marginBottom: "0.75rem", display: "block" }}
-            >
-              QUESTION TYPE
-            </label>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "0.75rem",
-                padding: "0.4rem",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setFormType("multiple_choice")}
-                className="btn"
-                style={{
-                  padding: "0.65rem 1rem",
-                  fontSize: "0.9rem",
-                  background:
-                    formType === "multiple_choice"
-                      ? "var(--accent-gradient)"
-                      : "transparent",
-                  color:
-                    formType === "multiple_choice"
-                      ? "#ffffff"
-                      : "var(--text-secondary)",
-                  boxShadow:
-                    formType === "multiple_choice"
-                      ? "0 4px 15px rgba(99, 102, 241, 0.3)"
-                      : "none",
-                }}
-              >
-                Multiple Choice
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormType("true_false")}
-                className="btn"
-                style={{
-                  padding: "0.65rem 1rem",
-                  fontSize: "0.9rem",
-                  background:
-                    formType === "true_false"
-                      ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
-                      : "transparent",
-                  color:
-                    formType === "true_false"
-                      ? "#ffffff"
-                      : "var(--text-secondary)",
-                  boxShadow:
-                    formType === "true_false"
-                      ? "0 4px 15px rgba(16, 185, 129, 0.3)"
-                      : "none",
-                }}
-              >
-                True / False
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormType("essay")}
-                className="btn"
-                style={{
-                  padding: "0.65rem 1rem",
-                  fontSize: "0.9rem",
-                  background:
-                    formType === "essay"
-                      ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
-                      : "transparent",
-                  color:
-                    formType === "essay"
-                      ? "#ffffff"
-                      : "var(--text-secondary)",
-                  boxShadow:
-                    formType === "essay"
-                      ? "0 4px 15px rgba(245, 158, 11, 0.3)"
-                      : "none",
-                }}
-              >
-                Essay / Free Text
-              </button>
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-6 z-[1000]">
+        <div className="modal-content card w-full max-w-[760px] max-h-[90vh] flex flex-col overflow-hidden p-0 bg-secondary border border-white/10 shadow-2xl shadow-indigo-500/20">
+          {/* Modal Header (Fixed at top) */}
+          <div className="flex items-center justify-between px-6 py-3.5 border-b border-border bg-secondary flex-shrink-0">
+            <div>
+              <h2 className="text-lg font-extrabold text-foreground">
+                {questionToEdit
+                  ? `Edit Question #${questionToEdit.order || ""}`
+                  : "Add New Question"}
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Configure your question text, type, points, and grading rules.
+              </p>
             </div>
-          </div>
-
-          {/* 2. Question Text */}
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="label">
-              QUESTION TEXT <span style={{ color: "var(--error)" }}>*</span>
-            </label>
-            <textarea
-              required
-              value={formText}
-              onChange={(e) => setFormText(e.target.value)}
-              rows={3}
-              placeholder="Enter your question prompt here... e.g., What is the primary role of ribosomes in a cell?"
-              className="input custom-scrollbar"
-              style={{
-                resize: "vertical",
-                minHeight: "90px",
-                fontSize: "1rem",
-                lineHeight: 1.5,
-              }}
-            />
-          </div>
-
-          {/* 3. Question Image URL + Live Preview */}
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label
-              className="label"
-              style={{ display: "flex", justifyContent: "space-between" }}
+            <button
+              onClick={onClose}
+              className="btn btn-ghost btn-sm px-2 py-1 text-lg leading-none"
             >
-              <span>QUESTION IMAGE URL (OPTIONAL)</span>
-              <span style={{ fontWeight: 400, color: "var(--text-muted)" }}>
-                Supports PNG, JPG, GIF, SVG
-              </span>
-            </label>
-            <input
-              type="url"
-              value={formImage}
-              onChange={(e) => setFormImage(e.target.value)}
-              placeholder="https://example.com/illustration.png"
-              className="input"
-            />
-            {formImage.trim() && (
-              <div
-                style={{
-                  marginTop: "0.75rem",
-                  padding: "0.75rem",
-                  borderRadius: "var(--radius-md)",
-                  background: "rgba(0, 0, 0, 0.3)",
-                  border: "1px dashed var(--border)",
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "var(--text-muted)",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  IMAGE PREVIEW
-                </div>
-                <img
-                  src={formImage.trim()}
-                  alt="Preview"
-                  style={{
-                    maxHeight: "180px",
-                    maxWidth: "100%",
-                    objectFit: "contain",
-                    margin: "0 auto",
-                    borderRadius: "4px",
-                  }}
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = "none";
-                  }}
-                />
+              ✕
+            </button>
+          </div>
+
+          {/* Scrollable Modal Body */}
+          <div className="custom-scrollbar overflow-y-auto flex-1 p-5 px-6 pb-7">
+            {/* Error Banner */}
+            {formError && (
+              <div className="alert alert-error animate-fade-in mb-6">
+                <span>{formError}</span>
               </div>
             )}
-          </div>
 
-          {/* 4. Points & Duration Row */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "1rem",
-            }}
-          >
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="label">
-                POINTS <span style={{ color: "var(--error)" }}>*</span>
-              </label>
-              <input
-                type="number"
-                min={1}
-                required
-                value={formPoints}
-                onChange={(e) =>
-                  setFormPoints(Math.max(1, parseInt(e.target.value) || 1))
-                }
-                className="input"
-              />
-              <span
-                style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}
-              >
-                Score value for this question
-              </span>
-            </div>
-
-            {durationMode === "per_question" ? (
-              <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="label">
-                  DURATION (SECONDS) <span style={{ color: "var(--error)" }}>*</span>
-                </label>
-                <input
-                  type="number"
-                  min={5}
-                  required
-                  value={formDuration}
-                  onChange={(e) =>
-                    setFormDuration(Math.max(5, parseInt(e.target.value) || 5))
-                  }
-                  className="input"
-                />
-                <span
-                  style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}
-                >
-                  Per-question timer limit
-                </span>
-              </div>
-            ) : (
-              <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="label" style={{ color: "var(--text-muted)" }}>
-                  DURATION (SECONDS)
-                </label>
-                <input
-                  type="text"
-                  disabled
-                  value="Global Timer Mode Active"
-                  className="input"
-                  style={{
-                    fontStyle: "italic",
-                    background: "rgba(255, 255, 255, 0.02)",
-                  }}
-                />
-                <span
-                  style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}
-                >
-                  Controlled by quiz global duration
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* ==================================================================
-             TYPE-SPECIFIC ANSWER INPUTS
-             ================================================================== */}
-          <div
-            style={{
-              marginTop: "0.5rem",
-              padding: "1.5rem",
-              borderRadius: "var(--radius-lg)",
-              background: "rgb(10 10 15 / 6%)",
-              border: "1px solid #b5b5b5",
-            }}
-          >
-            {/* A. MULTIPLE CHOICE BUILDER */}
-            {formType === "multiple_choice" && (
+            {/* Modal Form */}
+            <form onSubmit={handleSaveQuestion} className="flex flex-col gap-6">
+              {/* 1. Question Type Selector */}
               <div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <label className="label" style={{ marginBottom: 0 }}>
-                    ANSWER OPTIONS <span style={{ color: "var(--error)" }}>*</span>
-                  </label>
-                  <span
-                    style={{
-                      fontSize: "0.8rem",
-                      color: "var(--text-secondary)",
-                    }}
+                <label className="label mb-3 block">
+                  QUESTION TYPE
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setFormType("multiple_choice")}
+                    className={`btn py-2.5 px-4 text-sm font-semibold transition-all ${
+                      formType === "multiple_choice"
+                        ? "bg-primary text-white shadow-md shadow-primary/30"
+                        : "bg-transparent text-muted-foreground hover:text-foreground"
+                    }`}
                   >
-                    Select the correct option(s) using the checkmark
+                    Multiple Choice
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormType("true_false")}
+                    className={`btn py-2.5 px-4 text-sm font-semibold transition-all ${
+                      formType === "true_false"
+                        ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30"
+                        : "bg-transparent text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    True / False
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormType("essay")}
+                    className={`btn py-2.5 px-4 text-sm font-semibold transition-all ${
+                      formType === "essay"
+                        ? "bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/30"
+                        : "bg-transparent text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Essay / Free Text
+                  </button>
+                </div>
+              </div>
+
+              {/* 2. Question Text */}
+              <div className="form-group mb-0">
+                <label className="label">
+                  QUESTION TEXT <span className="text-error">*</span>
+                </label>
+                <textarea
+                  required
+                  value={formText}
+                  onChange={(e) => setFormText(e.target.value)}
+                  rows={3}
+                  placeholder="Enter your question prompt here... e.g., What is the primary role of ribosomes in a cell?"
+                  className="input custom-scrollbar min-h-[90px] text-base leading-relaxed resize-y"
+                />
+              </div>
+
+              {/* 3. Question Image URL + Live Preview */}
+              <div className="form-group mb-0">
+                <label className="label flex justify-between">
+                  <span>QUESTION IMAGE URL (OPTIONAL)</span>
+                  <span className="font-normal text-muted-foreground">
+                    Supports PNG, JPG, GIF, SVG
+                  </span>
+                </label>
+                <input
+                  type="url"
+                  value={formImage}
+                  onChange={(e) => setFormImage(e.target.value)}
+                  placeholder="https://example.com/illustration.png"
+                  className="input"
+                />
+                {formImage.trim() && (
+                  <div className="mt-3 p-3 rounded-xl bg-black/30 border border-dashed border-border text-center">
+                    <div className="text-xs text-muted-foreground font-semibold mb-2">
+                      IMAGE PREVIEW
+                    </div>
+                    <img
+                      src={formImage.trim()}
+                      alt="Preview"
+                      className="max-h-[180px] max-w-full object-contain mx-auto rounded"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* 4. Points & Duration Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="form-group mb-0">
+                  <label className="label">
+                    POINTS <span className="text-error">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    required
+                    value={formPoints}
+                    onChange={(e) =>
+                      setFormPoints(Math.max(1, parseInt(e.target.value) || 1))
+                    }
+                    className="input"
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    Score value for this question
                   </span>
                 </div>
 
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.75rem",
-                  }}
-                >
-                  {formOptions.map((opt, optIdx) => {
-                    const letter = String.fromCharCode(65 + optIdx);
-                    return (
-                      <div
-                        key={optIdx}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.75rem",
-                          padding: "0.65rem 0.85rem",
-                          borderRadius: "var(--radius-md)",
-                          background: opt.isCorrect
-                            ? "rgba(34, 197, 94, 0.1)"
-                            : "rgba(255, 255, 255, 0.02)",
-                          border: `1px solid ${
-                            opt.isCorrect
-                              ? "rgba(34, 197, 94, 0.4)"
-                              : "rgba(255, 255, 255, 0.08)"
-                          }`,
-                          transition: "all 0.2s ease",
-                        }}
-                      >
-                        {/* Letter Indicator */}
-                        <span
-                          style={{
-                            width: "32px",
-                            height: "32px",
-                            borderRadius: "8px",
-                            background: opt.isCorrect
-                              ? "rgba(34, 197, 94, 0.25)"
-                              : "rgba(255, 255, 255, 0.08)",
-                            color: opt.isCorrect
-                              ? "#1c9749"
-                              : "var(--text-primary)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontWeight: 800,
-                            fontSize: "0.9rem",
-                            flexShrink: 0,
-                          }}
-                        >
-                          {letter}
-                        </span>
+                {durationMode === "per_question" ? (
+                  <div className="form-group mb-0">
+                    <label className="label">
+                      DURATION (SECONDS) <span className="text-error">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      min={5}
+                      required
+                      value={formDuration}
+                      onChange={(e) =>
+                        setFormDuration(Math.max(5, parseInt(e.target.value) || 5))
+                      }
+                      className="input"
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      Per-question timer limit
+                    </span>
+                  </div>
+                ) : (
+                  <div className="form-group mb-0">
+                    <label className="label text-muted-foreground">
+                      DURATION (SECONDS)
+                    </label>
+                    <input
+                      type="text"
+                      disabled
+                      value="Global Timer Mode Active"
+                      className="input italic bg-white/5"
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      Controlled by quiz global duration
+                    </span>
+                  </div>
+                )}
+              </div>
 
-                        {/* Option Text Input */}
-                        <input
-                          type="text"
-                          required
-                          value={opt.optionText}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setFormOptions((prev) =>
-                              prev.map((item, idx) =>
-                                idx === optIdx
-                                  ? { ...item, optionText: val }
-                                  : item
-                              )
-                            );
-                          }}
-                          placeholder={`Option ${letter} text...`}
-                          className="input"
-                          style={{
-                            flex: 1,
-                            background: "transparent",
-                            border: "none",
-                            padding: "0.5rem",
-                          }}
-                        />
+              {/* ==================================================================
+                 TYPE-SPECIFIC ANSWER INPUTS
+                 ================================================================== */}
+              <div className="mt-2 p-6 card">
+                {/* A. MULTIPLE CHOICE BUILDER */}
+                {formType === "multiple_choice" && (
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <label className="label mb-0">
+                        ANSWER OPTIONS <span className="text-error">*</span>
+                      </label>
+                      <span className="text-xs text-muted-foreground">
+                        Select the correct option(s) using the checkmark
+                      </span>
+                    </div>
 
-                        {/* Correctness Selector Button */}
-                        <button
-                          type="button"
-                          onClick={() => toggleOptionCorrectness(optIdx)}
-                          className="btn btn-sm"
-                          title="Toggle correct option"
-                          style={{
-                            padding: "0.45rem 0.85rem",
-                            borderRadius: "var(--radius-full)",
-                            background: opt.isCorrect
-                              ? "rgba(34, 197, 94, 0.25)"
-                              : "rgba(255, 255, 255, 0.06)",
-                            color: opt.isCorrect
-                              ? "#1c9749"
-                              : "var(--text-secondary)",
-                            border: `1px solid ${
+                    <div className="flex flex-col gap-3">
+                      {formOptions.map((opt, optIdx) => {
+                        const letter = String.fromCharCode(65 + optIdx);
+                        return (
+                          <div
+                            key={optIdx}
+                            className={`flex items-center gap-3 p-2.5 px-3.5 rounded-xl transition-all border ${
                               opt.isCorrect
-                                ? "rgba(34, 197, 94, 0.5)"
-                                : "rgba(255, 255, 255, 0.12)"
-                            }`,
-                            fontWeight: 700,
-                            flexShrink: 0,
-                          }}
-                        >
-                          {opt.isCorrect ? "Correct" : "Mark Correct"}
-                        </button>
+                                ? "bg-emerald-500/15 border-emerald-500/40"
+                                : "bg-white/5 border-white/10"
+                            }`}
+                          >
+                            {/* Letter Indicator */}
+                            <span
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center font-extrabold text-sm flex-shrink-0 ${
+                                opt.isCorrect
+                                  ? "bg-emerald-500/25 text-success"
+                                  : "bg-white/10 text-foreground"
+                              }`}
+                            >
+                              {letter}
+                            </span>
 
-                        {/* Remove Option Button */}
-                        <button
-                          type="button"
-                          onClick={() => removeOption(optIdx)}
-                          disabled={formOptions.length <= 2}
-                          className="btn btn-ghost btn-sm"
-                          title="Remove option"
-                          style={{
-                            padding: "0.45rem 0.65rem",
-                            color: "#e12727",
-                            opacity: formOptions.length <= 2 ? 0.3 : 1,
-                            cursor:
-                              formOptions.length <= 2
-                                ? "not-allowed"
-                                : "pointer",
-                            flexShrink: 0,
-                          }}
-                        >
-                          X
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
+                            {/* Option Text Input */}
+                            <input
+                              type="text"
+                              required
+                              value={opt.optionText}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setFormOptions((prev) =>
+                                  prev.map((item, idx) =>
+                                    idx === optIdx
+                                      ? { ...item, optionText: val }
+                                      : item
+                                  )
+                                );
+                              }}
+                              placeholder={`Option ${letter} text...`}
+                              className="input flex-1 bg-transparent border-none p-2"
+                            />
 
-                {/* Add Option CTA */}
+                            {/* Correctness Selector Button */}
+                            <button
+                              type="button"
+                              onClick={() => toggleOptionCorrectness(optIdx)}
+                              className={`btn px-3.5 py-2 rounded-full text-xs font-bold flex-shrink-0 border ${
+                                opt.isCorrect
+                                  ? "btn-success"
+                                  : "btn-secondary"
+                              }`}
+                              title="Toggle correct option"
+                            >
+                              {opt.isCorrect ? "Correct" : "Mark Correct"}
+                            </button>
+
+                            {/* Remove Option Button */}
+                            <button
+                              type="button"
+                              onClick={() => removeOption(optIdx)}
+                              disabled={formOptions.length <= 2}
+                              className={`btn btn-danger btn-sm px-2.5 py-2 text-error font-bold ${
+                                formOptions.length <= 2
+                                  ? "opacity-30 cursor-not-allowed"
+                                  : "cursor-pointer"
+                              }`}
+                              title="Remove option"
+                            >
+                              X
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Add Option CTA */}
+                    <button
+                      type="button"
+                      onClick={addOption}
+                      className="btn btn-secondary btn-sm mt-4 w-full border border-dashed border-white/20 p-3 text-accent hover:text-primary font-semibold"
+                    >
+                      Add Another Option
+                    </button>
+                  </div>
+                )}
+
+                {/* B. TRUE / FALSE BUILDER */}
+                {formType === "true_false" && (
+                  <div>
+                    <label className="label mb-4 block">
+                      SELECT CORRECT ANSWER <span className="text-error">*</span>
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setFormCorrectAnswer("true")}
+                        className={`card card-hover p-6 text-center transition-all border-2 ${
+                          formCorrectAnswer === "true"
+                            ? "bg-emerald-500/20 border-emerald-500/60 shadow-lg shadow-emerald-500/20"
+                            : "bg-white/5 border-white/10"
+                        }`}
+                      >
+                        <div
+                          className={`text-lg font-extrabold ${
+                            formCorrectAnswer === "true"
+                              ? "text-emerald-400"
+                              : "text-foreground"
+                          }`}
+                        >
+                          True is Correct {formCorrectAnswer === "true" && "(Selected)"}
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setFormCorrectAnswer("false")}
+                        className={`card card-hover p-6 text-center transition-all border-2 ${
+                          formCorrectAnswer === "false"
+                            ? "bg-emerald-500/20 border-emerald-500/60 shadow-lg shadow-emerald-500/20"
+                            : "bg-white/5 border-white/10"
+                        }`}
+                      >
+                        <div
+                          className={`text-lg font-extrabold ${
+                            formCorrectAnswer === "false"
+                              ? "text-emerald-400"
+                              : "text-foreground"
+                          }`}
+                        >
+                          False is Correct {formCorrectAnswer === "false" && "(Selected)"}
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* C. ESSAY BUILDER */}
+                {formType === "essay" && (
+                  <div className="p-6 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center gap-4 text-amber-300">
+                    <div>
+                      <h4 className="text-base font-bold mb-1 text-yellow-600">
+                        Manual Review Required
+                      </h4>
+                      <p className="text-sm leading-relaxed text-yellow-600 font-medium">
+                        Essay answers are not auto-graded. You will review and grade
+                        student responses manually after quiz completion in the
+                        grading dashboard.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer Actions */}
+              <div className="flex items-center justify-end gap-4 mt-2 pt-4 border-t border-border">
                 <button
                   type="button"
-                  onClick={addOption}
-                  className="btn btn-ghost btn-sm"
-                  style={{
-                    marginTop: "1rem",
-                    width: "100%",
-                    border: "1px dashed rgba(255, 255, 255, 0.2)",
-                    padding: "0.75rem",
-                    color: "var(--accent-hover)",
-                  }}
+                  onClick={onClose}
+                  disabled={isSaving}
+                  className="btn btn-secondary py-3 px-6 font-semibold"
                 >
-                  Add Another Option
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="btn btn-primary py-3 px-8 text-base font-bold shadow-lg shadow-primary/30"
+                >
+                  {isSaving ? "Saving..." : "Save Question"}
                 </button>
               </div>
-            )}
-
-            {/* B. TRUE / FALSE BUILDER */}
-            {formType === "true_false" && (
-              <div>
-                <label
-                  className="label"
-                  style={{ marginBottom: "1rem", display: "block" }}
-                >
-                  SELECT CORRECT ANSWER{" "}
-                  <span style={{ color: "var(--error)" }}>*</span>
-                </label>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "1rem",
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setFormCorrectAnswer("true")}
-                    className="card card-hover"
-                    style={{
-                      padding: "1.5rem",
-                      textAlign: "center",
-                      background:
-                        formCorrectAnswer === "true"
-                          ? "rgba(16, 185, 129, 0.18)"
-                          : "rgba(255, 255, 255, 0.03)",
-                      border: `2px solid ${
-                        formCorrectAnswer === "true"
-                          ? "rgba(16, 185, 129, 0.6)"
-                          : "rgba(255, 255, 255, 0.08)"
-                      }`,
-                      cursor: "pointer",
-                      boxShadow:
-                        formCorrectAnswer === "true"
-                          ? "0 0 25px rgba(16, 185, 129, 0.2)"
-                          : "none",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "1.2rem",
-                        fontWeight: 800,
-                        color:
-                          formCorrectAnswer === "true"
-                            ? "#34d399"
-                            : "var(--text-primary)",
-                      }}
-                    >
-                      True is Correct{" "}
-                      {formCorrectAnswer === "true" && "(Selected)"}
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setFormCorrectAnswer("false")}
-                    className="card card-hover"
-                    style={{
-                      padding: "1.5rem",
-                      textAlign: "center",
-                      background:
-                        formCorrectAnswer === "false"
-                          ? "rgba(16, 185, 129, 0.18)"
-                          : "rgba(255, 255, 255, 0.03)",
-                      border: `2px solid ${
-                        formCorrectAnswer === "false"
-                          ? "rgba(16, 185, 129, 0.6)"
-                          : "rgba(255, 255, 255, 0.08)"
-                      }`,
-                      cursor: "pointer",
-                      boxShadow:
-                        formCorrectAnswer === "false"
-                          ? "0 0 25px rgba(16, 185, 129, 0.2)"
-                          : "none",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "1.2rem",
-                        fontWeight: 800,
-                        color:
-                          formCorrectAnswer === "false"
-                            ? "#34d399"
-                            : "var(--text-primary)",
-                      }}
-                    >
-                      False is Correct{" "}
-                      {formCorrectAnswer === "false" && "(Selected)"}
-                    </div>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* C. ESSAY BUILDER */}
-            {formType === "essay" && (
-              <div
-                style={{
-                  padding: "1.5rem",
-                  borderRadius: "var(--radius-md)",
-                  background: "rgba(245, 158, 11, 0.12)",
-                  border: "1px solid rgba(245, 158, 11, 0.3)",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "1rem",
-                  color: "#fbbf24",
-                }}
-              >
-                <div>
-                  <h4
-                    style={{
-                      fontSize: "1.05rem",
-                      fontWeight: 700,
-                      marginBottom: "0.25rem",
-                      color: "#928313",
-                    }}
-                  >
-                    Manual Review Required
-                  </h4>
-                  <p
-                    style={{
-                      fontSize: "0.9rem",
-                      lineHeight: 1.5,
-                      color: "#928313",
-                      opacity: 0.9,
-                    }}
-                  >
-                    Essay answers are not auto-graded. You will review and grade
-                    student responses manually after quiz completion in the
-                    grading dashboard.
-                  </p>
-                </div>
-              </div>
-            )}
+            </form>
           </div>
-
-          {/* Modal Footer Actions */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              gap: "1rem",
-              marginTop: "0.5rem",
-              paddingTop: "1rem",
-              borderTop: "1px solid var(--border)",
-            }}
-          >
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isSaving}
-              className="btn btn-secondary"
-              style={{ padding: "0.75rem 1.5rem" }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="btn btn-primary"
-              style={{ padding: "0.75rem 2rem", fontSize: "1rem" }}
-            >
-              {isSaving ? "Saving..." : "Save Question"}
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
-    </div>
     </ModalPortal>
   );
 };
