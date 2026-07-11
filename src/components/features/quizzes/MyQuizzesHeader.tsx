@@ -19,26 +19,19 @@ export const MyQuizzesHeader: React.FC<MyQuizzesHeaderProps> = ({
   return (
     <>
       {/* Page Header */}
-      <div
-        className="flex justify-between items-center mb-6"
-        style={{ flexWrap: "wrap", gap: "1rem" }}
-      >
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
         <div>
-          <h1
-            className="title"
-            style={{ fontSize: "2.5rem", marginBottom: "0.25rem" }}
-          >
+          <h1 className="title text-4xl font-extrabold mb-1 text-foreground">
             My Quizzes
           </h1>
-          <p className="subtitle" style={{ margin: 0, maxWidth: "100%" }}>
+          <p className="subtitle m-0 max-w-full text-muted-foreground">
             Create, manage, and publish your assessments
           </p>
         </div>
 
         <Link
           href="/teacher/quizzes/new"
-          className="btn btn-primary btn-lg"
-          style={{ boxShadow: "0 0 20px rgba(99, 102, 241, 0.4)" }}
+          className="btn btn-primary btn-lg shadow-lg shadow-indigo-500/40 font-black"
         >
           Create New Quiz
         </Link>
@@ -46,24 +39,16 @@ export const MyQuizzesHeader: React.FC<MyQuizzesHeaderProps> = ({
 
       {/* Alert Messages */}
       {publishError && (
-        <div
-          className="alert alert-error animate-fade-in"
-          style={{ marginBottom: "1.5rem", alignItems: "flex-start" }}
-        >
-          <div style={{ flex: 1 }}>
-            <strong style={{ display: "block", marginBottom: "0.25rem" }}>
+        <div className="alert alert-error animate-fade-in mb-6 items-start flex justify-between">
+          <div className="flex-1">
+            <strong className="block mb-1 font-bold">
               Action Required
             </strong>
             <span>{publishError}</span>
           </div>
           <button
             onClick={onClearError}
-            className="btn btn-ghost btn-sm"
-            style={{
-              padding: "0.2rem 0.5rem",
-              minWidth: "auto",
-              color: "#fca5a5",
-            }}
+            className="btn btn-ghost btn-sm p-1 min-w-0 text-red-300 font-extrabold"
           >
             X
           </button>
@@ -71,19 +56,11 @@ export const MyQuizzesHeader: React.FC<MyQuizzesHeaderProps> = ({
       )}
 
       {successMsg && (
-        <div
-          className="alert alert-success animate-fade-in"
-          style={{ marginBottom: "1.5rem" }}
-        >
-          <span style={{ flex: 1 }}>{successMsg}</span>
+        <div className="alert alert-success animate-fade-in mb-6 flex items-center justify-between">
+          <span className="flex-1 font-semibold">{successMsg}</span>
           <button
             onClick={onClearSuccess}
-            className="btn btn-ghost btn-sm"
-            style={{
-              padding: "0.2rem 0.5rem",
-              minWidth: "auto",
-              color: "#43c372",
-            }}
+            className="btn btn-ghost btn-sm p-1 min-w-0 text-emerald-400 font-extrabold"
           >
             X
           </button>

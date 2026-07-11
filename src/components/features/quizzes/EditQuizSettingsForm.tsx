@@ -55,11 +55,8 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
   onSubmit,
 }) => {
   return (
-    <form onSubmit={onSubmit} className="card" style={{ padding: "2.5rem" }}>
-      <div
-        className="card-header flex justify-between items-center"
-        style={{ flexWrap: "wrap", gap: "0.5rem" }}
-      >
+    <form onSubmit={onSubmit} className="card p-6 sm:p-10">
+      <div className="card-header flex justify-between items-center flex-wrap gap-2">
         <div>
           <h2 className="card-title">General Information</h2>
           <p className="card-description">
@@ -67,25 +64,11 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
           </p>
         </div>
         {accessCode && (
-          <div
-            style={{
-              background: "rgba(10, 10, 15, 0.8)",
-              padding: "0.5rem 1rem",
-              borderRadius: "var(--radius-md)",
-              border: "1px solid var(--border)",
-              fontSize: "0.85rem",
-            }}
-          >
-            <span style={{ color: "#FFFFF5", marginRight: "0.5rem" }}>
+          <div className="bg-[#0a0a0f]/80 px-4 py-2 rounded-md border border-border text-sm">
+            <span className="text-[#FFFFF5] mr-2">
               Code:
             </span>
-            <strong
-              style={{
-                fontFamily: "monospace",
-                color: "#FFFFFF",
-                letterSpacing: "0.1em",
-              }}
-            >
+            <strong className="font-mono text-white tracking-widest">
               {accessCode}
             </strong>
           </div>
@@ -95,7 +78,7 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
       {/* Title Input */}
       <div className="form-group">
         <label className="label" htmlFor="title">
-          Quiz Title <span style={{ color: "var(--error)" }}>*</span>
+          Quiz Title <span className="text-error">*</span>
         </label>
         <input
           id="title"
@@ -110,35 +93,31 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
       </div>
 
       {/* Description Input */}
-      <div className="form-group" style={{ marginBottom: "2.5rem" }}>
+      <div className="form-group mb-10">
         <label className="label" htmlFor="description">
           Description / Instructions
         </label>
         <textarea
           id="description"
-          className="input"
+          className="input resize-y"
           rows={4}
           placeholder="Explain what this assessment covers, rules against cheating, or any preparatory materials..."
           value={description}
           onChange={(e) => onDescriptionChange(e.target.value)}
           disabled={isSubmitting}
-          style={{ resize: "vertical" }}
         />
       </div>
 
       {/* Access Mode Section */}
-      <div style={{ marginBottom: "2.5rem" }}>
-        <h3
-          className="card-title"
-          style={{ fontSize: "1.2rem", marginBottom: "0.35rem" }}
-        >
+      <div className="mb-10">
+        <h3 className="card-title text-xl mb-1.5">
           Security & Access Mode
         </h3>
-        <p className="card-description" style={{ marginBottom: "1rem" }}>
+        <p className="card-description mb-4">
           How students will access this assessment.
         </p>
 
-        <div className="choice-card selected" style={{ cursor: "default" }}>
+        <div className="choice-card selected cursor-default">
           <div className="choice-card-title">Public Access Code Only</div>
           <div className="choice-card-desc">
             Students access this assessment by entering the unique access code
@@ -149,14 +128,11 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
       </div>
 
       {/* Duration Mode Section */}
-      <div style={{ marginBottom: "2.5rem" }}>
-        <h3
-          className="card-title"
-          style={{ fontSize: "1.2rem", marginBottom: "0.35rem" }}
-        >
+      <div className="mb-10">
+        <h3 className="card-title text-xl mb-1.5">
           Timer & Duration Mode
         </h3>
-        <p className="card-description" style={{ marginBottom: "1rem" }}>
+        <p className="card-description mb-4">
           Choose how time limits are enforced during the assessment.
         </p>
 
@@ -191,13 +167,10 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
 
         {/* Conditional Input: Global Duration */}
         {durationMode === "global" && (
-          <div
-            className="form-group animate-fade-in"
-            style={{ marginTop: "1.25rem", maxWidth: "300px" }}
-          >
+          <div className="form-group animate-fade-in mt-5 max-w-[300px]">
             <label className="label" htmlFor="globalDuration">
               Global Duration (minutes){" "}
-              <span style={{ color: "var(--error)" }}>*</span>
+              <span className="text-error">*</span>
             </label>
             <input
               id="globalDuration"
@@ -211,7 +184,7 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
               disabled={isSubmitting}
               placeholder="30"
             />
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+            <span className="text-xs text-muted-foreground">
               Will be converted to{" "}
               {Math.round(Number(globalDurationMinutes || 0) * 60)} seconds upon
               saving.
@@ -221,13 +194,10 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
       </div>
 
       {/* Max Attempts Section */}
-      <div
-        className="form-group"
-        style={{ marginBottom: "2.5rem", maxWidth: "300px" }}
-      >
+      <div className="form-group mb-10 max-w-[300px]">
         <label className="label" htmlFor="maxAttempts">
           Maximum Attempts Allowed{" "}
-          <span style={{ color: "var(--error)" }}>*</span>
+          <span className="text-error">*</span>
         </label>
         <input
           id="maxAttempts"
@@ -240,20 +210,17 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
           required
           disabled={isSubmitting}
         />
-        <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+        <span className="text-xs text-muted-foreground">
           Number of times a student is allowed to retake this assessment.
         </span>
       </div>
 
       {/* Certificate Settings Section */}
-      <div style={{ marginBottom: "2.5rem" }}>
-        <h3
-          className="card-title"
-          style={{ fontSize: "1.2rem", marginBottom: "0.35rem" }}
-        >
+      <div className="mb-10">
+        <h3 className="card-title text-xl mb-1.5">
           Certificate Settings
         </h3>
-        <p className="card-description" style={{ marginBottom: "1rem" }}>
+        <p className="card-description mb-4">
           Automatically award downloadable completion certificates to passing
           students.
         </p>
@@ -267,18 +234,10 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
           }
         >
           <div>
-            <div
-              style={{
-                fontWeight: 700,
-                color: "var(--text-primary)",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-            >
+            <div className="font-bold text-foreground flex items-center gap-2">
               Enable Certificate for this Quiz
             </div>
-            <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+            <div className="text-sm text-muted-foreground">
               Students who score above the minimum passing threshold will receive
               an official certificate of achievement.
             </div>
@@ -297,23 +256,11 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
 
         {/* Conditional Inputs when Certificate is Enabled */}
         {certificateEnabled && (
-          <div
-            className="animate-fade-in"
-            style={{
-              marginTop: "1.25rem",
-              padding: "1.25rem",
-              background: "rgba(255, 255, 255, 0.02)",
-              borderRadius: "8px",
-              border: "1px solid var(--border)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "1.25rem",
-            }}
-          >
-            <div className="form-group" style={{ maxWidth: "300px" }}>
+          <div className="animate-fade-in mt-5 p-5 bg-white/[0.02] rounded-lg border border-border flex flex-col gap-5">
+            <div className="form-group max-w-[300px]">
               <label className="label" htmlFor="certificateMinScore">
                 Minimum Passing Score (%){" "}
-                <span style={{ color: "var(--error)" }}>*</span>
+                <span className="text-error">*</span>
               </label>
               <input
                 id="certificateMinScore"
@@ -327,7 +274,7 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
                 disabled={isSubmitting}
                 placeholder="70"
               />
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+              <span className="text-xs text-muted-foreground">
                 Percentage score required to unlock the certificate (e.g. 70 for 70%).
               </span>
             </div>
@@ -345,7 +292,7 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
                 disabled={isSubmitting}
                 placeholder="e.g., Dr. Jane Smith"
               />
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+              <span className="text-xs text-muted-foreground">
                 Name displayed on the signature line of the completion certificate.
               </span>
             </div>
@@ -363,7 +310,7 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
                 disabled={isSubmitting}
                 placeholder="e.g., Lead Instructor & Course Director"
               />
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+              <span className="text-xs text-muted-foreground">
                 Title displayed right underneath the signer&apos;s name.
               </span>
             </div>
@@ -381,7 +328,7 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
                 disabled={isSubmitting}
                 placeholder="e.g., https://example.com/signature.png"
               />
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+              <span className="text-xs text-muted-foreground">
                 Direct URL to a PNG or JPG image of the instructor&apos;s signature (transparent background recommended).
               </span>
             </div>
@@ -390,24 +337,15 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
       </div>
 
       {/* Action Buttons Footer */}
-      <div
-        className="flex justify-between items-center"
-        style={{
-          paddingTop: "1.5rem",
-          borderTop: "1px solid var(--border)",
-          flexWrap: "wrap",
-          gap: "1rem",
-        }}
-      >
+      <div className="flex justify-between items-center pt-6 border-t border-border flex-wrap gap-4">
         <Link href="/teacher/quizzes" className="btn btn-secondary">
           Cancel
         </Link>
 
         <button
           type="submit"
-          className="btn btn-primary btn-lg"
+          className="btn btn-primary btn-lg shadow-lg shadow-indigo-500/40 font-black"
           disabled={isSubmitting}
-          style={{ boxShadow: "0 0 25px rgba(99, 102, 241, 0.4)" }}
         >
           {isSubmitting ? "Saving Changes..." : "Save Changes"}
         </button>
