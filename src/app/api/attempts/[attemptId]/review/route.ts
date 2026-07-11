@@ -106,7 +106,6 @@ export async function GET(req: Request, { params }: RouteContext) {
 
     let studentName = 'Unknown Student';
     let studentEmail = 'unknown@example.com';
-
     if (attempt.userId) {
       const [user] = await db
         .select({ name: schema.users.name, email: schema.users.email })

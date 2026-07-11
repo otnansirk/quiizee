@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ReviewAttemptHeader } from '@/components/features/reviews/ReviewAttemptHeader';
 import { ReviewQuestionCard } from '@/components/features/reviews/ReviewQuestionCard';
 import { ScoreFinalizeConfirmModal } from '@/components/features/reviews/ScoreFinalizeConfirmModal';
+import { log } from 'console';
 
 interface ReviewOption {
   id: string;
@@ -23,13 +24,13 @@ interface NormalizedItem {
   maxPoints: number;
   correctAnswer: string | null;
   options: ReviewOption[];
-  
+
   // Student response
   selectedOptionId: string | null;
   answerText: string | null;
   isCorrect: boolean | null;
   status: string;
-  
+
   // Grading state
   currentScore: number;
   feedback: string;
@@ -95,11 +96,11 @@ export default function InteractiveGradingStudioPage() {
     status: 'in_progress',
   });
   const [quizInfo, setQuizInfo] = useState<{ id?: string; title: string; description?: string }>({
-    title: 'Assessment Review',
+    title: '...',
   });
   const [studentInfo, setStudentInfo] = useState<{ name: string; email: string }>({
-    name: 'Student Name',
-    email: 'student@minilms.edu',
+    name: '... ... ...',
+    email: '... ... ...',
   });
 
   // Local form state for essay questions: questionId -> form state
@@ -122,11 +123,10 @@ export default function InteractiveGradingStudioPage() {
         const res = await fetch(`/api/attempts/${attemptId}/review`);
         if (res.ok) {
           const data = (await res.json()) as any;
-
+          console.log(JSON.stringify(data.attempt), "asdsdsa")
           // Extract basic info
-          const att = data.attempt || data.data?.attempt || {};
-          const qz = data.quiz || data.data?.quiz || {};
-          const st = data.student || data.user || data.data?.student || data.data?.user || {};
+          const att = data.attempt|| {};
+          const qz = data.quiz || {};
 
           setAttemptInfo({
             id: att.id || attemptId,
@@ -143,34 +143,27 @@ export default function InteractiveGradingStudioPage() {
           });
 
           setStudentInfo({
-            name: st.name || att.studentName || 'Student Response',
-            email: st.email || att.studentEmail || 'No email provided',
+            name: data.studentName || 'Student Response',
+            email: data.studentEmail || 'No email provided',
           });
 
           // Normalize questions and answers
           const rawQuestions = Array.isArray(data.questions)
             ? data.questions
-            : Array.isArray(data.data?.questions)
-            ? data.data.questions
-            : Array.isArray(data.items)
-            ? data.items
             : [];
-          const rawAnswers = Array.isArray(data.answers)
-            ? data.answers
-            : Array.isArray(data.studentAnswers)
+          const rawAnswers = Array.isArray(data.studentAnswers)
             ? data.studentAnswers
-            : Array.isArray(data.data?.answers)
-            ? data.data.answers
             : [];
 
           const normItems: NormalizedItem[] = rawQuestions.map((qItem: unknown, idx: number) => {
             const qObj = qItem as RawQuestion & { question?: RawQuestion };
+            console.log("KEIEE", qObj)
             const q: RawQuestion = qObj.question || qObj;
             const a: RawStudentAnswer | null =
               qObj.answer ||
               qObj.studentAnswer ||
               qObj.student_answer ||
-              rawAnswers.find((ans: RawStudentAnswer) => ans.questionId === q.id || ans.question_id === q.id) ||
+              rawAnswers.find((ans: RawStudentAnswer) => ans.questionId === q.id) ||
               null;
 
             const studentAnswerId = a?.id || q.studentAnswerId || q.student_answer_id || null;
