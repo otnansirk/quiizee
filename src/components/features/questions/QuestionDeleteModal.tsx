@@ -8,6 +8,8 @@ export interface QuestionDeleteModalProps {
   isOpen: boolean;
   questionToDelete: QuestionData | null;
   quizId: string;
+  quizHasSubmissions?: boolean;
+  quizSubmissionsCount?: number;
   onClose: () => void;
   onSuccess: () => void;
   onError: (msg: string) => void;
@@ -17,6 +19,8 @@ export const QuestionDeleteModal: React.FC<QuestionDeleteModalProps> = ({
   isOpen,
   questionToDelete,
   quizId,
+  quizHasSubmissions = false,
+  quizSubmissionsCount = 0,
   onClose,
   onSuccess,
   onError,
@@ -74,12 +78,28 @@ export const QuestionDeleteModal: React.FC<QuestionDeleteModalProps> = ({
             </svg>
           </div>
           <h3 className="text-lg font-extrabold mb-1.5 text-foreground">
-            Delete Question?
+            {quizHasSubmissions ? "Cannot Delete Question" : "Delete Question?"}
           </h3>
-          <p className="text-muted-foreground mb-5 text-sm leading-relaxed">
-            Are you sure you want to delete this question? This action cannot be
-            undone and will remove all associated student answers.
-          </p>
+
+          {quizHasSubmissions ? (
+            <div className="text-left my-4 p-4 rounded-xl bg-error/15 border border-error/40 text-error flex items-start gap-3 shadow-md">
+              <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div className="text-xs leading-relaxed text-error">
+                <span className="font-bold block mb-0.5 text-sm uppercase tracking-wider">
+                  Action Blocked: Quiz Has Past Submissions
+                </span>
+                You cannot delete this question because student(s) ({quizSubmissionsCount || 1} attempts total) have already submitted attempts answering questions in this quiz. Deleting it would corrupt historical attempt records.
+              </div>
+            </div>
+          ) : (
+            <p className="text-muted-foreground mb-5 text-sm leading-relaxed">
+              Are you sure you want to delete this question? This action cannot be
+              undone and will remove all associated student answers.
+            </p>
+          )}
+
           <div className="p-3.5 bg-black/30 rounded-xl mb-6 text-left border border-border">
             <div className="text-xs text-muted-foreground font-semibold mb-1 uppercase tracking-wider">
               QUESTION PREVIEW
@@ -92,20 +112,31 @@ export const QuestionDeleteModal: React.FC<QuestionDeleteModalProps> = ({
           </div>
 
           <div className="flex gap-4 justify-center">
-            <button
-              onClick={onClose}
-              disabled={isDeleting}
-              className="btn btn-secondary flex-1 py-2.5"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleDeleteQuestion}
-              disabled={isDeleting}
-              className="btn flex-1 py-2.5 bg-gradient-to-br from-error to-red-600 text-white shadow-md shadow-error/35 font-semibold"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </button>
+            {quizHasSubmissions ? (
+              <button
+                onClick={onClose}
+                className="btn btn-secondary w-full py-2.5 font-bold"
+              >
+                Close
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={onClose}
+                  disabled={isDeleting}
+                  className="btn btn-secondary flex-1 py-2.5"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteQuestion}
+                  disabled={isDeleting}
+                  className="btn flex-1 py-2.5 bg-gradient-to-br from-error to-red-600 text-white shadow-md shadow-error/35 font-semibold"
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

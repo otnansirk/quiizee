@@ -11,6 +11,8 @@ export interface QuestionFormModalProps {
   durationMode?: string;
   questionToEdit: QuestionData | null;
   nextOrder: number;
+  quizHasSubmissions?: boolean;
+  quizSubmissionsCount?: number;
   onSuccess: (isEdit: boolean) => void;
 }
 
@@ -21,6 +23,8 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
   durationMode = "global",
   questionToEdit,
   nextOrder,
+  quizHasSubmissions = false,
+  quizSubmissionsCount = 0,
   onSuccess,
 }) => {
   const [formType, setFormType] = useState<QuestionType>("multiple_choice");
@@ -193,7 +197,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
       }
 
       if (questionToEdit) {
-        payload.regrade = regradeAttempts && Boolean(questionToEdit.hasSubmissions);
+        payload.regrade = regradeAttempts && Boolean(quizHasSubmissions);
       }
 
       const url = questionToEdit
@@ -250,8 +254,23 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
 
           {/* Scrollable Modal Body */}
           <div className="custom-scrollbar overflow-y-auto flex-1 p-5 px-6 pb-7">
+            {/* Block Add Question if Quiz Has Submissions */}
+            {!questionToEdit && quizHasSubmissions && (
+              <div className="p-4 mb-6 rounded-xl bg-error/15 border border-error/40 text-error flex items-start gap-3 shadow-md bg-red-200">
+                <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div className="text-xs leading-relaxed text-error">
+                  <span className="font-bold block mb-0.5 text-sm uppercase tracking-wider">
+                    Action Blocked: Quiz Has Past Submissions ({quizSubmissionsCount || 1})
+                  </span>
+                  You cannot add brand new questions to this quiz because student(s) have already submitted attempts. Adding new questions would alter the total question count and corrupt historical attempt grading records.
+                </div>
+              </div>
+            )}
+
             {/* Submissions Warning Alert + Regrade Checkbox */}
-            {questionToEdit && questionToEdit.hasSubmissions && (
+            {questionToEdit && quizHasSubmissions && (
               <div className="p-4 mb-6 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 flex flex-col gap-3 shadow-md">
                 <div className="flex items-start gap-3">
                   <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -259,9 +278,9 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                   </svg>
                   <div className="text-xs leading-relaxed text-yellow-600">
                     <span className="font-bold block mb-0.5 text-sm uppercase tracking-wider">
-                      Be Careful: Question Has Past Submission(s) ({questionToEdit.submissionsCount || 1})
+                      Be Careful: Quiz Has Past Submission(s) ({quizSubmissionsCount || 1} attempts total)
                     </span>
-                    Students have already answered this question in previous attempts. Modifying the prompt, options, or correct answer may influence historical attempt records and scores.
+                    Students have already answered questions in this quiz. Modifying the prompt, options, or correct answer may influence historical attempt records and scores.
                   </div>
                 </div>
 
@@ -613,15 +632,17 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                   disabled={isSaving}
                   className="btn btn-secondary py-3 px-6 font-semibold"
                 >
-                  Cancel
+                  {(!questionToEdit && quizHasSubmissions) ? "Close" : "Cancel"}
                 </button>
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="btn btn-primary py-3 px-8 text-base font-bold shadow-lg shadow-primary/30"
-                >
-                  {isSaving ? "Saving..." : "Save Question"}
-                </button>
+                {(!questionToEdit && quizHasSubmissions) ? null : (
+                  <button
+                    type="submit"
+                    disabled={isSaving}
+                    className="btn btn-primary py-3 px-8 text-base font-bold shadow-lg shadow-primary/30"
+                  >
+                    {isSaving ? "Saving..." : "Save Question"}
+                  </button>
+                )}
               </div>
             </form>
           </div>
