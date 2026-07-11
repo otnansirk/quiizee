@@ -36,8 +36,6 @@ export interface QuestionData {
   order: number;
   correctAnswer?: string | null;
   options?: OptionData[];
-  hasSubmissions?: boolean;
-  submissionsCount?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -51,6 +49,8 @@ export interface QuizData {
   durationMode: 'global' | 'per_question';
   globalDuration?: number | null;
   isPublished: boolean;
+  hasSubmissions?: boolean;
+  submissionsCount?: number;
   questions?: QuestionData[];
 }
 
@@ -86,45 +86,56 @@ export default function QuizQuestionsPage() {
      API: FETCH QUIZ & QUESTIONS
      -------------------------------------------------------------------------- */
   const fetchQuizData = useCallback(async () => {
-    if (!quizId) return;
     setIsLoading(true);
     setFetchError(null);
-
     try {
       const res = await fetch(`/api/quizzes/${quizId}`);
       if (!res.ok) {
-        if (res.status === 404) {
-          throw new Error('Quiz not found. It may have been deleted.');
-        }
-        throw new Error(`Failed to load quiz details (${res.status})`);
+        if (res.status === 404) throw new Error('Quiz not found');
+        throw new Error('Failed to fetch quiz details');
       }
-      const data = (await res.json()) as QuizData;
-      setQuiz(data);
-
-      const sortedQuestions = (data.questions || []).slice().sort((a, b) => a.order - b.order);
-      setQuestions(sortedQuestions);
+      const data = (await res.json()) as any;
+      setQuiz({
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        accessCode: data.accessCode,
+        accessMode: data.accessMode,
+        durationMode: data.durationMode,
+        globalDuration: data.globalDuration,
+        isPublished: Boolean(data.isPublished),
+        hasSubmissions: Boolean(data.hasSubmissions),
+        submissionsCount: Number(data.submissionsCount || 0),
+      });
+      setQuestions(data.questions || []);
     } catch (err: any) {
-      console.error('Error fetching quiz data:', err);
-      setFetchError(err.message || 'An unexpected error occurred while loading questions.');
+      setFetchError(err.message || 'An unexpected error occurred');
+      showToast(err.message || 'Failed to load quiz data', 'error');
     } finally {
       setIsLoading(false);
     }
-  }, [quizId]);
+  }, [quizId, showToast]);
 
   useEffect(() => {
-    fetchQuizData();
-  }, [fetchQuizData]);
+    if (quizId) {
+      fetchQuizData();
+    }
+  }, [quizId, fetchQuizData]);
 
   /* --------------------------------------------------------------------------
      API: PUBLISH / UNPUBLISH QUIZ
      -------------------------------------------------------------------------- */
-  const handlePublishToggle = async (targetPublishState: boolean) => {
-    if (targetPublishState && questions.length === 0) {
+  const handlePublishToggle = async () => {
+    if (!quiz) return;
+
+    if (!quiz.isPublished && questions.length === 0) {
       setIsPublishAlertOpen(true);
       return;
     }
 
+    const targetPublishState = !quiz.isPublished;
     setIsPublishing(true);
+
     try {
       const res = await fetch(`/api/quizzes/${quizId}`, {
         method: 'PUT',
@@ -180,52 +191,31 @@ export default function QuizQuestionsPage() {
       ]);
 
       if (!res1.ok || !res2.ok) {
-        throw new Error('Server rejected reorder request');
+        throw new Error('Failed to save question order');
       }
       showToast('Question order updated', 'success');
     } catch (err: any) {
-      showToast('Failed to save question order. Reverting changes...', 'error');
-      await fetchQuizData();
+      showToast(err.message || 'Error reordering questions', 'error');
+      fetchQuizData(); // Revert on failure
     }
   };
 
   /* --------------------------------------------------------------------------
-     COMPUTED SUMMARY STATS
+     CALCULATED VALUES
      -------------------------------------------------------------------------- */
   const totalQuestions = questions.length;
   const totalPoints = questions.reduce((sum, q) => sum + (q.points || 0), 0);
 
-  /* ==========================================================================
+  /* --------------------------------------------------------------------------
      RENDER: LOADING & ERROR STATES
-     ========================================================================== */
+     -------------------------------------------------------------------------- */
   if (isLoading) {
     return (
-      <div className="container" style={{ padding: '3rem 1.5rem', minHeight: '80vh' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div
-            className="card"
-            style={{
-              height: '80px',
-              background: 'rgba(26, 26, 46, 0.4)',
-              animation: 'pulseGlow 2s infinite',
-            }}
-          />
-          <div
-            className="card"
-            style={{
-              height: '120px',
-              background: 'rgba(26, 26, 46, 0.4)',
-              animation: 'pulseGlow 2s infinite',
-            }}
-          />
-          <div
-            className="card"
-            style={{
-              height: '200px',
-              background: 'rgba(26, 26, 46, 0.4)',
-              animation: 'pulseGlow 2s infinite',
-            }}
-          />
+      <div className="container" style={{ paddingTop: '3rem', textAlign: 'center' }}>
+        <div className="card" style={{ padding: '3rem' }}>
+          <div className="w-10 h-10 rounded-full border-4 border-primary border-t-transparent animate-spin mx-auto mb-4" />
+          <h2 className="text-xl font-bold">Loading questions...</h2>
+          <p className="text-muted-foreground text-sm mt-1">Please wait while we fetch your quiz data.</p>
         </div>
       </div>
     );
@@ -233,50 +223,37 @@ export default function QuizQuestionsPage() {
 
   if (fetchError || !quiz) {
     return (
-      <div className="container animate-fade-in" style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>
-        <div className="card" style={{ maxWidth: '550px', margin: '0 auto', padding: '3rem 2rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.75rem', marginBottom: '0.75rem' }}>
-            Failed to Load Quiz
-          </h2>
-          <p className="card-description" style={{ marginBottom: '2rem', color: 'var(--text-secondary)' }}>
-            {fetchError || 'We could not find the requested quiz.'}
-          </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <Link href="/teacher/quizzes" className="btn btn-secondary">
-              Back to Quizzes
-            </Link>
-            <button onClick={fetchQuizData} className="btn btn-primary">
-              Try Again
-            </button>
+      <div className="container" style={{ paddingTop: '3rem', textAlign: 'center' }}>
+        <div className="card border-error/30 bg-error/10" style={{ padding: '3rem' }}>
+          <div className="w-12 h-12 rounded-full bg-error/20 text-error flex items-center justify-center text-xl font-bold mx-auto mb-4">
+            !
           </div>
+          <h2 className="text-xl font-bold text-error">Failed to load quiz</h2>
+          <p className="text-muted-foreground text-sm mt-1 mb-6">{fetchError || 'Quiz not found or unauthorized'}</p>
+          <Link href="/teacher/quizzes" className="btn btn-secondary py-2.5 px-6">
+            ← Back to Quizzes
+          </Link>
         </div>
       </div>
     );
   }
 
-  /* ==========================================================================
+  /* --------------------------------------------------------------------------
      RENDER: MAIN UI
-     ========================================================================== */
+     -------------------------------------------------------------------------- */
   return (
     <div className="min-h-screen animate-fade-in" style={{ paddingBottom: '6rem' }}>
       {/* Custom Styles for Modals and Micro-animations */}
       <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes modalSlideIn {
-          from { opacity: 0; transform: scale(0.96) translateY(-12px); }
-          to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .modal-content {
-          animation: modalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes toastSlideUp {
-          from { opacity: 0; transform: translateY(20px); }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(6px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        .toast-item {
-          animation: toastSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .animate-fade-in {
+          animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
+          width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: rgba(0, 0, 0, 0.15);
@@ -320,6 +297,8 @@ export default function QuizQuestionsPage() {
           isOpen={isDeleteModalOpen}
           questionToDelete={questionToDelete}
           quizId={quizId}
+          quizHasSubmissions={quiz.hasSubmissions}
+          quizSubmissionsCount={quiz.submissionsCount}
           onClose={() => { setIsDeleteModalOpen(false); setQuestionToDelete(null); }}
           onSuccess={() => { showToast('Question deleted successfully', 'success'); fetchQuizData(); }}
           onError={(msg) => showToast(msg, 'error')}
@@ -357,6 +336,8 @@ export default function QuizQuestionsPage() {
           durationMode={quiz.durationMode}
           questionToEdit={questionToEdit}
           nextOrder={questions.length + 1}
+          quizHasSubmissions={quiz.hasSubmissions}
+          quizSubmissionsCount={quiz.submissionsCount}
           onSuccess={(isEdit) => {
             showToast(isEdit ? 'Question updated successfully!' : 'Question added successfully!', 'success');
             fetchQuizData();

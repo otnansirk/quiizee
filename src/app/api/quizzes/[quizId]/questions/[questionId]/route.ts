@@ -353,6 +353,24 @@ export async function DELETE(req: Request, { params }: RouteContext) {
     if (error) return error;
     if (!question) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
 
+    const existingAttempts = await db
+      .select({ id: schema.quizAttempts.id })
+      .from(schema.quizAttempts)
+      .where(
+        and(
+          eq(schema.quizAttempts.quizId, quizId),
+          inArray(schema.quizAttempts.status, ['submitted', 'graded'])
+        )
+      )
+      .limit(1);
+
+    if (existingAttempts.length > 0) {
+      return NextResponse.json(
+        { success: false, message: "Cannot delete this question because one or more students have already submitted attempts for this quiz." },
+        { status: 403 }
+      );
+    }
+
     await db.transaction(async (tx) => {
       // 1. Find and delete all student answers (and associated essay reviews) for this question
       const answers = await tx
