@@ -33,43 +33,29 @@ export const AttemptsHeaderFilters: React.FC<AttemptsHeaderFiltersProps> = ({
   return (
     <>
       {/* Top Breadcrumb & Page Header */}
-      <div style={{ marginBottom: "2rem" }}>
+      <div className="mb-8">
         <Link
           href="/teacher/quizzes"
-          className="btn btn-ghost btn-sm"
-          style={{
-            color: "var(--text-secondary)",
-            marginBottom: "1rem",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.4rem",
-          }}
+          className="btn btn-ghost btn-sm text-muted-foreground mb-4 inline-flex items-center gap-1.5"
         >
           Back to Quizzes
         </Link>
 
-        <div
-          className="flex justify-between items-start"
-          style={{ flexWrap: "wrap", gap: "1rem" }}
-        >
+        <div className="flex justify-between items-start flex-wrap gap-4">
           <div>
-            <h1 className="title" style={{ fontSize: "2.5rem", marginBottom: "0.25rem" }}>
+            <h1 className="title text-4xl mb-1 font-extrabold text-foreground">
               Attempt History
             </h1>
-            <p className="subtitle" style={{ margin: 0, maxWidth: "100%" }}>
+            <p className="subtitle m-0 max-w-full text-muted-foreground">
               View all student submissions and assessment performance for{" "}
-              <strong style={{ color: "var(--accent-hover)" }}>{quizTitle}</strong>
+              <strong className="text-primary font-bold">{quizTitle}</strong>
             </p>
           </div>
           <div>
             <button
               onClick={onRefresh}
               disabled={loading}
-              className="btn btn-secondary btn-sm"
-              style={{
-                borderColor: "rgba(99, 102, 241, 0.3)",
-                color: "var(--accent-hover)",
-              }}
+              className="btn btn-secondary btn-sm border-indigo-500/30 text-primary hover:bg-indigo-500/10 transition-all"
               title="Refresh attempt history"
             >
               Refresh
@@ -80,18 +66,14 @@ export const AttemptsHeaderFilters: React.FC<AttemptsHeaderFiltersProps> = ({
 
       {/* Error Banner */}
       {error && (
-        <div
-          className="alert alert-error animate-fade-in mb-6"
-          style={{ alignItems: "flex-start" }}
-        >
-          <div style={{ flex: 1 }}>
-            <strong style={{ display: "block", marginBottom: "0.25rem" }}>Notice</strong>
+        <div className="alert alert-error animate-fade-in mb-6 items-start flex justify-between gap-3 p-4 rounded-xl bg-error/15 border border-error/30 text-error">
+          <div className="flex-1">
+            <strong className="block mb-1 font-extrabold">Notice</strong>
             <span>{error}</span>
           </div>
           <button
             onClick={onClearError}
-            className="btn btn-ghost btn-sm"
-            style={{ padding: "0.2rem 0.5rem", minWidth: "auto", color: "#e12727" }}
+            className="btn btn-ghost btn-sm px-2 py-1 min-w-0 text-error font-bold"
           >
             X
           </button>
@@ -99,73 +81,47 @@ export const AttemptsHeaderFilters: React.FC<AttemptsHeaderFiltersProps> = ({
       )}
 
       {/* Filter Tabs */}
-      <div
-        className="flex gap-2 mb-6"
-        style={{
-          // flexWrap: "wrap",
-          padding: "0.5rem",
-          marginBottom: "1.5rem",
-          // borderRadius: "var(--radius-lg)",
-          borderBottom: "1px solid #b8b8b8",
-        }}
-      >
+      <div className="flex gap-2 mb-6 p-2 border-b border-border overflow-x-auto">
         <button
           onClick={() => onSelectFilter("all")}
-          className="btn btn-sm"
-          style={{
-            background: filter === "all" ? "var(--accent-gradient)" : "transparent",
-            color: filter === "all" ? "#ffffff" : "var(--text-secondary)",
-            border: "none",
-            boxShadow: filter === "all" ? "0 2px 10px rgba(99, 102, 241, 0.3)" : "none",
-          }}
+          className={`btn btn-sm transition-all border-none ${
+            filter === "all"
+              ? "bg-primary text-white shadow-md shadow-primary/30 font-bold"
+              : "bg-transparent text-muted-foreground hover:text-foreground font-medium"
+          }`}
         >
           All Submissions ({totalAttemptsCount})
         </button>
 
         <button
           onClick={() => onSelectFilter("submitted")}
-          className="btn btn-sm"
-          style={{
-            background: filter === "submitted" ? "rgba(245, 158, 11, 0.2)" : "transparent",
-            color: filter === "submitted" ? "#7e6e1c" : "var(--text-secondary)",
-            border:
-              filter === "submitted"
-                ? "1px solid rgba(245, 158, 11, 0.4)"
-                : "1px solid transparent",
-            boxShadow: filter === "submitted" ? "0 0 12px rgba(245, 158, 11, 0.2)" : "none",
-          }}
+          className={`btn btn-sm transition-all ${
+            filter === "submitted"
+              ? "bg-amber-500/20 text-amber-700 border border-amber-500/40 shadow-md shadow-amber-500/20 font-bold"
+              : "bg-transparent text-muted-foreground border border-transparent hover:text-foreground font-medium"
+          }`}
         >
           Needs Grading ({countSubmitted})
         </button>
 
         <button
           onClick={() => onSelectFilter("graded")}
-          className="btn btn-sm"
-          style={{
-            background: filter === "graded" ? "rgba(34, 197, 94, 0.2)" : "transparent",
-            color: filter === "graded" ? "#188340" : "var(--text-secondary)",
-            border:
-              filter === "graded"
-                ? "1px solid rgba(34, 197, 94, 0.4)"
-                : "1px solid transparent",
-            boxShadow: filter === "graded" ? "0 0 12px rgba(34, 197, 94, 0.2)" : "none",
-          }}
+          className={`btn btn-sm transition-all ${
+            filter === "graded"
+              ? "bg-emerald-500/20 text-emerald-700 border border-emerald-500/40 shadow-md shadow-emerald-500/20 font-bold"
+              : "bg-transparent text-muted-foreground border border-transparent hover:text-foreground font-medium"
+          }`}
         >
           Graded ({countGraded})
         </button>
 
         <button
           onClick={() => onSelectFilter("in_progress")}
-          className="btn btn-sm"
-          style={{
-            background:
-              filter === "in_progress" ? "rgba(59, 130, 246, 0.2)" : "transparent",
-            color: filter === "in_progress" ? "#1c5596" : "var(--text-secondary)",
-            border:
-              filter === "in_progress"
-                ? "1px solid rgba(59, 130, 246, 0.4)"
-                : "1px solid transparent",
-          }}
+          className={`btn btn-sm transition-all ${
+            filter === "in_progress"
+              ? "bg-blue-500/20 text-blue-700 border border-blue-500/40 shadow-md shadow-blue-500/20 font-bold"
+              : "bg-transparent text-muted-foreground border border-transparent hover:text-foreground font-medium"
+          }`}
         >
           In Progress ({countInProgress})
         </button>

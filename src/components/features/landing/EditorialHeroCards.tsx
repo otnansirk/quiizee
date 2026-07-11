@@ -17,17 +17,7 @@ export const EditorialHeroCards: React.FC<EditorialHeroCardsProps> = ({
   onSubmitCheckResults,
 }) => {
   return (
-    <main
-      className="container"
-      style={{
-        padding: "4rem 1.5rem 6rem",
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <main className="container mx-auto px-6 py-16 flex-1 flex flex-col justify-center items-center">
       {/* Playful Chunky Graphic Typography */}
       <div className="chunky-title-container">
         <span className="chunky-letter">Q</span>
@@ -55,7 +45,7 @@ export const EditorialHeroCards: React.FC<EditorialHeroCardsProps> = ({
               instantly without account registration.
             </p>
           </div>
-          <div style={{ marginTop: "1.5rem" }}>
+          <div className="mt-6">
             <Link href="/quiz/join" className="editorial-btn-blue">
               Join Quiz Room
             </Link>
@@ -78,12 +68,7 @@ export const EditorialHeroCards: React.FC<EditorialHeroCardsProps> = ({
           </div>
           <form
             onSubmit={onSubmitCheckResults}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              marginTop: "1rem",
-            }}
+            className="flex flex-col gap-4 mt-4"
           >
             <div>
               <input
@@ -94,28 +79,14 @@ export const EditorialHeroCards: React.FC<EditorialHeroCardsProps> = ({
                 onChange={(e) => onResultCodeChange(e.target.value)}
               />
               {error && (
-                <span
-                  style={{
-                    color: "#dc2626",
-                    fontSize: "0.8rem",
-                    marginTop: "0.4rem",
-                    display: "block",
-                    fontWeight: 700,
-                  }}
-                >
+                <span className="text-error text-xs mt-1.5 block font-bold">
                   {error}
                 </span>
               )}
             </div>
             <button
               type="submit"
-              className="editorial-btn-black"
-              style={{
-                background: "#059669",
-                borderColor: "#111827",
-                boxShadow: "4px 4px 0px #111827",
-                padding: "0.9rem",
-              }}
+              className="editorial-btn-black bg-emerald-600 border-foreground shadow-[4px_4px_0px_#111827] p-3.5 hover:bg-emerald-700 font-extrabold text-white transition-all"
             >
               Check Results
             </button>
