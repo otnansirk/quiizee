@@ -36,61 +36,27 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
   if (!currentQuestion) return null;
 
   return (
-    <div
-      className="card animate-fade-in"
-      style={{
-        padding: "clamp(1rem, 4vw, 2.5rem)",
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "400px",
-      }}
-    >
+    <div className="card animate-fade-in p-6 sm:p-10 flex flex-col min-h-[400px]">
       {/* Header: Question X of Y | Type Badge | Points Badge */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "1rem",
-          paddingBottom: "1.25rem",
-          borderBottom: "1px solid var(--border)",
-          marginBottom: "1.75rem",
-        }}
-      >
+      <div className="flex justify-between items-center flex-wrap gap-4 pb-5 border-b border-border mb-7">
         <div>
-          <span
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 800,
-              color: "var(--text-primary)",
-            }}
-          >
+          <span className="text-xl font-extrabold text-foreground">
             Question {currentQuestionIndex + 1}{" "}
           </span>
-          <span
-            style={{
-              fontSize: "1rem",
-              color: "var(--text-muted)",
-              fontWeight: 600,
-            }}
-          >
+          <span className="text-base text-muted-foreground font-semibold">
             of {totalQuestions}
           </span>
         </div>
 
-        <div style={{ display: "flex", gap: "0.65rem", alignItems: "center" }}>
-          <span className="badge badge-info" style={{ margin: 0 }}>
+        <div className="flex gap-2.5 items-center">
+          <span className="badge badge-info m-0 font-bold">
             {currentQuestion.type === "multiple_choice"
               ? "Multiple Choice"
               : currentQuestion.type === "true_false"
               ? "True or False"
               : "Essay"}
           </span>
-          <span
-            className="badge badge-accent"
-            style={{ margin: 0, fontWeight: 800 }}
-          >
+          <span className="badge badge-accent m-0 font-extrabold">
             {currentQuestion.points} pt
             {currentQuestion.points === 1 ? "" : "s"}
           </span>
@@ -98,54 +64,27 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
       </div>
 
       {/* Question Text */}
-      <h2
-        style={{
-          fontSize: "clamp(1.05rem, 3.5vw, 1.4rem)",
-          fontWeight: 700,
-          color: "var(--text-primary)",
-          lineHeight: "1.6",
-          marginBottom: "1.25rem",
-        }}
-      >
+      <h2 className="text-lg sm:text-2xl font-bold text-foreground leading-relaxed mb-5">
         {currentQuestion.questionText}
       </h2>
 
       {/* Question Image Preview */}
       {currentQuestion.questionImage && (
-        <div
-          style={{
-            marginBottom: "2rem",
-            borderRadius: "var(--radius-lg)",
-            overflow: "hidden",
-            border: "1px solid var(--border)",
-            maxHeight: "420px",
-            display: "flex",
-            justifyContent: "center",
-            background: "rgba(0, 0, 0, 0.4)",
-            padding: "1rem",
-          }}
-        >
+        <div className="mb-8 rounded-2xl overflow-hidden border border-border max-h-[420px] flex justify-center bg-black/40 p-4">
           <img
             src={currentQuestion.questionImage}
             alt={`Question ${currentQuestionIndex + 1} Figure`}
-            style={{
-              maxWidth: "100%",
-              maxHeight: "380px",
-              objectFit: "contain",
-              borderRadius: "var(--radius-sm)",
-            }}
+            className="max-w-full max-h-[380px] object-contain rounded-lg"
           />
         </div>
       )}
 
       {/* Interactive Answer Inputs */}
-      <div style={{ flex: 1, marginBottom: "2.5rem" }}>
+      <div className="flex-1 mb-10">
         {/* 1. Multiple Choice */}
         {currentQuestion.type === "multiple_choice" &&
           currentQuestion.options && (
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-            >
+            <div className="flex flex-col gap-4">
               {currentQuestion.options.map((option: any, idx: number) => {
                 const isSelected =
                   answers[currentQuestion.id]?.selectedOptionId === option.id;
@@ -157,55 +96,27 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                     onClick={() =>
                       onSelectOption(currentQuestion.id, option.id)
                     }
-                    className={`choice-card ${isSelected ? "selected" : ""}`}
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: "1.25rem",
-                      padding: "1.25rem 1.5rem",
-                      borderColor: isSelected
-                        ? "var(--accent)"
-                        : "var(--border)",
-                      background: isSelected
-                        ? "rgba(99, 102, 241, 0.15)"
-                        : "rgba(232, 232, 232, 0.6)",
-                      boxShadow: isSelected
-                        ? "0 0 25px rgba(99, 102, 241, 0.25)"
-                        : undefined,
-                    }}
+                    className={`choice-card flex flex-row items-center gap-5 p-5 border rounded-xl transition-all cursor-pointer ${
+                      isSelected
+                        ? "selected border-primary bg-indigo-500/15 shadow-lg shadow-indigo-500/25"
+                        : "border-border bg-secondary/60 hover:border-foreground/30"
+                    }`}
                   >
                     <div
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontWeight: 800,
-                        fontSize: "1.05rem",
-                        background: isSelected
-                          ? "var(--accent-gradient)"
-                          : "rgba(255, 255, 255, 0.08)",
-                        color: isSelected ? "#ffffff" : "var(--text-secondary)",
-                        border: isSelected
-                          ? "none"
-                          : "1px solid var(--border)",
-                        flexShrink: 0,
-                        transition: "all var(--transition-fast)",
-                      }}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-base flex-shrink-0 transition-all ${
+                        isSelected
+                          ? "bg-primary text-white border-none"
+                          : "bg-white/10 text-muted-foreground border border-border"
+                      }`}
                     >
                       {letter}
                     </div>
                     <div
-                      style={{
-                        flex: 1,
-                        fontSize: "1.08rem",
-                        color: isSelected ? "#000000" : "var(--text-primary)",
-                        lineHeight: "1.5",
-                        fontWeight: isSelected ? 800 : 400,
-                      }}
+                      className={`flex-1 text-lg leading-snug ${
+                        isSelected
+                          ? "text-primary font-extrabold"
+                          : "text-foreground font-normal"
+                      }`}
                     >
                       {option.optionText}
                     </div>
@@ -217,13 +128,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
 
         {/* 2. True / False */}
         {currentQuestion.type === "true_false" && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "0.75rem",
-            }}
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {(() => {
               const currentVal =
                 answers[currentQuestion.id]?.answerText?.toLowerCase();
@@ -236,36 +141,18 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                     onClick={() =>
                       onSelectTrueFalse(currentQuestion.id, "true")
                     }
-                    className={`choice-card ${
-                      isTrueSelected ? "selected" : ""
+                    className={`choice-card flex flex-col items-center justify-center py-10 px-4 text-center gap-2.5 border rounded-xl transition-all cursor-pointer ${
+                      isTrueSelected
+                        ? "selected border-emerald-500 bg-emerald-500/15 shadow-lg shadow-emerald-500/25"
+                        : "border-border bg-secondary/60 hover:border-foreground/30"
                     }`}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: "clamp(1rem, 4vw, 2.5rem) 1rem",
-                      textAlign: "center",
-                      gap: "0.6rem",
-                      borderColor: isTrueSelected
-                        ? "var(--success)"
-                        : "var(--border)",
-                      background: isTrueSelected
-                        ? "rgba(34, 197, 94, 0.16)"
-                        : "#d4d4d4",
-                      boxShadow: isTrueSelected
-                        ? "0 0 30px rgba(34, 197, 94, 0.25)"
-                        : undefined,
-                    }}
                   >
                     <div
-                      style={{
-                        fontSize: "1.35rem",
-                        fontWeight: 800,
-                        color: isTrueSelected
-                          ? "#1a8a43"
-                          : "var(--text-primary)",
-                      }}
+                      className={`text-2xl font-extrabold ${
+                        isTrueSelected
+                          ? "text-emerald-400"
+                          : "text-foreground"
+                      }`}
                     >
                       True
                     </div>
@@ -275,36 +162,18 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                     onClick={() =>
                       onSelectTrueFalse(currentQuestion.id, "false")
                     }
-                    className={`choice-card ${
-                      isFalseSelected ? "selected" : ""
+                    className={`choice-card flex flex-col items-center justify-center py-10 px-4 text-center gap-2.5 border rounded-xl transition-all cursor-pointer ${
+                      isFalseSelected
+                        ? "selected border-error bg-error/15 shadow-lg shadow-error/25"
+                        : "border-border bg-secondary/60 hover:border-foreground/30"
                     }`}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: "clamp(1rem, 4vw, 2.5rem) 1rem",
-                      textAlign: "center",
-                      gap: "0.6rem",
-                      borderColor: isFalseSelected
-                        ? "var(--error)"
-                        : "var(--border)",
-                      background: isFalseSelected
-                        ? "rgba(239, 68, 68, 0.16)"
-                        : "rgba(232, 232, 232, 0.6)",
-                      boxShadow: isFalseSelected
-                        ? "0 0 30px rgba(239, 68, 68, 0.25)"
-                        : undefined,
-                    }}
                   >
                     <div
-                      style={{
-                        fontSize: "1.35rem",
-                        fontWeight: 800,
-                        color: isFalseSelected
-                          ? "#e12727"
-                          : "var(--text-primary)",
-                      }}
+                      className={`text-2xl font-extrabold ${
+                        isFalseSelected
+                          ? "text-error"
+                          : "text-foreground"
+                      }`}
                     >
                       False
                     </div>
@@ -317,7 +186,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
 
         {/* 3. Essay */}
         {currentQuestion.type === "essay" && (
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div className="flex flex-col">
             <textarea
               rows={7}
               placeholder="Type your comprehensive answer here..."
@@ -326,63 +195,22 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                 onEssayChange(currentQuestion.id, e.target.value)
               }
               onBlur={(e) => onEssayBlur(currentQuestion.id, e.target.value)}
-              className="input"
-              style={{
-                width: "100%",
-                padding: "1.25rem",
-                fontSize: "1.05rem",
-                lineHeight: "1.6",
-                background: "rgba(246, 246, 246, 0.7)",
-                resize: "vertical",
-                minHeight: "180px",
-                borderRadius: "var(--radius-lg)",
-              }}
+              className="input w-full p-5 text-lg leading-relaxed bg-secondary/70 resize-y min-h-[180px] rounded-2xl border border-border focus:border-primary focus:outline-none"
             />
             {/* Saving Status Indicator */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                marginTop: "0.75rem",
-                minHeight: "1.5rem",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-              }}
-            >
+            <div className="flex justify-end items-center mt-3 min-h-[1.5rem] text-sm font-semibold">
               {savingStatus[currentQuestion.id] === "saving" && (
-                <span
-                  style={{
-                    color: "var(--text-secondary)",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                  }}
-                >
+                <span className="text-muted-foreground flex items-center gap-1.5">
                   Saving response...
                 </span>
               )}
               {savingStatus[currentQuestion.id] === "saved" && (
-                <span
-                  style={{
-                    color: "#43c372",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                  }}
-                >
+                <span className="text-green-600 flex items-center gap-1.5">
                   Saved securely
                 </span>
               )}
               {savingStatus[currentQuestion.id] === "error" && (
-                <span
-                  style={{
-                    color: "#e12727",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                  }}
-                >
+                <span className="text-error flex items-center gap-1.5">
                   Error saving. Will retry on next edit.
                 </span>
               )}
@@ -392,22 +220,12 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
       </div>
 
       {/* Bottom Navigation Footer inside Card */}
-      <div
-        style={{
-          borderTop: "1px solid var(--border)",
-          paddingTop: "1rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "0.75rem",
-        }}
-      >
+      <div className="border-t border-border pt-4 flex justify-between items-center flex-wrap gap-3">
         {durationMode !== "per_question" ? (
           <button
             onClick={onPrevQuestion}
             disabled={currentQuestionIndex === 0}
-            className="btn btn-secondary nav-btn-prev"
+            className="btn btn-secondary nav-btn-prev font-bold px-6 py-2"
           >
             Prev
           </button>
@@ -415,18 +233,12 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
           <div />
         )}
 
-        <div
-          style={{
-            fontSize: "0.82rem",
-            color: "var(--text-secondary)",
-            fontWeight: 600,
-          }}
-        >
-          <strong style={{ color: "var(--text-primary)" }}>
+        <div className="text-sm text-muted-foreground font-semibold">
+          <strong className="text-foreground">
             {currentQuestionIndex + 1}
           </strong>
           {" / "}
-          <strong style={{ color: "var(--text-primary)" }}>
+          <strong className="text-foreground">
             {totalQuestions}
           </strong>
         </div>
@@ -434,18 +246,14 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
         {currentQuestionIndex < totalQuestions - 1 ? (
           <button
             onClick={onNextQuestion}
-            className="btn btn-primary nav-btn-next"
+            className="btn btn-primary nav-btn-next font-bold px-6 py-2 shadow-md shadow-primary/30"
           >
             Next
           </button>
         ) : (
           <button
             onClick={onReviewSubmit}
-            className="btn btn-primary nav-btn-next"
-            style={{
-              background: "var(--accent-gradient)",
-              boxShadow: "0 0 20px rgba(168, 85, 247, 0.5)",
-            }}
+            className="btn btn-primary nav-btn-next font-bold px-6 py-2 bg-gradient-to-br from-purple-600 to-indigo-500 shadow-lg shadow-purple-500/50"
           >
             Review & Submit
           </button>

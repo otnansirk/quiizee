@@ -62,85 +62,21 @@ export const QuizHeaderTimer: React.FC<QuizHeaderTimerProps> = ({
       />
 
       {/* Sticky Top Timer & Controls Bar */}
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          background: "#ffffff",
-          borderBottom: "2px solid #111827",
-          padding: "0.6rem 0",
-        }}
-      >
-        <div
-          className="container controls-bar-inner"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "1rem",
-          }}
-        >
+      <div className="sticky top-0 z-50 bg-white border-b-2 border-black py-2.5">
+        <div className="container controls-bar-inner flex items-center justify-between gap-4">
           {/* Left: Quiz Title & Student Name */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              minWidth: 0,
-              flex: 1,
-            }}
-          >
-            <h1
-              className="controls-title"
-              style={{
-                fontSize: "1.1rem",
-                fontWeight: 900,
-                color: "#111827",
-                letterSpacing: "-0.02em",
-                lineHeight: "1.2",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
+          <div className="flex flex-col min-w-0 flex-1">
+            <h1 className="controls-title text-lg font-black text-black tracking-tight leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
               {quizTitle || "Live Assessment"}
             </h1>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.4rem",
-                marginTop: "0.1rem",
-                flexWrap: "wrap",
-              }}
-            >
-              <span
-                className="controls-meta"
-                style={{
-                  fontSize: "0.8rem",
-                  color: "#4b5563",
-                  fontWeight: 700,
-                }}
-              >
-                <strong style={{ color: "#111827" }}>{studentName}</strong>
+            <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+              <span className="controls-meta text-xs text-zinc-600 font-bold">
+                <strong className="text-black">{studentName}</strong>
               </span>
-              <span
-                style={{
-                  color: "#9ca3af",
-                  fontWeight: 700,
-                  fontSize: "0.75rem",
-                }}
-              >
+              <span className="text-zinc-400 font-bold text-xs">
                 ·
               </span>
-              <span
-                className="controls-meta"
-                style={{
-                  fontSize: "0.78rem",
-                  color: "#6b7280",
-                  fontWeight: 700,
-                }}
-              >
+              <span className="controls-meta text-xs text-zinc-500 font-bold">
                 Attempt #{attemptNumber || 1}
               </span>
             </div>
@@ -148,26 +84,7 @@ export const QuizHeaderTimer: React.FC<QuizHeaderTimerProps> = ({
 
           {/* Center: Live Countdown Timer */}
           {remainingSeconds !== null && (
-            <div
-              className={`badge controls-timer ${timerClass}`}
-              style={{
-                fontSize: "0.95rem",
-                padding: "0.4rem 1rem",
-                margin: 0,
-                borderRadius: "6px",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.4rem",
-                fontFamily: "monospace",
-                fontWeight: 900,
-                letterSpacing: "0.04em",
-                border: "2px solid #111827",
-                boxShadow: "2px 2px 0px #111827",
-                transition: "all 0.3s ease",
-                flexShrink: 0,
-                whiteSpace: "nowrap",
-              }}
-            >
+            <div className={`badge controls-timer ${timerClass} text-sm py-1.5 px-4 m-0 rounded-md flex items-center gap-1.5 font-mono font-black tracking-wider border-2 border-black shadow-[2px_2px_0px_#111827] transition-all flex-shrink-0 whitespace-nowrap`}>
               {durationMode === "per_question" ? (
                 <span>
                   Q{currentQuestionIndex + 1}: {formatTime(remainingSeconds)}
@@ -179,18 +96,11 @@ export const QuizHeaderTimer: React.FC<QuizHeaderTimerProps> = ({
           )}
 
           {/* Right: Submit Quiz Button */}
-          <div style={{ flexShrink: 0 }}>
+          <div className="flex-shrink-0">
             <button
               onClick={onSubmitClick}
               disabled={isSubmitting}
-              className="btn btn-primary controls-submit"
-              style={{
-                padding: "0.5rem 1.2rem",
-                boxShadow: "3px 3px 0px #111827",
-                border: "2px solid #111827",
-                fontWeight: 900,
-                fontSize: "0.9rem",
-              }}
+              className="btn btn-primary controls-submit py-2 px-5 shadow-[3px_3px_0px_#111827] border-2 border-black font-black text-sm"
             >
               Submit
             </button>
@@ -200,27 +110,7 @@ export const QuizHeaderTimer: React.FC<QuizHeaderTimerProps> = ({
 
       {/* Question Timeout Banner */}
       {questionTimeoutBanner && (
-        <div
-          className="animate-fade-in"
-          style={{
-            position: "fixed",
-            top: "80px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 100,
-            background: "rgba(239, 68, 68, 0.95)",
-            color: "#ffffff",
-            padding: "0.85rem 1.75rem",
-            borderRadius: "var(--radius-full)",
-            boxShadow: "0 10px 30px rgba(239, 68, 68, 0.5)",
-            fontWeight: 800,
-            fontSize: "1rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.65rem",
-            border: "2px solid rgba(255, 255, 255, 0.3)",
-          }}
-        >
+        <div className="animate-fade-in fixed top-20 left-1/2 -translate-x-1/2 z-[100] bg-red-500 text-white py-3 px-7 rounded-full shadow-xl shadow-red-500/50 font-extrabold text-base flex items-center gap-2.5 border-2 border-white/30">
           <span>{questionTimeoutBanner}</span>
         </div>
       )}
