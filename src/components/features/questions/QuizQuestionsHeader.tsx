@@ -51,6 +51,18 @@ export const QuizQuestionsHeader: React.FC<QuizQuestionsHeaderProps> = ({
               Draft
             </span>
           )}
+
+          {quiz.hasSubmissions && (
+            <span
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30 cursor-help"
+              title="This quiz has submitted student attempts. Adding or deleting questions is blocked to preserve historical grading records."
+            >
+              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Submissions ({quiz.submissionsCount || 1})
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
