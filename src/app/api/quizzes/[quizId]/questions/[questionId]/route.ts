@@ -6,6 +6,7 @@ import { eq, and, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 
 const optionInputSchema = z.object({
+  id: z.string().optional(),
   optionText: z.string().optional(),
   isCorrect: z.boolean().optional(),
   order: z.number().optional(),
@@ -30,6 +31,7 @@ interface RouteContext {
 }
 
 interface OptionInput {
+  id?: string;
   optionText?: string;
   isCorrect?: boolean;
   order?: number;
@@ -154,26 +156,87 @@ export async function PUT(req: Request, { params }: RouteContext) {
       const effectiveType = type !== undefined ? type : question.type;
 
       if (effectiveType === 'multiple_choice' && Array.isArray(options)) {
-        await tx
-          .delete(schema.questionOptions)
+        const existingOptions = await tx
+          .select()
+          .from(schema.questionOptions)
           .where(eq(schema.questionOptions.questionId, questionId));
 
-        if (options.length > 0) {
-          const optionsToInsert = (options as OptionInput[]).map((opt, idx) => ({
-            questionId,
-            optionText: String(opt.optionText || '').trim(),
-            isCorrect: Boolean(opt.isCorrect),
-            order: opt.order !== undefined && opt.order !== null ? Number(opt.order) : idx + 1,
-          }));
+        const inputOpts = options as OptionInput[];
+        const existingIdsMap = new Map(existingOptions.map((o) => [o.id, o]));
+        const processedIds = new Set<string>();
 
-          await tx
-            .insert(schema.questionOptions)
-            .values(optionsToInsert);
+        const remainingInputOpts: { opt: OptionInput; idx: number }[] = [];
+        for (let idx = 0; idx < inputOpts.length; idx++) {
+          const opt = inputOpts[idx];
+          if (opt.id && existingIdsMap.has(opt.id)) {
+            await tx
+              .update(schema.questionOptions)
+              .set({
+                optionText: String(opt.optionText || '').trim(),
+                isCorrect: Boolean(opt.isCorrect),
+                order: opt.order !== undefined && opt.order !== null ? Number(opt.order) : idx + 1,
+              })
+              .where(eq(schema.questionOptions.id, opt.id));
+            processedIds.add(opt.id);
+          } else {
+            remainingInputOpts.push({ opt, idx });
+          }
+        }
+
+        const remainingExisting = existingOptions.filter((o) => !processedIds.has(o.id));
+        for (let i = 0; i < remainingInputOpts.length; i++) {
+          const { opt, idx } = remainingInputOpts[i];
+          if (i < remainingExisting.length) {
+            const existingToUpdate = remainingExisting[i];
+            await tx
+              .update(schema.questionOptions)
+              .set({
+                optionText: String(opt.optionText || '').trim(),
+                isCorrect: Boolean(opt.isCorrect),
+                order: opt.order !== undefined && opt.order !== null ? Number(opt.order) : idx + 1,
+              })
+              .where(eq(schema.questionOptions.id, existingToUpdate.id));
+            processedIds.add(existingToUpdate.id);
+          } else {
+            await tx.insert(schema.questionOptions).values({
+              questionId,
+              optionText: String(opt.optionText || '').trim(),
+              isCorrect: Boolean(opt.isCorrect),
+              order: opt.order !== undefined && opt.order !== null ? Number(opt.order) : idx + 1,
+            });
+          }
+        }
+
+        const toDelete = existingOptions.filter((o) => !processedIds.has(o.id));
+        for (const delOpt of toDelete) {
+          try {
+            await tx
+              .delete(schema.questionOptions)
+              .where(eq(schema.questionOptions.id, delOpt.id));
+          } catch (err) {
+            await tx
+              .update(schema.questionOptions)
+              .set({ isCorrect: false })
+              .where(eq(schema.questionOptions.id, delOpt.id));
+          }
         }
       } else if (type !== undefined && type !== 'multiple_choice' && question.type === 'multiple_choice') {
-        await tx
-          .delete(schema.questionOptions)
+        const existingOptions = await tx
+          .select()
+          .from(schema.questionOptions)
           .where(eq(schema.questionOptions.questionId, questionId));
+        for (const delOpt of existingOptions) {
+          try {
+            await tx
+              .delete(schema.questionOptions)
+              .where(eq(schema.questionOptions.id, delOpt.id));
+          } catch (err) {
+            await tx
+              .update(schema.questionOptions)
+              .set({ isCorrect: false })
+              .where(eq(schema.questionOptions.id, delOpt.id));
+          }
+        }
       }
     });
 

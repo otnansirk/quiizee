@@ -6,6 +6,7 @@ import { eq, asc } from 'drizzle-orm';
 import { z } from 'zod';
 
 const optionInputSchema = z.object({
+  id: z.string().optional(),
   optionText: z.string().optional(),
   isCorrect: z.boolean().optional(),
   order: z.number().optional(),
@@ -29,6 +30,7 @@ interface RouteContext {
 }
 
 interface OptionInput {
+  id?: string;
   optionText?: string;
   isCorrect?: boolean;
   order?: number;
