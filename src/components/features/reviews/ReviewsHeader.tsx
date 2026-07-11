@@ -18,18 +18,12 @@ export const ReviewsHeader: React.FC<ReviewsHeaderProps> = ({
   return (
     <>
       {/* Page Header */}
-      <div
-        className="flex justify-between items-center mb-6"
-        style={{ flexWrap: "wrap", gap: "1rem" }}
-      >
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
         <div>
-          <h1
-            className="title"
-            style={{ fontSize: "2.5rem", marginBottom: "0.25rem" }}
-          >
+          <h1 className="title text-4xl font-extrabold mb-1 text-foreground">
             Essay Reviews & Grading
           </h1>
-          <p className="subtitle" style={{ margin: 0, maxWidth: "100%" }}>
+          <p className="subtitle m-0 max-w-full text-muted-foreground">
             Review student responses and finalize assessment scores
           </p>
         </div>
@@ -37,11 +31,7 @@ export const ReviewsHeader: React.FC<ReviewsHeaderProps> = ({
         <button
           onClick={onRefresh}
           disabled={loading}
-          className="btn btn-secondary btn-sm"
-          style={{
-            borderColor: "rgba(99, 102, 241, 0.3)",
-            color: "var(--accent-hover)",
-          }}
+          className="btn btn-secondary btn-sm border-indigo-500/30 text-indigo-400 hover:text-indigo-300 font-semibold"
           title="Refresh pending reviews list"
         >
           Refresh List
@@ -50,19 +40,11 @@ export const ReviewsHeader: React.FC<ReviewsHeaderProps> = ({
 
       {/* Error Banner */}
       {error && (
-        <div
-          className="alert alert-error animate-fade-in"
-          style={{ marginBottom: "1.5rem" }}
-        >
-          <span style={{ flex: 1 }}>{error}</span>
+        <div className="alert alert-error animate-fade-in mb-6 flex items-center justify-between">
+          <span className="flex-1 font-semibold">{error}</span>
           <button
             onClick={onClearError}
-            className="btn btn-ghost btn-sm"
-            style={{
-              padding: "0.2rem 0.5rem",
-              minWidth: "auto",
-              color: "#e12727",
-            }}
+            className="btn btn-ghost btn-sm p-1 min-w-0 text-red-400 font-bold"
           >
             X
           </button>

@@ -26,127 +26,39 @@ export const ScoreFinalizeConfirmModal: React.FC<
 
   return (
     <ModalPortal isOpen={isOpen}>
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(5, 5, 10, 0.8)",
-          backdropFilter: "blur(10px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "1.5rem",
-          zIndex: 1050,
-        }}
-      >
-        <div
-          className="modal-content card animate-fade-in"
-          style={{
-            width: "100%",
-            maxWidth: "440px",
-            padding: "1.75rem",
-            textAlign: "center",
-            background: "var(--bg-secondary)",
-            border: "1px solid rgba(16, 185, 129, 0.35)",
-            boxShadow:
-              "0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 45px rgba(16, 185, 129, 0.18)",
-          }}
-        >
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "14px",
-              background: "rgba(16, 185, 129, 0.15)",
-              color: "#10b981",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "1.2rem",
-              fontWeight: 900,
-              margin: "0 auto 1rem",
-              border: "1px solid rgba(16, 185, 129, 0.35)",
-            }}
-          >
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-6 z-[1050]">
+        <div className="modal-content card animate-fade-in w-full max-w-[440px] p-7 text-center bg-secondary border border-success/35 shadow-2xl shadow-success/20">
+          <div className="w-12 h-12 rounded-xl bg-success/15 text-success flex items-center justify-center text-xl font-black mx-auto mb-4 border border-success/35">
             ✓
           </div>
-          <h3
-            style={{
-              fontSize: "1.3rem",
-              fontWeight: 800,
-              marginBottom: "0.45rem",
-              color: "var(--text-primary)",
-            }}
-          >
+          <h3 className="text-xl font-extrabold mb-2 text-foreground">
             Finalize Exam Score?
           </h3>
-          <p
-            style={{
-              color: "var(--text-secondary)",
-              marginBottom: "1.25rem",
-              fontSize: "0.9rem",
-              lineHeight: 1.5,
-            }}
-          >
+          <p className="text-muted-foreground mb-5 text-sm leading-relaxed">
             You are about to lock the final grade for this student attempt and make the results available.
           </p>
 
-          <div
-            style={{
-              padding: "1rem",
-              background: "rgba(0, 0, 0, 0.3)",
-              borderRadius: "var(--radius-md)",
-              marginBottom: "1.5rem",
-              border: "1px solid var(--border)",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--text-muted)",
-                marginBottom: "0.25rem",
-              }}
-            >
+          <div className="p-4 bg-black/30 rounded-xl mb-6 border border-border">
+            <div className="text-xs text-muted-foreground font-semibold mb-1 tracking-wider uppercase">
               FINAL SCORE TO BE AWARDED
             </div>
-            <div
-              style={{
-                fontWeight: 800,
-                color: "#10b981",
-                fontSize: "1.5rem",
-              }}
-            >
+            <div className="font-extrabold text-success text-2xl">
               {runningTotal} / {displayMax} pts
             </div>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "1rem",
-              justifyContent: "center",
-            }}
-          >
+          <div className="flex gap-4 justify-center">
             <button
               onClick={onClose}
               disabled={isFinalizing}
-              className="btn btn-secondary"
-              style={{ flex: 1, padding: "0.75rem" }}
+              className="btn btn-secondary flex-1 py-3"
             >
               Cancel
             </button>
             <button
               onClick={onConfirm}
               disabled={isFinalizing}
-              className="btn"
-              style={{
-                flex: 1,
-                padding: "0.75rem",
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                color: "#ffffff",
-                boxShadow: "0 4px 15px rgba(16, 185, 129, 0.35)",
-                fontWeight: 600,
-              }}
+              className="btn flex-1 py-3 bg-gradient-to-br from-emerald-500 to-success text-white shadow-md shadow-success/30 font-semibold"
             >
               {isFinalizing ? "Finalizing..." : "Finalize Now"}
             </button>
