@@ -31,57 +31,39 @@ export const EditQuizHeaderBanner: React.FC<EditQuizHeaderBannerProps> = ({
   return (
     <>
       {/* Back Navigation */}
-      <div
-        style={{
-          marginBottom: "1.5rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "1rem",
-        }}
-      >
+      <div className="mb-6 flex justify-between items-center flex-wrap gap-4">
         <Link
           href="/teacher/quizzes"
-          className="btn btn-ghost btn-sm"
-          style={{ paddingLeft: 0, color: "var(--text-secondary)" }}
+          className="btn btn-ghost btn-sm pl-0 text-muted-foreground"
         >
           Back to Quizzes
         </Link>
 
         <Link
           href={`/teacher/quizzes/${quizId}/questions`}
-          className="btn btn-secondary btn-sm"
-          style={{
-            borderColor: "rgba(99, 102, 241, 0.4)",
-            color: "var(--accent-hover)",
-          }}
+          className="btn btn-secondary btn-sm font-bold"
         >
           Manage Questions ({questionsCount})
         </Link>
       </div>
 
       {/* Page Title */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h1
-          className="title"
-          style={{ fontSize: "2.5rem", marginBottom: "0.25rem" }}
-        >
+      <div className="mb-8">
+        <h1 className="title text-4xl font-extrabold mb-1 text-foreground">
           Edit Quiz Settings
         </h1>
-        <p className="subtitle" style={{ margin: 0, maxWidth: "100%" }}>
+        <p className="subtitle m-0 max-w-full text-muted-foreground">
           Update assessment parameters, access permissions, and certificates
         </p>
       </div>
 
       {/* Alert Messages */}
       {errorMsg && (
-        <div className="alert alert-error animate-fade-in">
-          <span style={{ flex: 1 }}>{errorMsg}</span>
+        <div className="alert alert-error animate-fade-in flex items-center justify-between">
+          <span className="flex-1 font-semibold">{errorMsg}</span>
           <button
             onClick={onClearError}
-            className="btn btn-ghost btn-sm"
-            style={{ padding: "0.2rem 0.5rem", minWidth: "auto", color: "#e12727" }}
+            className="btn btn-ghost btn-sm p-1 min-w-0 text-error font-extrabold"
           >
             X
           </button>
@@ -89,12 +71,11 @@ export const EditQuizHeaderBanner: React.FC<EditQuizHeaderBannerProps> = ({
       )}
 
       {successMsg && (
-        <div className="alert alert-success animate-fade-in">
-          <span style={{ flex: 1 }}>{successMsg}</span>
+        <div className="alert alert-success animate-fade-in flex items-center justify-between">
+          <span className="flex-1 font-semibold">{successMsg}</span>
           <button
             onClick={onClearSuccess}
-            className="btn btn-ghost btn-sm"
-            style={{ padding: "0.2rem 0.5rem", minWidth: "auto", color: "#43c372" }}
+            className="btn btn-ghost btn-sm p-1 min-w-0 text-emerald-400 font-extrabold"
           >
             X
           </button>
@@ -102,53 +83,21 @@ export const EditQuizHeaderBanner: React.FC<EditQuizHeaderBannerProps> = ({
       )}
 
       {/* Publication Status Card */}
-      <div
-        className="card"
-        style={{
-          marginBottom: "2rem",
-          padding: "1.5rem 2rem",
-          color: "#ffffff",
-          background: "#222222",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "1rem",
-        }}
-      >
+      <div className="card mb-8 p-6 sm:p-8 text-white !bg-black/80 flex items-center justify-between flex-wrap gap-4 border-2 border-black shadow-[4px_4px_0px_#000]">
         <div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              marginBottom: "0.25rem",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "1.25rem",
-                fontWeight: 700,
-              }}
-            >
+          <div className="flex items-center gap-3 mb-1">
+            <span className="text-xl font-bold">
               Publication Status:
             </span>
             <span
-              className={`badge ${
+              className={`badge m-0 text-xs font-extrabold ${
                 isPublished ? "badge-success" : "badge-warning"
               }`}
-              style={{ margin: 0, fontSize: "0.8rem" }}
             >
               {isPublished ? "Published" : "Draft"}
             </span>
           </div>
-          <p
-            style={{
-              fontSize: "0.85rem",
-              color: "#ffffffb3",
-              margin: 0,
-            }}
-          >
+          <p className="text-sm text-white/70 m-0">
             {isPublished
               ? "This assessment is currently live and accessible to students with the access code."
               : "This assessment is currently hidden from students. Add questions and publish when ready."}
@@ -159,7 +108,7 @@ export const EditQuizHeaderBanner: React.FC<EditQuizHeaderBannerProps> = ({
           type="button"
           onClick={onTogglePublish}
           disabled={isPublishing || isSubmitting}
-          className={`btn ${isPublished ? "btn-secondary" : "btn-primary"}`}
+          className={`btn font-bold px-6 py-2.5 ${isPublished ? "btn-secondary" : "btn-primary"}`}
         >
           {isPublishing
             ? "Updating..."

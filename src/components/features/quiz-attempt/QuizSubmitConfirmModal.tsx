@@ -27,297 +27,107 @@ export const QuizSubmitConfirmModal: React.FC<QuizSubmitConfirmModalProps> = ({
   return (
     <ModalPortal isOpen={showSubmitModal || showAutoSubmitModal}>
       <>
-      {/* Submit Confirmation Modal Overlay */}
-      {showSubmitModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0, 0, 0, 0.82)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
-            zIndex: 100,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "1.5rem",
-            animation: "fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-          }}
-        >
-          <div
-            className="card animate-fade-in"
-            style={{
-              maxWidth: "480px",
-              width: "100%",
-              textAlign: "center",
-              padding: "1.75rem 1.5rem",
-              border: "1px solid rgba(99, 102, 241, 0.4)",
-              boxShadow:
-                "0 0 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(99, 102, 241, 0.25)",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "1.35rem",
-                fontWeight: 800,
-                color: "var(--text-primary)",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Submit Assessment?
-            </h3>
-            <p
-              style={{
-                color: "var(--text-secondary)",
-                marginBottom: "1.25rem",
-                fontSize: "0.9rem",
-              }}
-            >
-              You are about to finalize and submit your responses for scoring.
-            </p>
+        {/* Submit Confirmation Modal Overlay */}
+        {showSubmitModal && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-fade-in">
+            <div className="card animate-fade-in max-w-[480px] w-full text-center p-7 border border-indigo-500/40 shadow-2xl shadow-indigo-500/25 bg-secondary">
+              <h3 className="text-xl font-extrabold text-foreground mb-2">
+                Submit Assessment?
+              </h3>
+              <p className="text-muted-foreground mb-5 text-sm">
+                You are about to finalize and submit your responses for scoring.
+              </p>
 
-            {/* Scorecard Summary Stats */}
-            <div
-              style={{
-                background: "rgb(36, 36, 41)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-lg)",
-                padding: "1.25rem",
-                marginBottom: "1.75rem",
-                display: "flex",
-                justifyContent: "space-around",
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "var(--text-muted)",
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Total Questions
-                </div>
-                <div
-                  style={{
-                    fontSize: "1.5rem",
-                    fontWeight: 800,
-                    color: "#FFFFFF",
-                    marginTop: "0.2rem",
-                  }}
-                >
-                  {totalCount}
-                </div>
-              </div>
-              <div style={{ width: "1px", background: "var(--border)" }} />
-              <div>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "#43c372",
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Answered
-                </div>
-                <div
-                  style={{
-                    fontSize: "1.5rem",
-                    fontWeight: 800,
-                    color: "#43c372",
-                    marginTop: "0.2rem",
-                  }}
-                >
-                  {answeredCount}
-                </div>
-              </div>
-              <div style={{ width: "1px", background: "var(--border)" }} />
-              <div>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color:
-                      unansweredCount > 0 ? "#fde047" : "var(--text-muted)",
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Unanswered
-                </div>
-                <div
-                  style={{
-                    fontSize: "1.5rem",
-                    fontWeight: 800,
-                    color:
-                      unansweredCount > 0
-                        ? "#fde047"
-                        : "#FFFFFF",
-                    marginTop: "0.2rem",
-                  }}
-                >
-                  {unansweredCount}
-                </div>
-              </div>
-            </div>
-
-            {/* Amber Warning or Emerald Success */}
-            {unansweredCount > 0 ? (
-              <div
-                className="alert"
-                style={{
-                  background: "rgba(245, 158, 11, 0.15)",
-                  border: "1px solid rgba(245, 158, 11, 0.4)",
-                  color: "#c8aa12",
-                  textAlign: "left",
-                  marginBottom: "2rem",
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: "0.75rem",
-                }}
-              >
+              {/* Scorecard Summary Stats */}
+              <div className="bg-zinc-900 border border-border rounded-xl p-5 mb-7 flex justify-around items-center">
                 <div>
-                  <strong
-                    style={{ display: "block", marginBottom: "0.2rem" }}
-                  >
-                    Incomplete Assessment Warning
-                  </strong>
-                  <span>
-                    You have{" "}
-                    <strong>
-                      {unansweredCount} unanswered question
-                      {unansweredCount === 1 ? "" : "s"}
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                    Total Questions
+                  </div>
+                  <div className="text-2xl font-extrabold text-white mt-1">
+                    {totalCount}
+                  </div>
+                </div>
+                <div className="w-[1px] h-10 bg-border" />
+                <div>
+                  <div className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">
+                    Answered
+                  </div>
+                  <div className="text-2xl font-extrabold text-emerald-400 mt-1">
+                    {answeredCount}
+                  </div>
+                </div>
+                <div className="w-[1px] h-10 bg-border" />
+                <div>
+                  <div className={`text-xs font-semibold uppercase tracking-wider ${unansweredCount > 0 ? "text-amber-300" : "text-muted-foreground"}`}>
+                    Unanswered
+                  </div>
+                  <div className={`text-2xl font-extrabold mt-1 ${unansweredCount > 0 ? "text-amber-300" : "text-white"}`}>
+                    {unansweredCount}
+                  </div>
+                </div>
+              </div>
+
+              {/* Amber Warning or Emerald Success */}
+              {unansweredCount > 0 ? (
+                <div className="alert bg-amber-500/15 border border-amber-500/40 text-amber-300 text-left mb-8 flex items-start gap-3 p-4 rounded-xl">
+                  <div>
+                    <strong className="block mb-1 font-bold">
+                      Incomplete Assessment Warning
                     </strong>
-                    ! Any unanswered items will be automatically scored as 0
-                    points.
+                    <span className="text-sm">
+                      You have{" "}
+                      <strong className="font-bold">
+                        {unansweredCount} unanswered question
+                        {unansweredCount === 1 ? "" : "s"}
+                      </strong>
+                      ! Any unanswered items will be automatically scored as 0 points.
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="alert bg-emerald-500/15 border border-emerald-500/40 text-green-600 text-left mb-8 flex items-center gap-3 p-4 rounded-xl">
+                  <span className="text-sm">
+                    <strong className="font-bold">All Set!</strong> You have provided an answer for every question in this assessment.
                   </span>
                 </div>
-              </div>
-            ) : (
-              <div
-                className="alert"
-                style={{
-                  background: "rgba(34, 197, 94, 0.15)",
-                  border: "1px solid rgba(34, 197, 94, 0.4)",
-                  color: "#43c372",
-                  textAlign: "left",
-                  marginBottom: "2rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.75rem",
-                }}
-              >
-                <span>
-                  <strong>All Set!</strong> You have provided an answer for every
-                  question in this assessment.
-                </span>
-              </div>
-            )}
+              )}
 
-            {/* Modal Actions */}
-            <div
-              style={{
-                display: "flex",
-                gap: "1rem",
-                justifyContent: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <button
-                onClick={onKeepWorking}
-                disabled={isSubmitting}
-                className="btn btn-secondary btn-lg"
-                style={{
-                  flex: 1,
-                  minWidth: "160px",
-                  justifyContent: "center",
-                }}
-              >
-                Keep Working
-              </button>
-              <button
-                onClick={onConfirmSubmit}
-                disabled={isSubmitting}
-                className="btn btn-primary btn-lg"
-                style={{
-                  flex: 1,
-                  minWidth: "200px",
-                  justifyContent: "center",
-                  boxShadow: "0 0 25px rgba(99, 102, 241, 0.5)",
-                }}
-              >
-                {isSubmitting
-                  ? "Submitting..."
-                  : "Yes, Submit"}
-              </button>
+              {/* Modal Actions */}
+              <div className="flex gap-4 justify-center flex-wrap">
+                <button
+                  onClick={onKeepWorking}
+                  disabled={isSubmitting}
+                  className="btn btn-secondary btn-lg flex-1 min-w-[160px] justify-center py-3"
+                >
+                  Keep Working
+                </button>
+                <button
+                  onClick={onConfirmSubmit}
+                  disabled={isSubmitting}
+                  className="btn btn-primary btn-lg flex-1 min-w-[200px] justify-center py-3 shadow-lg shadow-indigo-500/50"
+                >
+                  {isSubmitting ? "Submitting..." : "Yes, Submit"}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Auto-Submission Modal Overlay */}
-      {showAutoSubmitModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0, 0, 0, 0.88)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            zIndex: 110,
-            display: "flex",
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: "1.5rem",
-            animation: "fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-          }}
-        >
-          <div
-            className="card animate-fade-in"
-            style={{
-              maxWidth: "420px",
-              width: "100%",
-              textAlign: "center",
-              padding: "1.75rem 1.5rem",
-              border: "1px solid rgba(239, 68, 68, 0.5)",
-              boxShadow: "0 0 50px rgba(239, 68, 68, 0.3)",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "1.35rem",
-                fontWeight: 800,
-                color: "var(--text-primary)",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Time&apos;s Up!
-            </h3>
-            <p
-              style={{
-                color: "var(--text-secondary)",
-                fontSize: "0.95rem",
-                marginBottom: "1.5rem",
-                lineHeight: "1.5",
-              }}
-            >
-              Your allocated time has expired. Submitting your assessment
-              automatically...
-            </p>
-            <div
-              className="spinner"
-              style={{ width: "42px", height: "42px", margin: "0 auto" }}
-            ></div>
+        {/* Auto-Submission Modal Overlay */}
+        {showAutoSubmitModal && (
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-[110] flex items-center justify-center p-6 animate-fade-in">
+            <div className="card animate-fade-in max-w-[420px] w-full text-center p-7 border border-error/50 shadow-2xl shadow-error/30 bg-secondary">
+              <h3 className="text-xl font-extrabold text-foreground mb-2">
+                Time&apos;s Up!
+              </h3>
+              <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+                Your allocated time has expired. Submitting your assessment automatically...
+              </p>
+              <div className="spinner w-11 h-11 mx-auto"></div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
       </>
     </ModalPortal>
   );
