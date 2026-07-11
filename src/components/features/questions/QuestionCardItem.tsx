@@ -65,6 +65,19 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
               {q.duration}s
             </span>
           )}
+
+          {/* Submitted Info Badge */}
+          {q.hasSubmissions && (
+            <span
+              className="px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 cursor-help"
+              title="This question has been answered across one or more student attempts. Modifying the prompt or correct answer may influence historical scores."
+            >
+              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Submitted ({q.submissionsCount || 1})
+            </span>
+          )}
         </div>
 
         {/* Card Actions (Reorder, Edit, Delete) */}

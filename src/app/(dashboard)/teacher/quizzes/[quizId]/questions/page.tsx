@@ -36,6 +36,8 @@ export interface QuestionData {
   order: number;
   correctAnswer?: string | null;
   options?: OptionData[];
+  hasSubmissions?: boolean;
+  submissionsCount?: number;
   createdAt?: string;
   updatedAt?: string;
 }

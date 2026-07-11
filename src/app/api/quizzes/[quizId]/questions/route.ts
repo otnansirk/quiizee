@@ -97,9 +97,16 @@ export async function GET(req: Request, { params }: RouteContext) {
           .where(eq(schema.questionOptions.questionId, question.id))
           .orderBy(asc(schema.questionOptions.order));
 
+        const studentAnswers = await db
+          .select({ id: schema.studentAnswers.id })
+          .from(schema.studentAnswers)
+          .where(eq(schema.studentAnswers.questionId, question.id));
+
         return {
           ...question,
           options,
+          hasSubmissions: studentAnswers.length > 0,
+          submissionsCount: studentAnswers.length,
         };
       })
     );
