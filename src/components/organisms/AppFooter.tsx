@@ -7,25 +7,13 @@ interface AppFooterProps {
 }
 
 export const AppFooter: React.FC<AppFooterProps> = ({
-  padding = "2.5rem 0",
-  style = {},
   className = "",
 }) => {
   return (
     <footer
-      className={className}
-      style={{
-        padding,
-        borderTop: "2px solid #111827",
-        background: "#ffffff",
-        color: "#4b5563",
-        textAlign: "center",
-        fontSize: "0.85rem",
-        fontWeight: 700,
-        ...style,
-      }}
+      className={`py-10 border-t-2 border-foreground bg-background text-muted-foreground text-center text-sm font-bold ${className}`}
     >
-      <div className="container">
+      <div className="container mx-auto px-4">
         <p>
           © {new Date().getFullYear()} QUIIZEE &apos;26. ENGINEERED FOR INSTRUCTIONAL EXCELLENCE.
         </p>

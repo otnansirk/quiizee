@@ -23,58 +23,20 @@ export const ToastStack: React.FC<ToastStackProps> = ({ toasts }) => {
   if (!mounted || !toasts || toasts.length === 0) return null;
 
   return createPortal(
-    <div
-      className="toast-container"
-      style={{
-        position: "fixed",
-        bottom: "2rem",
-        right: "2rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.75rem",
-        zIndex: 9999,
-        pointerEvents: "none",
-      }}
-    >
+    <div className="toast-container fixed bottom-8 right-8 flex flex-col gap-3 z-[9999] pointer-events-none">
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="toast-item animate-fade-in"
-          style={{
-            pointerEvents: "auto",
-            padding: "1rem 1.25rem",
-            borderRadius: "var(--radius-md)",
-            background: "var(--bg-primary)",
-            border: "2px solid var(--border)",
-            boxShadow: "var(--shadow-md)",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.85rem",
-            color: "var(--text-primary)",
-            fontSize: "0.95rem",
-            fontWeight: 600,
-            maxWidth: "420px",
-            minWidth: "280px",
-          }}
+          className="toast-item animate-fade-in pointer-events-auto px-5 py-4 rounded-xl bg-background border-2 border-border shadow-md flex items-center gap-3.5 text-foreground text-sm font-semibold max-w-[420px] min-w-[280px]"
         >
           <div
-            style={{
-              padding: "0.25rem 0.65rem",
-              borderRadius: "4px",
-              background:
-                toast.type === "success"
-                  ? "var(--success)"
-                  : toast.type === "error"
-                  ? "var(--error)"
-                  : "var(--accent)",
-              color: "#ffffff",
-              fontWeight: 800,
-              fontSize: "0.75rem",
-              textTransform: "uppercase",
-              letterSpacing: "0.5px",
-              flexShrink: 0,
-              border: "1.5px solid var(--border)",
-            }}
+            className={`py-1 px-2.5 rounded text-white font-extrabold text-xs uppercase tracking-wider flex-shrink-0 border-2 border-border ${
+              toast.type === "success"
+                ? "bg-success"
+                : toast.type === "error"
+                ? "bg-error"
+                : "bg-accent"
+            }`}
           >
             {toast.type === "success"
               ? "SUCCESS"
@@ -82,7 +44,7 @@ export const ToastStack: React.FC<ToastStackProps> = ({ toasts }) => {
               ? "ERROR"
               : "INFO"}
           </div>
-          <span style={{ flex: 1, lineHeight: 1.4 }}>{toast.message}</span>
+          <span className="flex-1 leading-relaxed">{toast.message}</span>
         </div>
       ))}
     </div>,

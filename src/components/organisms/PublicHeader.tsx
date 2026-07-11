@@ -16,35 +16,21 @@ export const PublicHeader: React.FC<PublicHeaderProps> = ({
   sticky = true,
   backToHome = false,
   rightAction,
-  style = {},
   className = "",
 }) => {
   return (
     <header
-      className={className}
-      style={{
-        padding: "0.75rem 0",
-        borderBottom: "2px solid #111827",
-        background: "#ffffff",
-        position: sticky ? "sticky" : "static",
-        top: sticky ? 0 : undefined,
-        zIndex: sticky ? 40 : undefined,
-        ...style,
-      }}
+      className={`py-3 border-b-2 border-foreground bg-background ${
+        sticky ? "sticky top-0 z-40" : "static"
+      } ${className}`}
     >
-      <div className="container flex items-center justify-between">
+      <div className="container mx-auto px-4 flex items-center justify-between">
         <BrandLogo size={size} />
         <div className="flex items-center gap-3">
           {backToHome && (
             <Link
               href="/"
-              className="btn btn-ghost btn-sm"
-              style={{
-                color: "#111827",
-                fontWeight: 800,
-                fontSize: "0.85rem",
-                padding: "0.35rem 0.75rem",
-              }}
+              className="btn btn-ghost btn-sm text-foreground font-extrabold text-sm px-3 py-1.5"
             >
               Back to Home
             </Link>
