@@ -26,172 +26,82 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
   onEdit,
   onDelete,
 }) => {
-  let typeBadgeBg = "rgba(99, 102, 241, 0.15)";
-  let typeBadgeColor = "#818cf8";
-  let typeBadgeBorder = "rgba(99, 102, 241, 0.3)";
+  let badgeClass = "bg-indigo-500/15 text-indigo-400 border-indigo-500/30";
   let typeLabel = "Multiple Choice";
-  let cardBorderLeft = "#6366f1";
+  let borderLeftClass = "border-l-indigo-500";
 
   if (q.type === "true_false") {
-    typeBadgeBg = "rgba(16, 185, 129, 0.15)";
-    typeBadgeColor = "#34d399";
-    typeBadgeBorder = "rgba(16, 185, 129, 0.3)";
+    badgeClass = "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
     typeLabel = "True or False";
-    cardBorderLeft = "#10b981";
+    borderLeftClass = "border-l-emerald-500";
   } else if (q.type === "essay") {
-    typeBadgeBg = "rgba(245, 158, 11, 0.15)";
-    typeBadgeColor = "#fbbf24";
-    typeBadgeBorder = "rgba(245, 158, 11, 0.3)";
+    badgeClass = "bg-amber-500/15 text-yellow-600 border-amber-500/30";
     typeLabel = "Essay / Free Text";
-    cardBorderLeft = "#f59e0b";
+    borderLeftClass = "border-l-amber-500";
   }
 
   return (
-    <div
-      className="card card-hover"
-      style={{
-        padding: "1.75rem 2rem",
-        borderLeft: `4px solid ${cardBorderLeft}`,
-        display: "flex",
-        flexDirection: "column",
-        gap: "1.25rem",
-      }}
-    >
+    <div className={`card card-hover p-7 flex flex-col gap-5 border-l-4 ${borderLeftClass}`}>
       {/* Card Header Row */}
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "1rem",
-          paddingBottom: "1rem",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            flexWrap: "wrap",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "1.1rem",
-              fontWeight: 800,
-              color: "var(--text-primary)",
-              background: "rgba(255, 255, 255, 0.06)",
-              padding: "0.35rem 0.85rem",
-              borderRadius: "var(--radius-sm)",
-            }}
-          >
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="text-lg font-extrabold text-foreground bg-white/10 px-3.5 py-1.5 rounded-md">
             Question #{idx + 1}
           </span>
 
           {/* Type Badge */}
-          <span
-            style={{
-              padding: "0.3rem 0.75rem",
-              borderRadius: "var(--radius-full)",
-              background: typeBadgeBg,
-              color: typeBadgeColor,
-              border: `1px solid ${typeBadgeBorder}`,
-              fontSize: "0.8rem",
-              fontWeight: 700,
-            }}
-          >
+          <span className={`px-3 py-1 rounded-full text-xs font-bold border ${badgeClass}`}>
             {typeLabel}
           </span>
 
           {/* Points Badge */}
-          <span
-            style={{
-              padding: "0.3rem 0.75rem",
-              borderRadius: "var(--radius-full)",
-              background: "rgba(255, 255, 255, 0.05)",
-              color: "var(--text-primary)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-            }}
-          >
+          <span className="px-3 py-1 rounded-full bg-white/5 text-foreground border border-white/15 text-xs font-semibold">
             {q.points} {q.points === 1 ? "pt" : "pts"}
           </span>
 
           {/* Duration Badge (if per-question mode) */}
           {durationMode === "per_question" && q.duration && (
-            <span
-              style={{
-                padding: "0.3rem 0.75rem",
-                borderRadius: "var(--radius-full)",
-                background: "rgba(59, 130, 246, 0.15)",
-                color: "#60a5fa",
-                border: "1px solid rgba(59, 130, 246, 0.3)",
-                fontSize: "0.8rem",
-                fontWeight: 600,
-              }}
-            >
+            <span className="px-3 py-1 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30 text-xs font-semibold">
               {q.duration}s
             </span>
           )}
         </div>
 
         {/* Card Actions (Reorder, Edit, Delete) */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={onMoveUp}
             disabled={isFirst}
-            className="btn btn-ghost btn-sm"
+            className={`btn btn-ghost btn-sm px-2.5 py-1.5 text-xs font-bold ${
+              isFirst ? "opacity-30 cursor-not-allowed" : "cursor-pointer"
+            }`}
             title="Move question up"
-            style={{
-              padding: "0.4rem 0.6rem",
-              opacity: isFirst ? 0.3 : 1,
-              cursor: isFirst ? "not-allowed" : "pointer",
-            }}
           >
             UP
           </button>
           <button
             onClick={onMoveDown}
             disabled={isLast}
-            className="btn btn-ghost btn-sm"
+            className={`btn btn-ghost btn-sm px-2.5 py-1.5 text-xs font-bold ${
+              isLast ? "opacity-30 cursor-not-allowed" : "cursor-pointer"
+            }`}
             title="Move question down"
-            style={{
-              padding: "0.4rem 0.6rem",
-              opacity: isLast ? 0.3 : 1,
-              cursor: isLast ? "not-allowed" : "pointer",
-            }}
           >
             DOWN
           </button>
 
-          <div
-            style={{
-              width: "1px",
-              height: "20px",
-              background: "var(--border)",
-              margin: "0 0.25rem",
-            }}
-          />
+          <div className="w-[1px] h-5 bg-border mx-1" />
 
           <button
             onClick={onEdit}
-            className="btn btn-secondary btn-sm"
-            style={{ padding: "0.4rem 0.85rem" }}
+            className="btn btn-secondary btn-sm px-3.5 py-1.5 font-semibold"
           >
             Edit
           </button>
 
           <button
             onClick={onDelete}
-            className="btn btn-ghost btn-sm"
-            style={{
-              padding: "0.4rem 0.85rem",
-              color: "#e12727",
-              background: "rgba(239, 68, 68, 0.08)",
-            }}
+            className="btn btn-danger btn-sm px-3.5 py-1.5 text-error bg-error/10 hover:bg-error/20 font-semibold"
           >
             Delete
           </button>
@@ -200,39 +110,16 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
 
       {/* Question Text & Optional Image */}
       <div>
-        <p
-          style={{
-            fontSize: "1.15rem",
-            fontWeight: 600,
-            color: "var(--text-primary)",
-            lineHeight: 1.6,
-            whiteSpace: "pre-wrap",
-            marginBottom: q.questionImage ? "1rem" : "0",
-          }}
-        >
+        <p className={`text-lg font-semibold text-foreground leading-relaxed whitespace-pre-wrap ${q.questionImage ? "mb-4" : "mb-0"}`}>
           {q.questionText}
         </p>
 
         {q.questionImage && (
-          <div
-            style={{
-              marginTop: "0.75rem",
-              borderRadius: "var(--radius-md)",
-              overflow: "hidden",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              maxWidth: "500px",
-              background: "rgba(0, 0, 0, 0.3)",
-            }}
-          >
+          <div className="mt-3 rounded-xl overflow-hidden border border-white/10 max-w-[500px] bg-black/30">
             <img
               src={q.questionImage}
               alt="Question illustration"
-              style={{
-                width: "100%",
-                maxHeight: "280px",
-                objectFit: "contain",
-                display: "block",
-              }}
+              className="w-full max-h-[280px] object-contain block"
               onError={(e) => {
                 (e.target as HTMLElement).style.display = "none";
               }}
@@ -242,16 +129,10 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
       </div>
 
       {/* Type-Specific Answer Details */}
-      <div style={{ marginTop: "0.25rem" }}>
+      <div className="mt-1">
         {/* MULTIPLE CHOICE DETAILS */}
         {q.type === "multiple_choice" && q.options && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(100%, 1fr))",
-              gap: "0.75rem",
-            }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {q.options
               .slice()
               .sort((a, b) => a.order - b.order)
@@ -260,79 +141,35 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
                 return (
                   <div
                     key={opt.id || optIdx}
-                    style={{
-                      padding: "0.85rem 1rem",
-                      borderRadius: "var(--radius-md)",
-                      background: opt.isCorrect
-                        ? "rgba(34, 197, 94, 0.12)"
-                        : "rgba(255, 255, 255, 0.03)",
-                      border: `1px solid ${
-                        opt.isCorrect
-                          ? "rgba(34, 197, 94, 0.4)"
-                          : "rgba(255, 255, 255, 0.08)"
-                      }`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: "0.75rem",
-                      transition: "all 0.2s ease",
-                      boxShadow: opt.isCorrect
-                        ? "0 0 15px rgba(34, 197, 94, 0.1)"
-                        : "none",
-                    }}
+                    className={`p-3.5 px-4 rounded-xl flex items-center justify-between gap-3 transition-all border border-black border-2 ${
+                      opt.isCorrect
+                        ? "bg-success"
+                        : "bg-gray-300"
+                    }`}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.75rem",
-                      }}
-                    >
+                    <div className="flex items-center gap-3">
                       <span
-                        style={{
-                          width: "28px",
-                          height: "28px",
-                          borderRadius: "6px",
-                          background: opt.isCorrect
-                            ? "rgba(34, 197, 94, 0.25)"
-                            : "rgba(255, 255, 255, 0.08)",
-                          color: opt.isCorrect
-                            ? "#2d9754"
-                            : "var(--text-secondary)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontWeight: 700,
-                          fontSize: "0.85rem",
-                        }}
+                        className={`w-7 h-7 rounded-md flex items-center justify-center font-bold text-sm bg-white ${
+                          opt.isCorrect
+                            ? "text-success"
+                            : "text-black"
+                        }`}
                       >
                         {letter}
                       </span>
                       <span
-                        style={{
-                          color:"var(--text-primary)",
-                          fontWeight: opt.isCorrect ? 800 : 400,
-                          fontSize: "0.95rem",
-                        }}
+                        className={`text-sm ${
+                          opt.isCorrect
+                            ? "text-white font-extrabold"
+                            : "text-foreground font-normal"
+                        }`}
                       >
                         {opt.optionText}
                       </span>
                     </div>
 
                     {opt.isCorrect && (
-                      <span
-                        style={{
-                          padding: "0.2rem 0.6rem",
-                          borderRadius: "var(--radius-full)",
-                          background: "rgba(34, 197, 94, 0.2)",
-                          color: "#2d9754",
-                          fontSize: "0.75rem",
-                          fontWeight: 700,
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "0.3rem",
-                        }}
-                      >
+                      <span className="px-2.5 py-0.5 rounded-full bg-white text-success text-xs font-bold inline-flex items-center gap-1">
                         Correct
                       </span>
                     )}
@@ -344,31 +181,9 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
 
         {/* TRUE / FALSE DETAILS */}
         {q.type === "true_false" && (
-          <div
-            style={{
-              padding: "1rem 1.25rem",
-              borderRadius: "var(--radius-md)",
-              background: "rgba(16, 185, 129, 0.12)",
-              border: "1px solid rgba(16, 185, 129, 0.3)",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              color: "#2d9754",
-              fontWeight: 700,
-              fontSize: "1rem",
-              boxShadow: "0 0 20px rgba(16, 185, 129, 0.1)",
-            }}
-          >
+          <div className="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 inline-flex items-center gap-3 text-emerald-400 font-bold text-base shadow-lg shadow-emerald-500/10">
             <span>Correct Answer:</span>
-            <span
-              style={{
-                padding: "0.25rem 0.75rem",
-                background: "rgba(16, 185, 129, 0.767)",
-                borderRadius: "var(--radius-sm)",
-                color: "#ffffff",
-                textTransform: "capitalize",
-              }}
-            >
+            <span className="px-3 py-1 bg-emerald-600 rounded-md text-white capitalize">
               {q.correctAnswer === "false"
                 ? "False (Correct)"
                 : "True (Correct)"}
@@ -378,22 +193,9 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
 
         {/* ESSAY DETAILS */}
         {q.type === "essay" && (
-          <div
-            style={{
-              padding: "0.85rem 1.25rem",
-              borderRadius: "var(--radius-md)",
-              background: "rgba(245, 158, 11, 0.1)",
-              border: "1px solid rgba(245, 158, 11, 0.25)",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              color: "#fbbf24",
-              fontSize: "0.9rem",
-              fontWeight: 500,
-            }}
-          >
+          <div className="p-3.5 px-5 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center gap-3 text-yellow-600 text-sm font-medium">
             <span>
-              <strong>Manual grading required:</strong> Teacher review is needed
+              <strong className="font-bold">Manual grading required:</strong> Teacher review is needed
               to evaluate student responses after quiz completion.
             </span>
           </div>
