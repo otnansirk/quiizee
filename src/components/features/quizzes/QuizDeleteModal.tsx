@@ -48,48 +48,9 @@ export const QuizDeleteModal: React.FC<QuizDeleteModalProps> = ({
 
   return (
     <ModalPortal isOpen={isOpen}>
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(5, 5, 10, 0.8)",
-          backdropFilter: "blur(10px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "1.5rem",
-          zIndex: 1050,
-        }}
-      >
-        <div
-          className="modal-content card animate-fade-in"
-          style={{
-            width: "100%",
-            maxWidth: "440px",
-            padding: "1.75rem",
-            textAlign: "center",
-            background: "var(--bg-secondary)",
-            border: "1px solid rgba(239, 68, 68, 0.35)",
-            boxShadow:
-              "0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 45px rgba(239, 68, 68, 0.22)",
-          }}
-        >
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "14px",
-              background: "rgba(239, 68, 68, 0.15)",
-              color: "#ef4444",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "1.1rem",
-              fontWeight: 900,
-              margin: "0 auto 1rem",
-              border: "1px solid rgba(239, 68, 68, 0.35)",
-            }}
-          >
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-6 z-[1050]">
+        <div className="modal-content card animate-fade-in w-full max-w-[440px] p-7 text-center bg-secondary border border-error/35 shadow-2xl shadow-error/20">
+          <div className="w-12 h-12 rounded-xl bg-error/15 text-error flex items-center justify-center text-lg font-black mx-auto mb-4 border border-error/35">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -100,7 +61,7 @@ export const QuizDeleteModal: React.FC<QuizDeleteModalProps> = ({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              style={{ display: "block" }}
+              className="block"
             >
               <path d="M3 6h18" />
               <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
@@ -109,58 +70,29 @@ export const QuizDeleteModal: React.FC<QuizDeleteModalProps> = ({
               <line x1="14" y1="11" x2="14" y2="17" />
             </svg>
           </div>
-          <h3
-            style={{
-              fontSize: "1.3rem",
-              fontWeight: 800,
-              marginBottom: "0.45rem",
-              color: "var(--text-primary)",
-            }}
-          >
+          <h3 className="text-xl font-extrabold mb-2 text-foreground">
             Delete Assessment?
           </h3>
-          <p
-            style={{
-              color: "var(--text-secondary)",
-              marginBottom: "1.5rem",
-              fontSize: "0.9rem",
-              lineHeight: 1.5,
-            }}
-          >
+          <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
             Are you sure you want to permanently delete{" "}
-            <strong style={{ color: "var(--text-primary)" }}>
+            <strong className="text-foreground">
               &ldquo;{quizToDelete.title}&rdquo;
             </strong>
             ? This action cannot be undone and will permanently remove all associated questions, options, and student attempts.
           </p>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "1rem",
-              justifyContent: "center",
-            }}
-          >
+          <div className="flex gap-4 justify-center">
             <button
               onClick={onClose}
               disabled={isDeleting}
-              className="btn btn-secondary"
-              style={{ flex: 1, padding: "0.75rem" }}
+              className="btn btn-secondary flex-1 py-3"
             >
               Cancel
             </button>
             <button
               onClick={handleDeleteQuiz}
               disabled={isDeleting}
-              className="btn"
-              style={{
-                flex: 1,
-                padding: "0.75rem",
-                background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
-                color: "#ffffff",
-                boxShadow: "0 4px 15px rgba(239, 68, 68, 0.35)",
-                fontWeight: 600,
-              }}
+              className="btn flex-1 py-3 bg-gradient-to-br from-error to-red-600 text-white shadow-md shadow-error/30 font-semibold"
             >
               {isDeleting ? "Deleting..." : "Delete Permanently"}
             </button>

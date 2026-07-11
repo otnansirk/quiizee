@@ -85,133 +85,60 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
 
   return (
     <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: isCertificateAvailable
-          ? "repeat(auto-fit, minmax(260px, 1fr))"
-          : "1fr",
-        gap: "1rem",
-        marginBottom: "1.5rem",
-      }}
+      className={`grid gap-4 mb-6 ${
+        isCertificateAvailable
+          ? "grid-cols-1 md:grid-cols-2"
+          : "grid-cols-1"
+      }`}
     >
       {/* Large Glowing Score Display */}
-      <div
-        className="card results-score-card"
-        style={{
-          padding: "clamp(0.75rem, 3vw, 2rem)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          background:
-            "linear-gradient(145deg, rgba(26, 26, 46, 0.8) 0%, rgba(20, 20, 36, 0.9) 100%)",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
-          boxShadow:
-            "0 10px 30px rgba(0, 0, 0, 0.3), 0 0 30px rgba(99, 102, 241, 0.15)",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "0.75rem",
-            color: "#FFF",
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.08em",
-            marginBottom: "0.5rem",
-          }}
-        >
+      <div className="card results-score-card p-4 sm:p-8 flex flex-col items-center justify-center text-center bg-gradient-to-br from-[#1a1a2e]/80 to-[#141424]/90 border border-white/12 shadow-[0_10px_30px_rgba(0,0,0,0.3),_0_0_30px_rgba(99,102,241,0.15)]">
+        <div className="text-xs text-white font-bold uppercase tracking-wider mb-2">
           {status === "submitted" ? "Current Auto-Graded Score" : "Total Score Earned"}
         </div>
 
         {numTotalScore !== null ? (
-          <div
-            className="flex items-baseline justify-center gap-2"
-            style={{ marginBottom: "0.4rem" }}
-          >
+          <div className="flex items-baseline justify-center gap-2 mb-1.5">
             <span
-              className="results-score-num"
-              style={{
-                fontSize: "clamp(1.9rem, 7vw, 4rem)",
-                fontWeight: 900,
-                color: status === "submitted" ? "#fde047" : "#20a250",
-                lineHeight: 1,
-                letterSpacing: "-0.03em",
-                filter: "drop-shadow(0 0 15px rgba(255, 255, 255, 0.4))",
-              }}
+              className={`results-score-num text-5xl sm:text-6xl font-black leading-none tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] ${
+                status === "submitted" ? "text-yellow-300" : "text-emerald-500"
+              }`}
             >
               {numTotalScore}
             </span>
-            <span
-              className="results-score-den"
-              style={{
-                fontSize: "clamp(0.85rem, 2.5vw, 1.6rem)",
-                color: "#ffffff94",
-                fontWeight: 600,
-              }}
-            >
+            <span className="results-score-den text-xl sm:text-2xl text-white/60 font-semibold">
               / {numMaxScore}
             </span>
           </div>
         ) : (
-          <div
-            style={{
-              fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
-              fontWeight: 800,
-              color: "#fde047",
-              marginBottom: "0.5rem",
-              textShadow: "0 0 20px rgba(245, 158, 11, 0.3)",
-            }}
-          >
+          <div className="text-3xl sm:text-4xl font-extrabold text-yellow-300 mb-2 drop-shadow-[0_0_20px_rgba(245,158,11,0.3)]">
             Pending Review
           </div>
         )}
 
         {status === "submitted" ? (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem" }}>
-            <div
-              className="badge badge-warning"
-              style={{
-                fontSize: "0.78rem",
-                padding: "0.25rem 0.65rem",
-                fontWeight: 700,
-                margin: 0,
-                background: "rgba(245, 158, 11, 0.15)",
-                color: "#fde047",
-                borderColor: "rgba(245, 158, 11, 0.4)",
-              }}
-            >
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="badge badge-warning text-xs px-3 py-1 font-bold m-0 bg-amber-500/15 text-yellow-300 border border-amber-500/40">
               Pending Essay Review
             </div>
             {percentage !== null && (
-              <div style={{ fontSize: "0.82rem", color: "#e2e8f0", fontWeight: 600 }}>
+              <div className="text-xs sm:text-sm text-slate-200 font-semibold">
                 Auto-graded accuracy: {percentage}% (+ up to remaining points after teacher review)
               </div>
             )}
           </div>
         ) : percentage !== null ? (
           <div
-            className="badge badge-accent"
-            style={{
-              fontSize: "0.78rem",
-              padding: "0.25rem 0.65rem",
-              fontWeight: 700,
-              margin: 0,
-              background:
-                percentage >= 70
-                  ? "rgba(34, 197, 94, 0.15)"
-                  : "rgba(255, 255, 255, 0.15)",
-              color: percentage >= 70 ? "#43c372" : "#FFF",
-              borderColor:
-                percentage >= 70
-                  ? "rgba(34, 197, 94, 0.4)"
-                  : "rgba(255, 255, 255, 0.4)",
-            }}
+            className={`badge m-0 text-xs px-3 py-1 font-bold border ${
+              percentage >= 70
+                ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/40"
+                : "bg-white/15 text-white border-white/40"
+            }`}
           >
             {percentage}% Accuracy
           </div>
         ) : (
-          <div className="badge badge-warning" style={{ margin: 0 }}>
+          <div className="badge badge-warning m-0 text-xs font-bold">
             Awaiting Essay Grading
           </div>
         )}
@@ -219,119 +146,25 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
 
       {/* Celebratory Certificate Banner */}
       {isCertificateAvailable && (
-        <div
-          className="card results-cert-card"
-          style={{
-            padding: "clamp(0.75rem, 3vw, 2rem)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            background:
-              "linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.25) 100%)",
-            border: "1px solid rgba(168, 85, 247, 0.4)",
-            boxShadow:
-              "0 10px 35px rgba(168, 85, 247, 0.25), 0 0 25px rgba(99, 102, 241, 0.2)",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <h2
-            className="results-cert-title"
-            style={{
-              fontSize: "1.15rem",
-              fontWeight: 800,
-              color: "#000",
-              marginBottom: "0.4rem",
-              lineHeight: 1.3,
-            }}
-          >
+        <div className="card results-cert-card p-4 sm:p-8 flex flex-col items-center justify-center text-center bg-gradient-to-br from-indigo-500/20 to-purple-500/25 border border-purple-500/40 shadow-[0_10px_35px_rgba(168,85,247,0.25),_0_0_25px_rgba(99,102,241,0.2)] relative overflow-hidden">
+          <h2 className="results-cert-title text-xl font-extrabold text-black dark:text-white mb-1.5 leading-snug">
             Congratulations!
           </h2>
-          <p
-            style={{
-              fontSize: "0.85rem",
-              color: "var(--text-primary)",
-              marginBottom: "1rem",
-              opacity: 0.9,
-            }}
-          >
+          <p className="text-sm text-foreground mb-4 opacity-90">
             You earned a Certificate of Completion for demonstrating mastery in
             this assessment!
           </p>
 
           {certError && (
-            <div
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 9999,
-                backgroundColor: "#FAF9F6",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "1.5rem",
-                color: "#111827",
-                fontFamily: "Inter, -apple-system, sans-serif",
-              }}
-            >
-              <div
-                style={{
-                  background: "#FFFFFF",
-                  border: "3px solid #111827",
-                  borderRadius: "24px",
-                  padding: "3rem 2.5rem",
-                  maxWidth: "500px",
-                  width: "100%",
-                  textAlign: "center",
-                  boxShadow: "8px 8px 0px #111827",
-                  position: "relative",
-                }}
-              >
-                <div
-                  style={{
-                    display: "inline-block",
-                    background: "#EF4444",
-                    color: "#FFFFFF",
-                    fontSize: "0.75rem",
-                    fontWeight: 900,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.15em",
-                    padding: "0.35rem 0.85rem",
-                    border: "2px solid #111827",
-                    borderRadius: "6px",
-                    marginBottom: "1.5rem",
-                    boxShadow: "3px 3px 0px #111827",
-                  }}
-                >
+            <div className="fixed inset-0 z-[9999] bg-[#FAF9F6] flex items-center justify-center p-6 text-gray-900 font-sans">
+              <div className="bg-white border-4 border-gray-900 rounded-3xl p-10 sm:p-12 max-w-lg w-full text-center shadow-[8px_8px_0px_#111827] relative">
+                <div className="inline-block bg-red-500 text-white text-xs font-black uppercase tracking-widest px-3 py-1.5 border-2 border-gray-900 rounded-md mb-6 shadow-[3px_3px_0px_#111827]">
                   01 &nbsp;|&nbsp; Notice
                 </div>
-                <h1
-                  style={{
-                    fontSize: "2.2rem",
-                    fontWeight: 900,
-                    textTransform: "uppercase",
-                    letterSpacing: "-0.04em",
-                    color: "#111827",
-                    margin: "0 0 1rem 0",
-                    lineHeight: 1.1,
-                  }}
-                >
+                <h1 className="text-4xl font-black uppercase tracking-tight text-gray-900 mb-4 leading-tight">
                   Certificate<br />Notice
                 </h1>
-                <div
-                  style={{
-                    color: "#374151",
-                    fontSize: "1rem",
-                    lineHeight: 1.6,
-                    fontWeight: 600,
-                    wordBreak: "break-word",
-                  }}
-                >
+                <div className="text-gray-700 text-base leading-relaxed font-semibold break-words mb-8">
                   {certError}
                 </div>
                 <button
@@ -342,23 +175,7 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
                       window.history.replaceState({}, "", `/results/${encodeURIComponent(resultCode)}`);
                     }
                   }}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    background: "#4F46E5",
-                    color: "#FFFFFF",
-                    padding: "1rem 1.5rem",
-                    border: "3px solid #111827",
-                    borderRadius: "12px",
-                    textDecoration: "none",
-                    fontWeight: 900,
-                    textTransform: "uppercase",
-                    fontSize: "1rem",
-                    letterSpacing: "0.05em",
-                    boxShadow: "5px 5px 0px #111827",
-                    cursor: "pointer",
-                    transition: "transform 0.15s, box-shadow 0.15s",
-                  }}
+                  className="block w-full bg-indigo-600 text-white py-4 px-6 border-4 border-gray-900 rounded-xl font-black uppercase text-base tracking-wider shadow-[5px_5px_0px_#111827] cursor-pointer transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0px_#111827]"
                 >
                   Return to Results
                 </button>
@@ -370,14 +187,9 @@ export const ResultScoreCard: React.FC<ResultScoreCardProps> = ({
             type="button"
             disabled={loadingCert}
             onClick={handleDownloadCertificate}
-            className="btn btn-primary btn-block"
-            style={{
-              background: "linear-gradient(135deg, #a855f7 0%, #6366f1 100%)",
-              boxShadow: "0 4px 15px rgba(168, 85, 247, 0.5)",
-              fontWeight: 700,
-              opacity: loadingCert ? 0.7 : 1,
-              cursor: loadingCert ? "not-allowed" : "pointer",
-            }}
+            className={`btn btn-block font-bold bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg shadow-purple-500/50 ${
+              loadingCert ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
+            }`}
           >
             {loadingCert ? "Generating PDF Certificate..." : "Download PDF Certificate"}
           </button>
