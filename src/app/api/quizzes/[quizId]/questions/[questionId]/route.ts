@@ -21,6 +21,7 @@ const updateQuestionSchema = z.object({
   order: z.union([z.number(), z.string()]).optional(),
   correctAnswer: z.string().nullable().optional(),
   options: z.array(optionInputSchema).optional(),
+  regrade: z.boolean().optional(),
 });
 
 interface RouteContext {
@@ -116,6 +117,7 @@ export async function PUT(req: Request, { params }: RouteContext) {
       order,
       correctAnswer,
       options,
+      regrade,
     } = parseResult.data;
 
     if (type !== undefined && !['multiple_choice', 'true_false', 'essay'].includes(type)) {
@@ -235,6 +237,95 @@ export async function PUT(req: Request, { params }: RouteContext) {
               .update(schema.questionOptions)
               .set({ isCorrect: false })
               .where(eq(schema.questionOptions.id, delOpt.id));
+          }
+        }
+      }
+
+      if (regrade === true) {
+        const updatedQuestionRows = await tx
+          .select()
+          .from(schema.questions)
+          .where(eq(schema.questions.id, questionId))
+          .limit(1);
+        const updatedQ = updatedQuestionRows[0];
+        if (updatedQ) {
+          const questionPoints = Number(updatedQ.points || 1);
+          const allStudentAnswers = await tx
+            .select()
+            .from(schema.studentAnswers)
+            .where(eq(schema.studentAnswers.questionId, questionId));
+
+          if (allStudentAnswers.length > 0) {
+            const affectedAttemptIds = new Set<string>();
+            if (updatedQ.type === 'multiple_choice') {
+              const currentOptions = await tx
+                .select()
+                .from(schema.questionOptions)
+                .where(eq(schema.questionOptions.questionId, questionId));
+              const correctOptionIds = new Set(
+                currentOptions.filter((o) => o.isCorrect).map((o) => o.id)
+              );
+              const correctOptionTexts = new Set(
+                currentOptions.filter((o) => o.isCorrect).map((o) => o.optionText.trim().toLowerCase())
+              );
+
+              for (const ans of allStudentAnswers) {
+                let isCorrect = false;
+                if (ans.selectedOptionId && correctOptionIds.has(ans.selectedOptionId)) {
+                  isCorrect = true;
+                } else if (ans.answerText && correctOptionTexts.has(ans.answerText.trim().toLowerCase())) {
+                  isCorrect = true;
+                }
+                const scoreVal = isCorrect ? questionPoints : 0;
+                if (Boolean(ans.isCorrect) !== isCorrect || Number(ans.score) !== scoreVal) {
+                  await tx
+                    .update(schema.studentAnswers)
+                    .set({
+                      isCorrect,
+                      score: scoreVal.toString(),
+                      updatedAt: new Date(),
+                    })
+                    .where(eq(schema.studentAnswers.id, ans.id));
+                  if (ans.attemptId) affectedAttemptIds.add(ans.attemptId);
+                }
+              }
+            } else if (updatedQ.type === 'true_false') {
+              const correctAnsText = (updatedQ.correctAnswer || 'true').trim().toLowerCase();
+              for (const ans of allStudentAnswers) {
+                const studentAnsText = (ans.answerText || '').trim().toLowerCase();
+                const isCorrect = studentAnsText === correctAnsText && studentAnsText !== '';
+                const scoreVal = isCorrect ? questionPoints : 0;
+                if (Boolean(ans.isCorrect) !== isCorrect || Number(ans.score) !== scoreVal) {
+                  await tx
+                    .update(schema.studentAnswers)
+                    .set({
+                      isCorrect,
+                      score: scoreVal.toString(),
+                      updatedAt: new Date(),
+                    })
+                    .where(eq(schema.studentAnswers.id, ans.id));
+                  if (ans.attemptId) affectedAttemptIds.add(ans.attemptId);
+                }
+              }
+            }
+
+            for (const attemptId of affectedAttemptIds) {
+              const attemptAnswers = await tx
+                .select()
+                .from(schema.studentAnswers)
+                .where(eq(schema.studentAnswers.attemptId, attemptId));
+              const newTotalScore = attemptAnswers.reduce(
+                (sum, a) => sum + (Number(a.score) || 0),
+                0
+              );
+              await tx
+                .update(schema.quizAttempts)
+                .set({
+                  totalScore: newTotalScore.toString(),
+                  updatedAt: new Date(),
+                })
+                .where(eq(schema.quizAttempts.id, attemptId));
+            }
           }
         }
       }

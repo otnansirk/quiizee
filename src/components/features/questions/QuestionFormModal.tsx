@@ -37,12 +37,14 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
   ]);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [formError, setFormError] = useState<string>("");
+  const [regradeAttempts, setRegradeAttempts] = useState<boolean>(true);
 
   useEffect(() => {
     if (!isOpen) return;
 
     if (questionToEdit) {
       setFormType(questionToEdit.type);
+      setRegradeAttempts(true);
       setFormText(questionToEdit.questionText);
       setFormImage(questionToEdit.questionImage || "");
       setFormPoints(questionToEdit.points || 1);
@@ -190,6 +192,10 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
         payload.correctAnswer = formCorrectAnswer;
       }
 
+      if (questionToEdit) {
+        payload.regrade = regradeAttempts && Boolean(questionToEdit.hasSubmissions);
+      }
+
       const url = questionToEdit
         ? `/api/quizzes/${quizId}/questions/${questionToEdit.id}`
         : `/api/quizzes/${quizId}/questions`;
@@ -244,17 +250,32 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
 
           {/* Scrollable Modal Body */}
           <div className="custom-scrollbar overflow-y-auto flex-1 p-5 px-6 pb-7">
-            {/* Submissions Warning Alert */}
+            {/* Submissions Warning Alert + Regrade Checkbox */}
             {questionToEdit && questionToEdit.hasSubmissions && (
-              <div className="p-4 mb-6 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 flex items-start gap-3 shadow-md">
-                <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <div className="text-xs leading-relaxed text-yellow-600">
-                  <span className="font-bold block mb-0.5 text-sm uppercase tracking-wider">
-                    Be Careful: Question Has Past Submission(s) ( {questionToEdit.submissionsCount || 1} )
-                  </span>
-                  Students have already answered this question in previous attempts. Modifying the prompt, options, or correct answer may influence historical attempt records and scores.
+              <div className="p-4 mb-6 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 flex flex-col gap-3 shadow-md">
+                <div className="flex items-start gap-3">
+                  <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div className="text-xs leading-relaxed text-yellow-600">
+                    <span className="font-bold block mb-0.5 text-sm uppercase tracking-wider">
+                      Be Careful: Question Has Past Submission(s) ({questionToEdit.submissionsCount || 1})
+                    </span>
+                    Students have already answered this question in previous attempts. Modifying the prompt, options, or correct answer may influence historical attempt records and scores.
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t text-yellow-600 flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="regradeToggle"
+                    checked={regradeAttempts}
+                    onChange={(e) => setRegradeAttempts(e.target.checked)}
+                    className="w-4 h-4 rounded border-amber-500/50 bg-black/40 text-primary focus:ring-primary cursor-pointer flex-shrink-0"
+                  />
+                  <label htmlFor="regradeToggle" className="text-xs font-bold cursor-pointer select-none leading-tight">
+                    Re-grade all existing student attempts using this updated answer key (Recommended when fixing typos)
+                  </label>
                 </div>
               </div>
             )}
