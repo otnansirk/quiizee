@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev --turbo",
     "start": "next start",
     "lint": "eslint",
     "db:push": "drizzle-kit push",
