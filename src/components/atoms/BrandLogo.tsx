@@ -12,79 +12,40 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   size = "md",
   href = "/",
   className = "",
-  style = {},
 }) => {
   const sizeMap = {
     sm: {
-      box: "30px",
-      boxRadius: "7px",
-      boxFont: "0.95rem",
-      textFont: "1.1rem",
-      badgeFont: "0.75rem",
-      badgePadding: "0.1rem 0.35rem",
+      box: "w-[30px] h-[30px] rounded-[7px] text-[0.95rem]",
+      text: "text-[1.1rem]",
+      badge: "text-[0.75rem] py-[0.1rem] px-[0.35rem]",
     },
     md: {
-      box: "36px",
-      boxRadius: "8px",
-      boxFont: "1.1rem",
-      textFont: "1.3rem",
-      badgeFont: "0.85rem",
-      badgePadding: "0.15rem 0.4rem",
+      box: "w-[36px] h-[36px] rounded-[8px] text-[1.1rem]",
+      text: "text-[1.3rem]",
+      badge: "text-[0.85rem] py-[0.15rem] px-[0.4rem]",
     },
     lg: {
-      box: "42px",
-      boxRadius: "10px",
-      boxFont: "1.25rem",
-      textFont: "1.4rem",
-      badgeFont: "0.9rem",
-      badgePadding: "0.2rem 0.5rem",
+      box: "w-[42px] h-[42px] rounded-[10px] text-[1.25rem]",
+      text: "text-[1.4rem]",
+      badge: "text-[0.9rem] py-[0.2rem] px-[0.5rem]",
     },
   };
 
   const currentSize = sizeMap[size];
 
   const content = (
-    <span
-      className={`flex items-center gap-2 ${className}`}
-      style={{ textDecoration: "none", ...style }}
-    >
+    <span className={`flex items-center gap-2 no-underline ${className}`}>
       <span
-        style={{
-          width: currentSize.box,
-          height: currentSize.box,
-          borderRadius: currentSize.boxRadius,
-          background: "#111827",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontWeight: 900,
-          color: "#fff",
-          fontSize: currentSize.boxFont,
-          boxShadow: "2px 2px 0px #2563eb",
-          flexShrink: 0,
-        }}
+        className={`${currentSize.box} bg-foreground flex items-center justify-center font-black text-background shadow-[2px_2px_0px_#2563eb] flex-shrink-0`}
       >
         Q
       </span>
       <span
-        style={{
-          fontSize: currentSize.textFont,
-          fontWeight: 900,
-          color: "#111827",
-          letterSpacing: "-0.04em",
-          whiteSpace: "nowrap",
-        }}
+        className={`${currentSize.text} font-black text-foreground tracking-[-0.04em] whitespace-nowrap`}
       >
         QUIIZEE{" "}
         <span
-          style={{
-            fontSize: currentSize.badgeFont,
-            background: "#111827",
-            color: "#fff",
-            padding: currentSize.badgePadding,
-            borderRadius: "4px",
-            verticalAlign: "middle",
-          }}
+          className={`${currentSize.badge} bg-foreground text-background rounded-[4px] align-middle font-bold`}
         >
           &apos;26
         </span>
@@ -94,7 +55,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
   if (href) {
     return (
-      <Link href={href} style={{ textDecoration: "none" }}>
+      <Link href={href} className="no-underline">
         {content}
       </Link>
     );

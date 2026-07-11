@@ -8,24 +8,14 @@ interface SpinnerProps {
 }
 
 export const Spinner: React.FC<SpinnerProps> = ({
-  size = 36,
-  color = "#2563eb",
+  size = "md",
   className = "",
-  style = {},
 }) => {
+  const sizeClass = typeof size === "number" ? `w-[${size}px] h-[${size}px]` : size === "sm" ? "w-5 h-5" : size === "lg" ? "w-12 h-12" : "w-9 h-9";
+  
   return (
     <div
-      className={`spinner ${className}`}
-      style={{
-        width: typeof size === "number" ? `${size}px` : size,
-        height: typeof size === "number" ? `${size}px` : size,
-        border: `3px solid rgba(0, 0, 0, 0.1)`,
-        borderTopColor: color,
-        borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-        margin: "0 auto",
-        ...style,
-      }}
+      className={`animate-spin mx-auto rounded-full border-3 border-black/10 border-t-primary ${sizeClass} ${className}`}
     />
   );
 };
