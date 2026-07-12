@@ -10,7 +10,7 @@ const generateQuestionsSchema = z.object({
 });
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL =
+const GEMINI_API_URL: string =
   process.env.GEMINI_API_URL ||
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
@@ -113,10 +113,32 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
   ]
 }`;
 
-    const geminiRes = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    const isRouterV1 =
+      GEMINI_API_URL.includes('/chat/completions') ||
+      (GEMINI_API_URL.includes('/v1') &&
+        !GEMINI_API_URL.includes('googleapis.com') &&
+        !GEMINI_API_URL.includes(':generateContent'));
+
+    let targetUrl: string = GEMINI_API_URL;
+    let headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    let requestBody: any;
+
+    if (isRouterV1) {
+      // 9router / OpenAI / OneAPI format
+      targetUrl = GEMINI_API_URL.endsWith('/v1') || GEMINI_API_URL.endsWith('/v1/')
+        ? GEMINI_API_URL.replace(/\/$/, '') + '/chat/completions'
+        : GEMINI_API_URL;
+      headers['Authorization'] = `Bearer ${GEMINI_API_KEY}`;
+      requestBody = {
+        model: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 4096,
+      };
+    } else {
+      // Google Gemini Native format
+      targetUrl = `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`;
+      requestBody = {
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.7,
@@ -124,7 +146,13 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
           topP: 0.95,
           maxOutputTokens: 4096,
         },
-      }),
+      };
+    }
+
+    const geminiRes = await fetch(targetUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(requestBody),
     });
 
     if (!geminiRes.ok) {
@@ -138,7 +166,9 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
 
     const geminiData = (await geminiRes.json()) as any;
     const rawText: string =
-      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      geminiData?.choices?.[0]?.message?.content ||
+      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      '';
 
     if (!rawText) {
       return NextResponse.json(
