@@ -136,6 +136,7 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
       headers['Authorization'] = `Bearer ${AI_API_KEY}`;
       requestBody = {
         model: AI_MODEL,
+        stream: false,
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
         max_tokens: 4096,
@@ -170,30 +171,55 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
     }
 
     const responseText = await geminiRes.text();
-    console.log(responseText, "KRISS");
+    let rawText: string = '';
 
-    let cleanResponseText = responseText.replace(/data:\s*\[DONE\]/gi, '').trim();
-    let geminiData: any = {};
-    try {
-      geminiData = JSON.parse(cleanResponseText);
-    } catch (e) {
-      const firstBrace = cleanResponseText.indexOf('{');
-      const lastBrace = cleanResponseText.lastIndexOf('}');
-      if (firstBrace !== -1 && lastBrace > firstBrace) {
-        try {
-          geminiData = JSON.parse(cleanResponseText.substring(firstBrace, lastBrace + 1));
-        } catch {
-          console.error("Failed to parse JSON response after extraction:", cleanResponseText);
+    // Check if provider returned Server-Sent Events (SSE / Streamed chunks)
+    if (responseText.includes('data: ') && (responseText.includes('"chat.completion.chunk"') || responseText.includes('"delta"'))) {
+      const lines = responseText.split('\n');
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('data: ')) {
+          const jsonStr = trimmed.slice(6).trim();
+          if (jsonStr === '[DONE]' || !jsonStr) continue;
+          try {
+            const parsedChunk = JSON.parse(jsonStr);
+            const deltaContent =
+              parsedChunk?.choices?.[0]?.delta?.content ||
+              parsedChunk?.choices?.[0]?.message?.content ||
+              '';
+            if (deltaContent) {
+              rawText += deltaContent;
+            }
+          } catch {
+            // Ignore partial or unparseable chunk lines
+          }
         }
-      } else {
-        console.error("Failed to parse JSON response:", cleanResponseText);
       }
-    }
+    } else {
+      // Normal non-streamed response
+      const cleanResponseText = responseText.replace(/data:\s*\[DONE\]/gi, '').trim();
+      let geminiData: any = {};
+      try {
+        geminiData = JSON.parse(cleanResponseText);
+      } catch (e) {
+        const firstBrace = cleanResponseText.indexOf('{');
+        const lastBrace = cleanResponseText.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace > firstBrace) {
+          try {
+            geminiData = JSON.parse(cleanResponseText.substring(firstBrace, lastBrace + 1));
+          } catch {
+            console.error("Failed to parse JSON response after extraction:", cleanResponseText);
+          }
+        } else {
+          console.error("Failed to parse JSON response:", cleanResponseText);
+        }
+      }
 
-    const rawText: string =
-      geminiData?.choices?.[0]?.message?.content ||
-      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      '';
+      rawText =
+        geminiData?.choices?.[0]?.message?.content ||
+        geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        '';
+    }
 
     if (!rawText) {
       return NextResponse.json(
