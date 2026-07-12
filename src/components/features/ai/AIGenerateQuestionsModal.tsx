@@ -133,7 +133,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
   return (
     <ModalPortal isOpen={isOpen}>
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-6 z-[1000]"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 z-[1000]"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             onClose();
@@ -141,14 +141,14 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
           }
         }}
       >
-        <div className="modal-content card w-full max-w-[720px] max-h-[90vh] flex flex-col overflow-hidden p-0 bg-secondary border border-white/10 shadow-2xl shadow-indigo-500/20">
+        <div className="modal-content card w-full max-w-[720px] max-h-[92vh] sm:max-h-[90vh] flex flex-col overflow-hidden p-0 bg-secondary border border-white/10 shadow-2xl shadow-indigo-500/20">
           {/* Modal Header (Fixed at top) */}
-          <div className="flex items-center justify-between px-6 py-3.5 border-b border-border bg-secondary flex-shrink-0">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-3.5 border-b border-border bg-secondary flex-shrink-0">
             <div>
-              <h2 className="text-lg font-extrabold text-foreground">
+              <h2 className="text-base sm:text-lg font-extrabold text-foreground">
                 ✨ AI Question Generator
               </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-[0.7rem] sm:text-xs text-muted-foreground mt-0.5">
                 Paste your reference material and Gemini will generate quiz questions automatically.
               </p>
             </div>
@@ -157,22 +157,22 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                 onClose();
                 setAIStep("input");
               }}
-              className="btn btn-ghost btn-sm px-2 py-1 text-lg leading-none"
+              className="btn btn-ghost btn-sm px-2 py-1 text-base sm:text-lg leading-none"
             >
               ✕
             </button>
           </div>
 
           {/* Scrollable Modal Body */}
-          <div className="custom-scrollbar overflow-y-auto flex-1 p-5 px-6 pb-7">
+          <div className="custom-scrollbar overflow-y-auto flex-1 p-3.5 sm:p-5 px-4 sm:px-6 pb-5 sm:pb-7">
             {/* Block AI Generate if Quiz Has Submissions */}
             {quizHasSubmissions && (
-              <div className="p-4 mb-6 rounded-xl bg-error/15 border border-error/40 text-error flex items-start gap-3 shadow-md bg-red-200">
-                <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="p-3.5 sm:p-4 mb-5 sm:mb-6 rounded-xl bg-error/15 border border-error/40 text-error flex items-start gap-2.5 sm:gap-3 shadow-md bg-red-200">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
                 <div className="text-xs leading-relaxed text-error">
-                  <span className="font-bold block mb-0.5 text-sm uppercase tracking-wider">
+                  <span className="font-bold block mb-0.5 text-xs sm:text-sm uppercase tracking-wider">
                     Action Blocked: Quiz Has Past Submissions ({quizSubmissionsCount || 1})
                   </span>
                   You cannot add brand new questions to this quiz because student(s) have already submitted attempts. Adding new questions would alter the total question count and corrupt historical attempt grading records.
@@ -181,12 +181,12 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
             )}
 
             {/* Step indicator */}
-            <div className="flex items-center gap-2 mb-7 p-3 bg-gray-300 rounded-xl border-black border-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-5 sm:mb-7 p-2 sm:p-3 bg-gray-300 rounded-xl border-black border-2">
               {(["input", "review"] as const).map((step, i) => (
                 <React.Fragment key={step}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
                     <div
-                      className={`w-[26px] h-[26px] rounded-full flex-shrink-0 flex items-center justify-center text-xs font-extrabold transition-all ${
+                      className={`w-6 h-6 sm:w-[26px] sm:h-[26px] rounded-full flex-shrink-0 flex items-center justify-center text-[0.65rem] sm:text-xs font-extrabold transition-all ${
                         aiStep === step
                           ? "bg-primary text-white shadow-md shadow-primary/40"
                           : "bg-white/80 text-muted-foreground"
@@ -195,7 +195,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                       {i + 1}
                     </div>
                     <span
-                      className={`text-xs font-bold uppercase tracking-wider ${
+                      className={`text-[0.65rem] sm:text-xs font-bold uppercase tracking-wider ${
                         aiStep === step
                           ? "text-foreground"
                           : "text-muted-foreground"
@@ -205,7 +205,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                     </span>
                   </div>
                   {i === 0 && (
-                    <span className="text-muted-foreground text-base mx-1">
+                    <span className="text-muted-foreground text-sm sm:text-base mx-0.5 sm:mx-1">
                       →
                     </span>
                   )}
@@ -215,17 +215,17 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
 
             {/* Error Banner */}
             {aiError && (
-              <div className="alert alert-error animate-fade-in mb-6">
+              <div className="alert alert-error animate-fade-in mb-5 sm:mb-6">
                 <span>{aiError}</span>
               </div>
             )}
 
             {/* ---- STEP 1: INPUT ---- */}
             {aiStep === "input" && (
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4 sm:gap-6">
                 {/* Reference text */}
                 <div className="form-group mb-0">
-                  <label className="label">
+                  <label className="label text-xs sm:text-sm">
                     REFERENCE TEXT / KNOWLEDGE BASE{" "}
                     <span className="text-error">*</span>
                   </label>
@@ -234,17 +234,17 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                     onChange={(e) => setAIReferenceText(e.target.value)}
                     placeholder="Paste your lesson notes, textbook content, topic explanation, or any reference material here. Gemini will generate questions directly from this content..."
                     rows={7}
-                    className="input custom-scrollbar min-h-[140px] text-sm leading-relaxed resize-y"
+                    className="input custom-scrollbar min-h-[120px] sm:min-h-[140px] text-xs sm:text-sm leading-relaxed resize-y p-3"
                   />
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[0.7rem] sm:text-xs text-muted-foreground">
                     {aiReferenceText.length} characters · minimum 20 required
                   </span>
                 </div>
 
                 {/* Question count + difficulty */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                   <div className="form-group mb-0">
-                    <label className="label">
+                    <label className="label text-xs sm:text-sm">
                       NUMBER OF QUESTIONS:{" "}
                       <span className="text-foreground font-black">
                         {aiQuestionCount}
@@ -260,7 +260,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                       }
                       className="input py-1.5 cursor-pointer accent-accent"
                     />
-                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <div className="flex justify-between text-[0.7rem] sm:text-xs text-muted-foreground mt-1">
                       <span>1</span>
                       <span>10</span>
                       <span>20</span>
@@ -268,14 +268,14 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                   </div>
 
                   <div className="form-group mb-0">
-                    <label className="label">DIFFICULTY</label>
-                    <div className="grid grid-cols-3 gap-2 p-1.5 rounded-lg">
+                    <label className="label text-xs sm:text-sm">DIFFICULTY</label>
+                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-lg">
                       {(["easy", "medium", "hard"] as const).map((d) => (
                         <button
                           key={d}
                           type="button"
                           onClick={() => setAIDifficulty(d)}
-                          className={`btn py-2 px-1 text-xs capitalize transition-all ${
+                          className={`btn py-1.5 sm:py-2 px-1 text-[0.7rem] sm:text-xs capitalize transition-all ${
                             aiDifficulty === d
                               ? d === "easy"
                                 ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30"
@@ -294,8 +294,8 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
 
                 {/* Question types */}
                 <div className="form-group mb-0">
-                  <label className="label">QUESTION TYPES TO GENERATE</label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <label className="label text-xs sm:text-sm">QUESTION TYPES TO GENERATE</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
                     {([
                       { value: "multiple_choice", label: "Multiple Choice" },
                       { value: "true_false", label: "True / False" },
@@ -307,7 +307,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                           key={t.value}
                           type="button"
                           onClick={() => toggleAIType(t.value)}
-                          className={`btn py-2.5 px-2 text-xs transition-all ${
+                          className={`btn py-2 sm:py-2.5 px-2 text-xs transition-all ${
                             active
                               ? t.value === "true_false"
                                 ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30"
@@ -322,7 +322,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                       );
                     })}
                   </div>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[0.7rem] sm:text-xs text-muted-foreground">
                     Click to toggle. At least one type required.
                   </span>
                 </div>
@@ -335,7 +335,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                       onClose();
                       setAIStep("input");
                     }}
-                    className="btn btn-secondary btn-block py-3.5 text-base font-extrabold cursor-pointer"
+                    className="btn btn-secondary btn-block py-2.5 sm:py-3.5 text-sm sm:text-base font-extrabold cursor-pointer"
                   >
                     Close
                   </button>
@@ -343,7 +343,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                   <button
                     onClick={handleAIGenerate}
                     disabled={isGenerating}
-                    className={`btn btn-primary btn-block py-3.5 text-base font-extrabold flex items-center justify-center gap-2.5 ${
+                    className={`btn btn-primary btn-block py-2.5 sm:py-3.5 text-sm sm:text-base font-extrabold flex items-center justify-center gap-2 sm:gap-2.5 ${
                       isGenerating ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
                     }`}
                   >
@@ -364,16 +364,16 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
 
             {/* ---- STEP 2: REVIEW ---- */}
             {aiStep === "review" && (
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-4 sm:gap-5">
                 {/* Toolbar */}
-                <div className="flex items-center justify-between flex-wrap gap-3">
-                  <p className="text-muted-foreground text-sm m-0">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between flex-wrap gap-2.5 sm:gap-3">
+                  <p className="text-muted-foreground text-xs sm:text-sm m-0">
                     <span className="text-foreground font-extrabold">
                       {aiSelectedIndexes.size}
                     </span>{" "}
                     of {aiGeneratedQuestions.length} questions selected
                   </p>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 w-full sm:w-auto">
                     <button
                       type="button"
                       onClick={() =>
@@ -381,14 +381,14 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                           new Set(aiGeneratedQuestions.map((_, i) => i))
                         )
                       }
-                      className="btn btn-ghost btn-sm"
+                      className="btn btn-ghost btn-sm text-xs flex-1 sm:flex-none"
                     >
                       Select All
                     </button>
                     <button
                       type="button"
                       onClick={() => setAISelectedIndexes(new Set())}
-                      className="btn btn-ghost btn-sm"
+                      className="btn btn-ghost btn-sm text-xs flex-1 sm:flex-none"
                     >
                       Deselect All
                     </button>
@@ -399,7 +399,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                         setAIGeneratedQuestions([]);
                         setAISelectedIndexes(new Set());
                       }}
-                      className="btn btn-secondary btn-sm"
+                      className="btn btn-secondary btn-sm text-xs flex-1 sm:flex-none"
                     >
                       Re-generate
                     </button>
@@ -407,7 +407,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                 </div>
 
                 {/* Generated question list */}
-                <div className="custom-scrollbar flex flex-col gap-2.5 max-h-[400px] overflow-y-auto pr-1">
+                <div className="custom-scrollbar flex flex-col gap-2 sm:gap-2.5 max-h-[350px] sm:max-h-[400px] overflow-y-auto pr-1">
                   {aiGeneratedQuestions.map((q, i) => {
                     const selected = aiSelectedIndexes.has(i);
                     const typeLabel =
@@ -426,7 +426,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                       <div
                         key={i}
                         onClick={() => toggleAISelect(i)}
-                        className={`card p-4 cursor-pointer transition-all flex gap-3.5 items-start border ${
+                        className={`card p-3 sm:p-4 cursor-pointer transition-all flex gap-2.5 sm:gap-3.5 items-start border ${
                           selected
                             ? "border-indigo-500/50 bg-indigo-500/10 shadow-md shadow-indigo-500/10"
                             : "border-border bg-black/20"
@@ -434,14 +434,14 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                       >
                         {/* Checkbox */}
                         <div
-                          className={`w-5 h-5 rounded mt-1 flex-shrink-0 flex items-center justify-center border-2 transition-all ${
+                          className={`w-4 h-4 sm:w-5 sm:h-5 rounded mt-0.5 sm:mt-1 flex-shrink-0 flex items-center justify-center border-2 transition-all ${
                             selected
                               ? "border-accent bg-accent text-white"
                               : "border-border bg-transparent"
                           }`}
                         >
                           {selected && (
-                            <span className="text-[0.7rem] font-black">
+                            <span className="text-[0.65rem] sm:text-[0.7rem] font-black">
                               ✓
                             </span>
                           )}
@@ -449,41 +449,46 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                            <span className={`badge m-0 text-xs border ${badgeClass}`}>
+                            <span className="text-xs sm:text-sm font-extrabold text-foreground">
+                              #{i + 1}
+                            </span>
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[0.65rem] sm:text-xs font-bold border ${badgeClass}`}
+                            >
                               {typeLabel}
                             </span>
-                            <span className="text-xs text-muted-foreground font-semibold">
-                              Q{i + 1} · {q.points} pt{q.points !== 1 ? "s" : ""}
+                            <span className="px-2 py-0.5 rounded-full bg-white/5 text-foreground border border-white/10 text-[0.65rem] sm:text-xs font-semibold">
+                              {q.points} pt{q.points !== 1 ? "s" : ""}
                             </span>
                           </div>
-                          <p className="text-foreground text-sm font-semibold m-0 leading-relaxed">
+                          <p className="text-xs sm:text-sm font-semibold text-foreground leading-relaxed m-0 break-words">
                             {q.questionText}
                           </p>
                           {/* MC options preview */}
                           {q.type === "multiple_choice" &&
                             q.options &&
                             q.options.length > 0 && (
-                              <div className="mt-2 flex flex-col gap-1">
+                              <div className="mt-1.5 sm:mt-2 flex flex-col gap-1">
                                 {q.options.map((opt, oi) => (
                                   <div
                                     key={oi}
-                                    className={`text-xs flex items-center gap-1.5 ${
+                                    className={`text-[0.7rem] sm:text-xs flex items-center gap-1.5 break-words min-w-0 ${
                                       opt.isCorrect
                                         ? "text-emerald-400 font-bold"
                                         : "text-muted-foreground font-normal"
                                     }`}
                                   >
-                                    <span>
+                                    <span className="flex-shrink-0">
                                       {opt.isCorrect ? "✓" : "·"}
                                     </span>
-                                    <span>{opt.optionText}</span>
+                                    <span className="break-words min-w-0">{opt.optionText}</span>
                                   </div>
                                 ))}
                               </div>
                             )}
                           {/* T/F answer */}
                           {q.type === "true_false" && q.correctAnswer && (
-                            <div className="mt-1.5 text-xs text-emerald-400 font-semibold">
+                            <div className="mt-1 sm:mt-1.5 text-[0.7rem] sm:text-xs text-emerald-400 font-semibold">
                               Answer: {String(q.correctAnswer).toUpperCase()}
                             </div>
                           )}
@@ -497,7 +502,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                 <button
                   onClick={handleAISaveSelected}
                   disabled={isSavingAI || aiSelectedIndexes.size === 0}
-                  className={`btn btn-block py-3.5 text-base font-extrabold flex items-center justify-center gap-2 transition-all border-none ${
+                  className={`btn btn-block py-2.5 sm:py-3.5 text-sm sm:text-base font-extrabold flex items-center justify-center gap-2 transition-all border-none ${
                     aiSelectedIndexes.size === 0
                       ? "bg-white/5 text-muted-foreground cursor-not-allowed"
                       : "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30 cursor-pointer"
