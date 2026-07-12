@@ -7,6 +7,9 @@ interface __BaseEnv_CloudflareEnv {
 	ASSETS: Fetcher;
 	AUTH_URL: "https://quiizee.krisnantobiyuh.workers.dev";
 	NEXTAUTH_URL: "https://quiizee.krisnantobiyuh.workers.dev";
+	AI_API_URL?: string;
+	AI_API_KEY?: string;
+	AI_MODEL?: string;
 	GEMINI_API_URL: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 	NEXTJS_ENV: string;
 	WORKER_SELF_REFERENCE: Service<typeof import("./.open-next/worker").default>;
@@ -22,7 +25,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "AUTH_URL" | "NEXTAUTH_URL" | "GEMINI_API_URL" | "NEXTJS_ENV">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "AUTH_URL" | "NEXTAUTH_URL" | "AI_API_URL" | "AI_API_KEY" | "AI_MODEL" | "GEMINI_API_URL" | "NEXTJS_ENV">> {}
 }
 
 // Begin runtime types

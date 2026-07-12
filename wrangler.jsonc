@@ -28,10 +28,5 @@
       "id": "2d07aaca2af846d7a43481dd29315b0e",
       "localConnectionString": "postgresql://postgres:4UlfXpZTfocFzAIg@db.edunmxvcycpogjzzwvgt.supabase.co:5432/postgres"
     }
-  ],
-  "vars": {
-    "AUTH_URL": "https://quiizee.krisnantobiyuh.workers.dev",
-    "NEXTAUTH_URL": "https://quiizee.krisnantobiyuh.workers.dev",
-    "GEMINI_API_URL": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-  }
+  ]
 }
