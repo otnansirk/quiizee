@@ -93,26 +93,23 @@ export async function POST(req: Request, { params }: RouteContext) {
     if (studentAnswer.status === 'viewing') {
       const attemptStartTime = new Date(attempt.startTime).getTime();
       const currentStartedAt = new Date(studentAnswer.questionStartedAt).getTime();
-      // If questionStartedAt is within 5 seconds of attempt.startTime, it has not been started individually yet.
+      // If questionStartedAt equals attempt.startTime (within 5 seconds), it has not been started individually yet.
       const isInitialTimestamp = Math.abs(currentStartedAt - attemptStartTime) < 5000;
 
-      if (isInitialTimestamp || quiz?.durationMode === 'per_question') {
-        // If it's the initial timestamp, update it to right now.
-        if (isInitialTimestamp) {
-          questionStartedAt = new Date();
-          await db
-            .update(schema.studentAnswers)
-            .set({
-              questionStartedAt,
-              updatedAt: new Date(),
-            })
-            .where(
-              and(
-                eq(schema.studentAnswers.attemptId, attempt.id),
-                eq(schema.studentAnswers.questionId, questionId)
-              )
-            );
-        }
+      if (isInitialTimestamp) {
+        questionStartedAt = new Date();
+        await db
+          .update(schema.studentAnswers)
+          .set({
+            questionStartedAt,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(schema.studentAnswers.attemptId, attempt.id),
+              eq(schema.studentAnswers.questionId, questionId)
+            )
+          );
       }
     }
 
@@ -120,6 +117,7 @@ export async function POST(req: Request, { params }: RouteContext) {
       success: true,
       questionStartedAt,
       duration: question.duration ?? null,
+      serverNow: new Date().toISOString(),
     });
   } catch (error) {
     console.error('Error starting question timer:', error);

@@ -96,14 +96,14 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                     onClick={() =>
                       onSelectOption(currentQuestion.id, option.id)
                     }
-                    className={`choice-card flex flex-row items-center gap-5 p-5 border rounded-xl transition-all cursor-pointer ${
+                    className={`choice-card flex flex-row items-center gap-5 border rounded-xl transition-all cursor-pointer ${
                       isSelected
                         ? "selected border-primary bg-indigo-500/15 shadow-lg shadow-indigo-500/25"
                         : "border-border bg-secondary/60 hover:border-foreground/30"
                     }`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-base flex-shrink-0 transition-all ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-base flex-shrink-0 transition-all ${
                         isSelected
                           ? "bg-primary text-white border-none"
                           : "bg-white/10 text-muted-foreground border border-border"
@@ -112,7 +112,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                       {letter}
                     </div>
                     <div
-                      className={`flex-1 text-lg leading-snug ${
+                      className={`flex-1 text-lg leading-snug text-center ${
                         isSelected
                           ? "text-primary font-extrabold"
                           : "text-foreground font-normal"

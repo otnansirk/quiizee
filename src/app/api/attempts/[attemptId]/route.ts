@@ -99,6 +99,7 @@ export async function GET(req: Request, { params }: RouteContext) {
       quiz,
       questions: sanitizedQuestions,
       studentAnswers,
+      serverNow: new Date().toISOString(),
     });
   } catch (error) {
     console.error('Error fetching attempt details:', error);
