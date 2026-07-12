@@ -34,19 +34,19 @@ export const QuizQuestionsHeader: React.FC<QuizQuestionsHeaderProps> = ({
         </Link>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-6 mb-6">
-        <div className="flex items-center gap-4 flex-wrap">
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground leading-tight">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 mb-6">
+        <div className="flex items-center gap-2.5 sm:gap-4 flex-wrap">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground leading-tight">
             {quiz.title}
           </h1>
 
           {quiz.isPublished ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 text-[0.65rem] sm:text-xs font-bold uppercase tracking-wider rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               Published
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 text-[0.65rem] sm:text-xs font-bold uppercase tracking-wider rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
               Draft
             </span>
@@ -54,10 +54,10 @@ export const QuizQuestionsHeader: React.FC<QuizQuestionsHeaderProps> = ({
 
           {quiz.hasSubmissions && (
             <span
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30 cursor-help"
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 text-[0.65rem] sm:text-xs font-bold uppercase tracking-wider rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30 cursor-help"
               title="This quiz has submitted student attempts. Adding or deleting questions is blocked to preserve historical grading records."
             >
-              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3 sm:w-3.5 h-3 sm:h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Submissions ({quiz.submissionsCount || 1})
@@ -65,12 +65,12 @@ export const QuizQuestionsHeader: React.FC<QuizQuestionsHeaderProps> = ({
           )}
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap w-full sm:w-auto">
           {quiz.isPublished ? (
             <button
               onClick={() => onPublishToggle(false)}
               disabled={isPublishing}
-              className="btn btn-secondary py-3 px-6 text-sm border-error/75 text-error font-bold hover:bg-error/10"
+              className="btn btn-secondary py-2 sm:py-3 px-3.5 sm:px-6 text-xs sm:text-sm border-error/75 text-error font-bold hover:bg-error/10 flex-1 sm:flex-none justify-center"
             >
               {isPublishing ? "Unpublishing..." : "Unpublish"}
             </button>
@@ -78,7 +78,7 @@ export const QuizQuestionsHeader: React.FC<QuizQuestionsHeaderProps> = ({
             <button
               onClick={() => onPublishToggle(true)}
               disabled={isPublishing}
-              className="btn py-3 px-6 text-sm bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/35 font-bold hover:brightness-110"
+              className="btn py-2 sm:py-3 px-3.5 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/35 font-bold hover:brightness-110 flex-1 sm:flex-none justify-center"
             >
               {isPublishing ? "Publishing..." : "Publish Quiz"}
             </button>
@@ -86,71 +86,71 @@ export const QuizQuestionsHeader: React.FC<QuizQuestionsHeaderProps> = ({
 
           <button
             onClick={onOpenAIModal}
-            className="btn py-3 px-6 text-sm bg-gradient-to-br from-purple-600 to-indigo-500 text-white border-2 border-black shadow-[3px_3px_0px_#111827] font-bold hover:brightness-110"
+            className="btn py-2 sm:py-3 px-3.5 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-purple-600 to-indigo-500 text-white border-2 border-black shadow-[3px_3px_0px_#111827] font-bold hover:brightness-110 flex-1 sm:flex-none justify-center"
           >
             ✨ AI Generate
           </button>
 
           <button
             onClick={onAddQuestion}
-            className="btn btn-primary py-3 px-6 text-sm font-bold shadow-md shadow-primary/30"
+            className="btn btn-primary py-2 sm:py-3 px-3.5 sm:px-6 text-xs sm:text-sm font-bold shadow-md shadow-primary/30 flex-1 sm:flex-none justify-center"
           >
             Add Question
           </button>
         </div>
       </div>
 
-      <div className="card py-6 px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 bg-[#222222] border border-white/20 shadow-2xl rounded-2xl">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center text-2xl font-extrabold flex-shrink-0">
+      <div className="card py-4 px-4 sm:py-6 sm:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 bg-[#222222] border border-white/20 shadow-2xl rounded-2xl">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center text-lg sm:text-2xl font-extrabold flex-shrink-0">
             Q
           </div>
           <div>
-            <div className="text-xs text-zinc-300 font-bold tracking-wider uppercase">
+            <div className="text-[0.65rem] sm:text-xs text-zinc-300 font-bold tracking-wider uppercase">
               TOTAL QUESTIONS
             </div>
-            <div className="text-2xl font-extrabold text-white">
+            <div className="text-xl sm:text-2xl font-extrabold text-white">
               {totalQuestions}{" "}
-              <span className="text-sm font-medium text-zinc-400">
+              <span className="text-xs sm:text-sm font-medium text-zinc-400">
                 questions
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-400 flex items-center justify-center text-2xl font-extrabold flex-shrink-0">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-400 flex items-center justify-center text-lg sm:text-2xl font-extrabold flex-shrink-0">
             P
           </div>
           <div>
-            <div className="text-xs text-zinc-300 font-bold tracking-wider uppercase">
+            <div className="text-[0.65rem] sm:text-xs text-zinc-300 font-bold tracking-wider uppercase">
               TOTAL POINTS
             </div>
-            <div className="text-2xl font-extrabold text-white">
+            <div className="text-xl sm:text-2xl font-extrabold text-white">
               {totalPoints}{" "}
-              <span className="text-sm font-medium text-zinc-400">
+              <span className="text-xs sm:text-sm font-medium text-zinc-400">
                 pts
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-2xl font-extrabold flex-shrink-0">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-lg sm:text-2xl font-extrabold flex-shrink-0">
             T
           </div>
           <div>
-            <div className="text-xs text-zinc-300 font-bold tracking-wider uppercase">
+            <div className="text-[0.65rem] sm:text-xs text-zinc-300 font-bold tracking-wider uppercase">
               DURATION MODE
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <span className="py-1 px-2.5 rounded text-xs font-bold bg-blue-500/25 text-blue-300 border border-blue-500/40">
+              <span className="py-1 px-2 sm:px-2.5 rounded text-[0.65rem] sm:text-xs font-bold bg-blue-500/25 text-blue-300 border border-blue-500/40">
                 {quiz.durationMode === "global"
                   ? "Global Timer"
                   : "Per-Question Timer"}
               </span>
               {quiz.durationMode === "global" && quiz.globalDuration && (
-                <span className="text-xs text-zinc-300 font-semibold">
+                <span className="text-[0.65rem] sm:text-xs text-zinc-300 font-semibold">
                   ({quiz.globalDuration} min)
                 </span>
               )}

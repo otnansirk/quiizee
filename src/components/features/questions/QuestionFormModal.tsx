@@ -232,38 +232,38 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
 
   return (
     <ModalPortal isOpen={isOpen}>
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-6 z-[1000]">
-        <div className="modal-content card w-full max-w-[760px] max-h-[90vh] flex flex-col overflow-hidden p-0 bg-secondary border border-white/10 shadow-2xl shadow-indigo-500/20">
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 z-[1000]">
+        <div className="modal-content card w-full max-w-[760px] max-h-[92vh] sm:max-h-[90vh] flex flex-col overflow-hidden p-0 bg-secondary border border-white/10 shadow-2xl shadow-indigo-500/20">
           {/* Modal Header (Fixed at top) */}
-          <div className="flex items-center justify-between px-6 py-3.5 border-b border-border bg-secondary flex-shrink-0">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-3.5 border-b border-border bg-secondary flex-shrink-0">
             <div>
-              <h2 className="text-lg font-extrabold text-foreground">
+              <h2 className="text-base sm:text-lg font-extrabold text-foreground">
                 {questionToEdit
                   ? `Edit Question #${questionToEdit.order || ""}`
                   : "Add New Question"}
               </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-[0.7rem] sm:text-xs text-muted-foreground mt-0.5">
                 Configure your question text, type, points, and grading rules.
               </p>
             </div>
             <button
               onClick={onClose}
-              className="btn btn-ghost btn-sm px-2 py-1 text-lg leading-none"
+              className="btn btn-ghost btn-sm px-2 py-1 text-base sm:text-lg leading-none"
             >
               ✕
             </button>
           </div>
 
           {/* Scrollable Modal Body */}
-          <div className="custom-scrollbar overflow-y-auto flex-1 p-5 px-6 pb-7">
+          <div className="custom-scrollbar overflow-y-auto flex-1 p-3.5 sm:p-5 px-4 sm:px-6 pb-5 sm:pb-7">
             {/* Block Add Question if Quiz Has Submissions */}
             {!questionToEdit && quizHasSubmissions && (
-              <div className="p-4 mb-6 rounded-xl bg-error/15 border border-error/40 text-error flex items-start gap-3 shadow-md bg-red-200">
-                <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="p-3.5 sm:p-4 mb-5 sm:mb-6 rounded-xl bg-error/15 border border-error/40 text-error flex items-start gap-2.5 sm:gap-3 shadow-md bg-red-200">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
                 <div className="text-xs leading-relaxed text-error">
-                  <span className="font-bold block mb-0.5 text-sm uppercase tracking-wider">
+                  <span className="font-bold block mb-0.5 text-xs sm:text-sm uppercase tracking-wider">
                     Action Blocked: Quiz Has Past Submissions ({quizSubmissionsCount || 1})
                   </span>
                   You cannot add brand new questions to this quiz because student(s) have already submitted attempts. Adding new questions would alter the total question count and corrupt historical attempt grading records.
@@ -273,20 +273,20 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
 
             {/* Submissions Warning Alert + Regrade Checkbox */}
             {questionToEdit && quizHasSubmissions && (
-              <div className="p-4 mb-6 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 flex flex-col gap-3 shadow-md">
-                <div className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="p-3.5 sm:p-4 mb-5 sm:mb-6 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 flex flex-col gap-3 shadow-md">
+                <div className="flex items-start gap-2.5 sm:gap-3">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   <div className="text-xs leading-relaxed text-yellow-600">
-                    <span className="font-bold block mb-0.5 text-sm uppercase tracking-wider">
+                    <span className="font-bold block mb-0.5 text-xs sm:text-sm uppercase tracking-wider">
                       Be Careful: Quiz Has Past Submission(s) ({quizSubmissionsCount || 1} attempts total)
                     </span>
                     Students have already answered questions in this quiz. Modifying the prompt, options, or correct answer may influence historical attempt records and scores.
                   </div>
                 </div>
 
-                <div className="pt-3 border-t text-yellow-600 flex items-center gap-3">
+                <div className="pt-2.5 sm:pt-3 border-t text-yellow-600 flex items-center gap-2.5 sm:gap-3">
                   <input
                     type="checkbox"
                     id="regradeToggle"
@@ -303,23 +303,23 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
 
             {/* Error Banner */}
             {formError && (
-              <div className="alert alert-error animate-fade-in mb-6">
+              <div className="alert alert-error animate-fade-in mb-5 sm:mb-6">
                 <span>{formError}</span>
               </div>
             )}
 
             {/* Modal Form */}
-            <form onSubmit={handleSaveQuestion} className="flex flex-col gap-6">
+            <form onSubmit={handleSaveQuestion} className="flex flex-col gap-4 sm:gap-6">
               {/* 1. Question Type Selector */}
               <div>
-                <label className="label mb-3 block">
+                <label className="label mb-2 sm:mb-3 block text-xs sm:text-sm">
                   QUESTION TYPE
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-1.5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 p-1 sm:p-1.5">
                   <button
                     type="button"
                     onClick={() => setFormType("multiple_choice")}
-                    className={`btn py-2.5 px-4 text-sm font-semibold transition-all ${
+                    className={`btn py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm font-semibold transition-all ${
                       formType === "multiple_choice"
                         ? "bg-primary text-white shadow-md shadow-primary/30"
                         : "bg-transparent text-muted-foreground hover:text-foreground"
@@ -330,7 +330,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setFormType("true_false")}
-                    className={`btn py-2.5 px-4 text-sm font-semibold transition-all ${
+                    className={`btn py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm font-semibold transition-all ${
                       formType === "true_false"
                         ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30"
                         : "bg-transparent text-muted-foreground hover:text-foreground"
@@ -341,7 +341,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setFormType("essay")}
-                    className={`btn py-2.5 px-4 text-sm font-semibold transition-all ${
+                    className={`btn py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm font-semibold transition-all ${
                       formType === "essay"
                         ? "bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/30"
                         : "bg-transparent text-muted-foreground hover:text-foreground"
@@ -354,7 +354,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
 
               {/* 2. Question Text */}
               <div className="form-group mb-0">
-                <label className="label">
+                <label className="label text-xs sm:text-sm">
                   QUESTION TEXT <span className="text-error">*</span>
                 </label>
                 <textarea
@@ -363,15 +363,15 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                   onChange={(e) => setFormText(e.target.value)}
                   rows={3}
                   placeholder="Enter your question prompt here... e.g., What is the primary role of ribosomes in a cell?"
-                  className="input custom-scrollbar min-h-[90px] text-base leading-relaxed resize-y"
+                  className="input custom-scrollbar min-h-[80px] sm:min-h-[90px] text-sm sm:text-base leading-relaxed resize-y p-3"
                 />
               </div>
 
               {/* 3. Question Image URL + Live Preview */}
               <div className="form-group mb-0">
-                <label className="label flex justify-between">
+                <label className="label flex flex-col sm:flex-row justify-between text-xs sm:text-sm">
                   <span>QUESTION IMAGE URL (OPTIONAL)</span>
-                  <span className="font-normal text-muted-foreground">
+                  <span className="font-normal text-muted-foreground text-[0.7rem] sm:text-xs">
                     Supports PNG, JPG, GIF, SVG
                   </span>
                 </label>
@@ -380,17 +380,17 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                   value={formImage}
                   onChange={(e) => setFormImage(e.target.value)}
                   placeholder="https://example.com/illustration.png"
-                  className="input"
+                  className="input text-sm sm:text-base py-2 sm:py-2.5"
                 />
                 {formImage.trim() && (
-                  <div className="mt-3 p-3 rounded-xl bg-black/30 border border-dashed border-border text-center">
-                    <div className="text-xs text-muted-foreground font-semibold mb-2">
+                  <div className="mt-2.5 sm:mt-3 p-3 rounded-xl bg-black/30 border border-dashed border-border text-center">
+                    <div className="text-[0.65rem] sm:text-xs text-muted-foreground font-semibold mb-2">
                       IMAGE PREVIEW
                     </div>
                     <img
                       src={formImage.trim()}
                       alt="Preview"
-                      className="max-h-[180px] max-w-full object-contain mx-auto rounded"
+                      className="max-h-[150px] sm:max-h-[180px] max-w-full object-contain mx-auto rounded"
                       onError={(e) => {
                         (e.target as HTMLElement).style.display = "none";
                       }}
@@ -400,9 +400,9 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
               </div>
 
               {/* 4. Points & Duration Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="form-group mb-0">
-                  <label className="label">
+                  <label className="label text-xs sm:text-sm">
                     POINTS <span className="text-error">*</span>
                   </label>
                   <input
@@ -413,16 +413,16 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                     onChange={(e) =>
                       setFormPoints(Math.max(1, parseInt(e.target.value) || 1))
                     }
-                    className="input"
+                    className="input text-sm sm:text-base py-2 sm:py-2.5"
                   />
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[0.7rem] sm:text-xs text-muted-foreground">
                     Score value for this question
                   </span>
                 </div>
 
                 {durationMode === "per_question" ? (
                   <div className="form-group mb-0">
-                    <label className="label">
+                    <label className="label text-xs sm:text-sm">
                       DURATION (SECONDS) <span className="text-error">*</span>
                     </label>
                     <input
@@ -433,24 +433,24 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                       onChange={(e) =>
                         setFormDuration(Math.max(5, parseInt(e.target.value) || 5))
                       }
-                      className="input"
+                      className="input text-sm sm:text-base py-2 sm:py-2.5"
                     />
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-[0.7rem] sm:text-xs text-muted-foreground">
                       Per-question timer limit
                     </span>
                   </div>
                 ) : (
                   <div className="form-group mb-0">
-                    <label className="label text-muted-foreground">
+                    <label className="label text-muted-foreground text-xs sm:text-sm">
                       DURATION (SECONDS)
                     </label>
                     <input
                       type="text"
                       disabled
                       value="Global Timer Mode Active"
-                      className="input italic bg-white/5"
+                      className="input italic bg-white/5 text-sm sm:text-base py-2 sm:py-2.5"
                     />
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-[0.7rem] sm:text-xs text-muted-foreground">
                       Controlled by quiz global duration
                     </span>
                   </div>
@@ -460,26 +460,26 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
               {/* ==================================================================
                  TYPE-SPECIFIC ANSWER INPUTS
                  ================================================================== */}
-              <div className="mt-2 p-6 card">
+              <div className="mt-1 sm:mt-2 p-3.5 sm:p-6 card">
                 {/* A. MULTIPLE CHOICE BUILDER */}
                 {formType === "multiple_choice" && (
                   <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <label className="label mb-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4 gap-1">
+                      <label className="label mb-0 text-xs sm:text-sm">
                         ANSWER OPTIONS <span className="text-error">*</span>
                       </label>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-[0.7rem] sm:text-xs text-muted-foreground">
                         Select the correct option(s) using the checkmark
                       </span>
                     </div>
 
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-2.5 sm:gap-3">
                       {formOptions.map((opt, optIdx) => {
                         const letter = String.fromCharCode(65 + optIdx);
                         return (
                           <div
                             key={optIdx}
-                            className={`flex items-center gap-3 p-2.5 px-3.5 rounded-xl transition-all border ${
+                            className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 px-2.5 sm:px-3.5 rounded-xl transition-all border ${
                               opt.isCorrect
                                 ? "bg-emerald-500/15 border-emerald-500/40"
                                 : "bg-white/5 border-white/10"
@@ -487,7 +487,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                           >
                             {/* Letter Indicator */}
                             <span
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center font-extrabold text-sm flex-shrink-0 ${
+                              className={`w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-extrabold text-xs sm:text-sm flex-shrink-0 ${
                                 opt.isCorrect
                                   ? "bg-emerald-500/25 text-success"
                                   : "bg-white/10 text-foreground"
@@ -512,14 +512,14 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                                 );
                               }}
                               placeholder={`Option ${letter} text...`}
-                              className="input flex-1 bg-transparent border-none p-2"
+                              className="input flex-1 bg-transparent border-none p-1.5 sm:p-2 text-xs sm:text-sm min-w-0"
                             />
 
                             {/* Correctness Selector Button */}
                             <button
                               type="button"
                               onClick={() => toggleOptionCorrectness(optIdx)}
-                              className={`btn px-3.5 py-2 rounded-full text-xs font-bold flex-shrink-0 border ${
+                              className={`btn px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-[0.65rem] sm:text-xs font-bold flex-shrink-0 border ${
                                 opt.isCorrect
                                   ? "btn-success"
                                   : "btn-secondary"
@@ -534,7 +534,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                               type="button"
                               onClick={() => removeOption(optIdx)}
                               disabled={formOptions.length <= 2}
-                              className={`btn btn-danger btn-sm px-2.5 py-2 text-error font-bold ${
+                              className={`btn btn-danger btn-sm px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs sm:text-sm text-error font-bold flex-shrink-0 ${
                                 formOptions.length <= 2
                                   ? "opacity-30 cursor-not-allowed"
                                   : "cursor-pointer"
@@ -552,7 +552,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                     <button
                       type="button"
                       onClick={addOption}
-                      className="btn btn-secondary btn-sm mt-4 w-full border border-dashed border-white/20 p-3 text-accent hover:text-primary font-semibold"
+                      className="btn btn-secondary btn-sm mt-3 sm:mt-4 w-full border border-dashed border-white/20 p-2.5 sm:p-3 text-xs sm:text-sm text-accent hover:text-primary font-semibold"
                     >
                       Add Another Option
                     </button>
@@ -562,21 +562,21 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                 {/* B. TRUE / FALSE BUILDER */}
                 {formType === "true_false" && (
                   <div>
-                    <label className="label mb-4 block">
+                    <label className="label mb-3 sm:mb-4 block text-xs sm:text-sm">
                       SELECT CORRECT ANSWER <span className="text-error">*</span>
                     </label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <button
                         type="button"
                         onClick={() => setFormCorrectAnswer("true")}
-                        className={`card card-hover p-6 text-center transition-all border-2 ${
+                        className={`card card-hover p-4 sm:p-6 text-center transition-all border-2 ${
                           formCorrectAnswer === "true"
                             ? "bg-emerald-500/20 border-emerald-500/60 shadow-lg shadow-emerald-500/20"
                             : "bg-white/5 border-white/10"
                         }`}
                       >
                         <div
-                          className={`text-lg font-extrabold ${
+                          className={`text-base sm:text-lg font-extrabold ${
                             formCorrectAnswer === "true"
                               ? "text-emerald-400"
                               : "text-foreground"
@@ -589,14 +589,14 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setFormCorrectAnswer("false")}
-                        className={`card card-hover p-6 text-center transition-all border-2 ${
+                        className={`card card-hover p-4 sm:p-6 text-center transition-all border-2 ${
                           formCorrectAnswer === "false"
                             ? "bg-emerald-500/20 border-emerald-500/60 shadow-lg shadow-emerald-500/20"
                             : "bg-white/5 border-white/10"
                         }`}
                       >
                         <div
-                          className={`text-lg font-extrabold ${
+                          className={`text-base sm:text-lg font-extrabold ${
                             formCorrectAnswer === "false"
                               ? "text-emerald-400"
                               : "text-foreground"
@@ -611,12 +611,12 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
 
                 {/* C. ESSAY BUILDER */}
                 {formType === "essay" && (
-                  <div className="p-6 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center gap-4 text-amber-300">
+                  <div className="p-4 sm:p-6 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center gap-3 sm:gap-4 text-amber-300">
                     <div>
-                      <h4 className="text-base font-bold mb-1 text-yellow-600">
+                      <h4 className="text-sm sm:text-base font-bold mb-1 text-yellow-600">
                         Manual Review Required
                       </h4>
-                      <p className="text-sm leading-relaxed text-yellow-600 font-medium">
+                      <p className="text-xs sm:text-sm leading-relaxed text-yellow-600 font-medium">
                         Essay answers are not auto-graded. You will review and grade
                         student responses manually after quiz completion in the
                         grading dashboard.
@@ -627,12 +627,12 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
               </div>
 
               {/* Modal Footer Actions */}
-              <div className="flex items-center justify-end gap-4 mt-2 pt-4 border-t border-border">
+              <div className="flex items-center justify-end gap-3 sm:gap-4 mt-1 sm:mt-2 pt-3 sm:pt-4 border-t border-border">
                 <button
                   type="button"
                   onClick={onClose}
                   disabled={isSaving}
-                  className="btn btn-secondary py-3 px-6 font-semibold"
+                  className="btn btn-secondary py-2 sm:py-3 px-4 sm:px-6 text-xs sm:text-sm font-semibold"
                 >
                   {(!questionToEdit && quizHasSubmissions) ? "Close" : "Cancel"}
                 </button>
@@ -640,7 +640,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="btn btn-primary py-3 px-8 text-base font-bold shadow-lg shadow-primary/30"
+                    className="btn btn-primary py-2 sm:py-3 px-5 sm:px-8 text-xs sm:text-base font-bold shadow-lg shadow-primary/30"
                   >
                     {isSaving ? "Saving..." : "Save Question"}
                   </button>
