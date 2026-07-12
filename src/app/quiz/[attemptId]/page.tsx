@@ -84,6 +84,10 @@ export default function QuizTakingEnginePage() {
   const hasTimedOutQuestionRef = useRef<Record<string, boolean>>({});
   const essayTimeoutRef = useRef<Record<string, NodeJS.Timeout>>({});
   const attemptStartTimeRef = useRef<string | null>(null);
+  const answersRef = useRef<Record<string, AnswerState>>(answers);
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
 
   // 1. Fetch Attempt Data on Mount
   useEffect(() => {
@@ -197,7 +201,10 @@ export default function QuizTakingEnginePage() {
 
         // Initialize Global Timer if applicable
         if (quizData.durationMode === 'global' && typeof quizData.globalDuration === 'number') {
-          const elapsed = Math.floor((Date.now() - new Date(attemptData.startTime).getTime()) / 1000);
+          const serverNow = rawData.serverNow ? new Date(rawData.serverNow).getTime() : Date.now();
+          const timeOffset = serverNow - Date.now();
+          const attemptStart = new Date(attemptData.startTime).getTime();
+          const elapsed = Math.max(0, Math.floor((Date.now() + timeOffset - attemptStart) / 1000));
           const rem = Math.max(0, quizData.globalDuration - elapsed);
           setRemainingSeconds(rem);
         } else if (quizData.durationMode === 'per_question') {
@@ -310,7 +317,7 @@ export default function QuizTakingEnginePage() {
       setQuestionTimeoutBanner(prev => (prev?.includes(`Question ${currentIndex + 1}`) ? null : prev));
     }, 4000);
 
-    const currentAns = answers[currentQ.id];
+    const currentAns = answersRef.current[currentQ.id];
     const hasAns = !!currentAns?.selectedOptionId || (!!currentAns?.answerText && currentAns.answerText.trim() !== '');
 
     try {
@@ -352,7 +359,7 @@ export default function QuizTakingEnginePage() {
     } else {
       autoSubmitQuiz();
     }
-  }, [answers, attemptId, questions.length, autoSubmitQuiz]);
+  }, [attemptId, questions.length, autoSubmitQuiz]);
 
   useEffect(() => {
     if (
@@ -386,10 +393,16 @@ export default function QuizTakingEnginePage() {
         if (!data || !data.questionStartedAt || !isMounted) return;
 
         const startedAt = new Date(data.questionStartedAt).getTime();
-        const durationSecs = typeof currentQ.duration === 'number' ? currentQ.duration : (data.duration || 0);
+        const durationSecs =
+          typeof currentQ.duration === 'number' && currentQ.duration > 0
+            ? currentQ.duration
+            : data.duration || quiz?.globalDuration || 30;
+        const serverNow = data.serverNow ? new Date(data.serverNow).getTime() : Date.now();
+        const timeOffset = serverNow - Date.now();
 
         const calcRemaining = () => {
-          const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+          const syncedNow = Date.now() + timeOffset;
+          const elapsed = Math.max(0, Math.floor((syncedNow - startedAt) / 1000));
           return Math.max(0, durationSecs - elapsed);
         };
 
@@ -424,7 +437,7 @@ export default function QuizTakingEnginePage() {
       isMounted = false;
       if (timerInterval) clearInterval(timerInterval);
     };
-  }, [currentQuestionIndex, quiz, questions, attemptId, isRedirecting, isSubmitting, handleQuestionTimeout]);
+  }, [currentQuestionIndex, quiz?.durationMode, questions.length, attemptId, isRedirecting, isSubmitting, handleQuestionTimeout]);
 
   // 4. Answer Evaluation & Handlers
   const isQuestionAnswered = (qId: string, qType?: string): boolean => {
@@ -599,13 +612,11 @@ export default function QuizTakingEnginePage() {
     if (secs < 0) secs = 0;
     const hrs = Math.floor(secs / 3600);
     const mins = Math.floor((secs % 3600) / 60);
-    const s = secs % 60;
+    const s = Math.floor(secs % 60);
+    const hrStr = hrs < 10 ? `0${hrs}` : `${hrs}`;
     const minStr = mins < 10 ? `0${mins}` : `${mins}`;
     const secStr = s < 10 ? `0${s}` : `${s}`;
-    if (hrs > 0) {
-      return `${hrs}:${minStr}:${secStr}`;
-    }
-    return `${minStr}:${secStr}`;
+    return `${hrStr}:${minStr}:${secStr}`;
   };
 
   // 5. Render Loading & Error & Redirect States
@@ -650,13 +661,15 @@ export default function QuizTakingEnginePage() {
   const progressPct = totalCount > 0 ? Math.round((answeredCount / totalCount) * 100) : 0;
   const unansweredCount = totalCount - answeredCount;
 
-  // Determine Timer styling classes
-  let timerClass = 'timer-normal';
+  // Determine Timer styling classes using built-in Tailwind utilities and animate-pulse
+  let timerClass = 'bg-blue-50 text-blue-700 border-blue-400 font-bold shadow-[0_0_15px_rgba(59,130,246,0.15)]';
   if (remainingSeconds !== null) {
-    if (remainingSeconds <= 10) {
-      timerClass = 'timer-pulse-red';
+    if (remainingSeconds <= 5) {
+      timerClass = 'animate-pulse bg-red-600 text-white border-red-950 shadow-[0_0_20px_rgba(239,68,68,0.8)] font-black';
+    } else if (remainingSeconds <= 10) {
+      timerClass = 'bg-red-100 text-red-700 border-red-600 shadow-[0_0_18px_rgba(239,68,68,0.4)] font-extrabold';
     } else if (remainingSeconds <= 60) {
-      timerClass = 'timer-warning-amber';
+      timerClass = 'bg-amber-100 text-amber-800 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)] font-bold';
     }
   }
 
@@ -664,29 +677,6 @@ export default function QuizTakingEnginePage() {
     <div className="min-h-screen flex flex-col animate-fade-in" style={{ background: 'var(--bg-primary)' }}>
       {/* Custom CSS for Engine & Animations */}
       <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.55; transform: scale(1.04); }
-        }
-        .timer-pulse-red {
-          animation: pulse 1s infinite !important;
-          color: #e12727 !important;
-          background: rgba(239, 68, 68, 0.25) !important;
-          border: 1px solid rgba(239, 68, 68, 0.6) !important;
-          box-shadow: 0 0 25px rgba(239, 68, 68, 0.5) !important;
-        }
-        .timer-warning-amber {
-          color: #fde047 !important;
-          background: rgba(245, 158, 11, 0.2) !important;
-          border: 1px solid rgba(245, 158, 11, 0.5) !important;
-          box-shadow: 0 0 18px rgba(245, 158, 11, 0.3) !important;
-        }
-        .timer-normal {
-          color: #93c5fd;
-          background: rgba(59, 130, 246, 0.15);
-          border: 1px solid rgba(59, 130, 246, 0.3);
-          box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
-        }
         .quiz-workspace-grid {
           display: grid;
           grid-template-columns: 300px 1fr;
