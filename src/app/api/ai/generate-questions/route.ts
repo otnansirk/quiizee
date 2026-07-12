@@ -164,7 +164,27 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
       );
     }
 
-    const geminiData = (await geminiRes.json()) as any;
+    const responseText = await geminiRes.text();
+    console.log(responseText, "KRISS");
+
+    let cleanResponseText = responseText.replace(/data:\s*\[DONE\]/gi, '').trim();
+    let geminiData: any = {};
+    try {
+      geminiData = JSON.parse(cleanResponseText);
+    } catch (e) {
+      const firstBrace = cleanResponseText.indexOf('{');
+      const lastBrace = cleanResponseText.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace > firstBrace) {
+        try {
+          geminiData = JSON.parse(cleanResponseText.substring(firstBrace, lastBrace + 1));
+        } catch {
+          console.error("Failed to parse JSON response after extraction:", cleanResponseText);
+        }
+      } else {
+        console.error("Failed to parse JSON response:", cleanResponseText);
+      }
+    }
+
     const rawText: string =
       geminiData?.choices?.[0]?.message?.content ||
       geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ||
@@ -177,16 +197,40 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
       );
     }
 
-    // Strip potential markdown code fences
-    const cleaned = rawText
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/\s*```$/i, '')
+    // Strip potential markdown code fences and clean up model conversational intros/outros
+    let cleaned = rawText
+      .replace(/^[\s\S]*?```json\s*/i, '')
+      .replace(/^[\s\S]*?```\s*/i, '')
+      .replace(/\s*```[\s\S]*$/i, '')
       .trim();
+
+    // If cleaned doesn't start with { or [, locate the first { or [ and last } or ]
+    if (!cleaned.startsWith('{') && !cleaned.startsWith('[')) {
+      const firstObj = cleaned.indexOf('{');
+      const firstArr = cleaned.indexOf('[');
+      const firstStart =
+        firstObj !== -1 && firstArr !== -1 ? Math.min(firstObj, firstArr) : Math.max(firstObj, firstArr);
+      const lastObj = cleaned.lastIndexOf('}');
+      const lastArr = cleaned.lastIndexOf(']');
+      const lastEnd = Math.max(lastObj, lastArr);
+      if (firstStart !== -1 && lastEnd > firstStart) {
+        cleaned = cleaned.substring(firstStart, lastEnd + 1);
+      }
+    }
 
     let parsed: { questions: unknown[] };
     try {
-      parsed = JSON.parse(cleaned);
+      const jsonObj = JSON.parse(cleaned);
+      if (Array.isArray(jsonObj)) {
+        parsed = { questions: jsonObj };
+      } else if (jsonObj && Array.isArray(jsonObj.questions)) {
+        parsed = jsonObj;
+      } else if (jsonObj && typeof jsonObj === 'object') {
+        const arrProp = Object.values(jsonObj).find((val) => Array.isArray(val));
+        parsed = { questions: Array.isArray(arrProp) ? arrProp : [] };
+      } else {
+        parsed = { questions: [] };
+      }
     } catch {
       console.error('Failed to parse Gemini JSON:', cleaned);
       return NextResponse.json(
@@ -202,21 +246,32 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
       );
     }
 
-    // Sanitize and normalise each question
-    const questions = parsed.questions.map((q: any, idx: number) => ({
-      type: ['multiple_choice', 'true_false', 'essay'].includes(q.type) ? q.type : 'multiple_choice',
-      questionText: String(q.questionText || '').trim(),
-      points: Number(q.points) > 0 ? Number(q.points) : 1,
-      correctAnswer: q.correctAnswer != null ? String(q.correctAnswer) : null,
-      order: idx + 1,
-      options: Array.isArray(q.options)
-        ? q.options.map((opt: any, oidx: number) => ({
-            optionText: String(opt.optionText || '').trim(),
-            isCorrect: Boolean(opt.isCorrect),
-            order: oidx + 1,
-          }))
-        : [],
-    }));
+    // Sanitize and normalise each question across different model schemas
+    const questions = parsed.questions.map((q: any, idx: number) => {
+      const qText = String(q.questionText || q.question || q.prompt || '').trim();
+      const ans = q.correctAnswer != null ? String(q.correctAnswer) : q.answer != null ? String(q.answer) : null;
+      return {
+        type: ['multiple_choice', 'true_false', 'essay'].includes(q.type) ? q.type : 'multiple_choice',
+        questionText: qText,
+        points: Number(q.points) > 0 ? Number(q.points) : 1,
+        correctAnswer: ans,
+        order: idx + 1,
+        options: Array.isArray(q.options)
+          ? q.options.map((opt: any, oidx: number) => {
+              if (typeof opt === 'string') {
+                const optStr = opt.trim();
+                const isCorr = ans ? optStr.toLowerCase() === ans.toLowerCase() : oidx === 0;
+                return { optionText: optStr, isCorrect: isCorr, order: oidx + 1 };
+              }
+              return {
+                optionText: String(opt.optionText || opt.text || opt.label || '').trim(),
+                isCorrect: Boolean(opt.isCorrect || (ans && String(opt.optionText || opt.text || '').trim().toLowerCase() === ans.toLowerCase())),
+                order: oidx + 1,
+              };
+            })
+          : [],
+      };
+    });
 
     return NextResponse.json({ success: true, questions });
   } catch (error) {
