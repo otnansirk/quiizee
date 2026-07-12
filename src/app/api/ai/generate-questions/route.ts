@@ -45,6 +45,9 @@ export async function POST(req: Request) {
       difficulty = 'medium',
     } = body;
 
+    const allowedTypes = questionTypes.filter((t) => ['multiple_choice', 'true_false', 'essay'].includes(t));
+    const finalAllowedTypes = allowedTypes.length > 0 ? allowedTypes : ['multiple_choice', 'true_false', 'essay'];
+
     if (!referenceText || typeof referenceText !== 'string' || referenceText.trim().length < 20) {
       return NextResponse.json(
         { success: false, message: 'Reference text must be at least 20 characters.' },
@@ -60,9 +63,7 @@ export async function POST(req: Request) {
     }
 
     // Build type breakdown instruction
-    const typeList = (questionTypes as string[])
-      .filter((t) => ['multiple_choice', 'true_false', 'essay'].includes(t))
-      .join(', ');
+    const typeList = finalAllowedTypes.join(', ');
 
     const prompt = `You are an expert educational assessment designer. Based on the reference material below, generate exactly ${questionCount} quiz questions.
 
@@ -74,6 +75,7 @@ ${referenceText.trim()}
 REQUIREMENTS:
 - Generate exactly ${questionCount} questions
 - Use only these question types: ${typeList}
+- STRICTLY DO NOT generate any question types outside of: ${typeList}
 - Difficulty level: ${difficulty}
 - Questions must be directly based on the reference material
 - For multiple_choice: provide exactly 4 options, with exactly 1 correct answer
@@ -197,24 +199,25 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
       );
     }
 
-    // Strip potential markdown code fences and clean up model conversational intros/outros
-    let cleaned = rawText
-      .replace(/^[\s\S]*?```json\s*/i, '')
-      .replace(/^[\s\S]*?```\s*/i, '')
-      .replace(/\s*```[\s\S]*$/i, '')
-      .trim();
+    // Extract top-level JSON structure without breaking nested markdown code blocks inside questionText
+    let cleaned = rawText.trim();
+    const firstBrace = cleaned.indexOf('{');
+    const firstBracket = cleaned.indexOf('[');
+    let firstIndex = -1;
+    if (firstBrace !== -1 && firstBracket !== -1) {
+      firstIndex = Math.min(firstBrace, firstBracket);
+    } else if (firstBrace !== -1) {
+      firstIndex = firstBrace;
+    } else {
+      firstIndex = firstBracket;
+    }
 
-    // If cleaned doesn't start with { or [, locate the first { or [ and last } or ]
-    if (!cleaned.startsWith('{') && !cleaned.startsWith('[')) {
-      const firstObj = cleaned.indexOf('{');
-      const firstArr = cleaned.indexOf('[');
-      const firstStart =
-        firstObj !== -1 && firstArr !== -1 ? Math.min(firstObj, firstArr) : Math.max(firstObj, firstArr);
-      const lastObj = cleaned.lastIndexOf('}');
-      const lastArr = cleaned.lastIndexOf(']');
-      const lastEnd = Math.max(lastObj, lastArr);
-      if (firstStart !== -1 && lastEnd > firstStart) {
-        cleaned = cleaned.substring(firstStart, lastEnd + 1);
+    if (firstIndex !== -1) {
+      const lastBrace = cleaned.lastIndexOf('}');
+      const lastBracket = cleaned.lastIndexOf(']');
+      const lastIndex = Math.max(lastBrace, lastBracket);
+      if (lastIndex > firstIndex) {
+        cleaned = cleaned.substring(firstIndex, lastIndex + 1);
       }
     }
 
@@ -247,31 +250,49 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
     }
 
     // Sanitize and normalise each question across different model schemas
-    const questions = parsed.questions.map((q: any, idx: number) => {
+    let questions = parsed.questions.map((q: any, idx: number) => {
       const qText = String(q.questionText || q.question || q.prompt || '').trim();
       const ans = q.correctAnswer != null ? String(q.correctAnswer) : q.answer != null ? String(q.answer) : null;
+      let type = ['multiple_choice', 'true_false', 'essay'].includes(q.type) ? q.type : 'multiple_choice';
+
+      const options = Array.isArray(q.options)
+        ? q.options.map((opt: any, oidx: number) => {
+            if (typeof opt === 'string') {
+              const optStr = opt.trim();
+              const isCorr = ans ? optStr.toLowerCase() === ans.toLowerCase() : oidx === 0;
+              return { optionText: optStr, isCorrect: isCorr, order: oidx + 1 };
+            }
+            return {
+              optionText: String(opt.optionText || opt.text || opt.label || '').trim(),
+              isCorrect: Boolean(opt.isCorrect || (ans && String(opt.optionText || opt.text || '').trim().toLowerCase() === ans.toLowerCase())),
+              order: oidx + 1,
+            };
+          })
+        : [];
+
+      // If model returned a type not requested by teacher (e.g. 'essay' when essay deselected)
+      if (!finalAllowedTypes.includes(type)) {
+        if (options.length > 1 && finalAllowedTypes.includes('multiple_choice')) {
+          type = 'multiple_choice';
+        } else if (options.length === 2 && finalAllowedTypes.includes('true_false')) {
+          type = 'true_false';
+        }
+      }
+
       return {
-        type: ['multiple_choice', 'true_false', 'essay'].includes(q.type) ? q.type : 'multiple_choice',
+        type,
         questionText: qText,
-        points: Number(q.points) > 0 ? Number(q.points) : 1,
+        points: Number(q.points) > 0 ? Number(q.points) : (type === 'essay' ? 3 : 1),
         correctAnswer: ans,
         order: idx + 1,
-        options: Array.isArray(q.options)
-          ? q.options.map((opt: any, oidx: number) => {
-              if (typeof opt === 'string') {
-                const optStr = opt.trim();
-                const isCorr = ans ? optStr.toLowerCase() === ans.toLowerCase() : oidx === 0;
-                return { optionText: optStr, isCorrect: isCorr, order: oidx + 1 };
-              }
-              return {
-                optionText: String(opt.optionText || opt.text || opt.label || '').trim(),
-                isCorrect: Boolean(opt.isCorrect || (ans && String(opt.optionText || opt.text || '').trim().toLowerCase() === ans.toLowerCase())),
-                order: oidx + 1,
-              };
-            })
-          : [],
+        options,
       };
     });
+
+    // Strictly filter out any question whose type is still outside finalAllowedTypes
+    questions = questions
+      .filter((q: any) => finalAllowedTypes.includes(q.type))
+      .map((q: any, idx: number) => ({ ...q, order: idx + 1 }));
 
     return NextResponse.json({ success: true, questions });
   } catch (error) {

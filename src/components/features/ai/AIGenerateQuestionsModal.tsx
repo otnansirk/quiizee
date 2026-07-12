@@ -9,6 +9,8 @@ export interface AIGenerateQuestionsModalProps {
   onClose: () => void;
   quizId: string;
   onSuccess: (savedCount: number, failedCount: number) => void;
+  quizHasSubmissions?: boolean;
+  quizSubmissionsCount?: number;
 }
 
 export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> = ({
@@ -16,6 +18,8 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
   onClose,
   quizId,
   onSuccess,
+  quizHasSubmissions = false,
+  quizSubmissionsCount = 0,
 }) => {
   const [aiReferenceText, setAIReferenceText] = useState<string>("");
   const [aiQuestionCount, setAIQuestionCount] = useState<number>(5);
@@ -64,7 +68,7 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
           referenceText: aiReferenceText,
           questionCount: aiQuestionCount,
           difficulty: aiDifficulty,
-          types: aiTypes,
+          questionTypes: aiTypes,
         }),
       });
 
@@ -161,6 +165,21 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
 
           {/* Scrollable Modal Body */}
           <div className="custom-scrollbar overflow-y-auto flex-1 p-5 px-6 pb-7">
+            {/* Block AI Generate if Quiz Has Submissions */}
+            {quizHasSubmissions && (
+              <div className="p-4 mb-6 rounded-xl bg-error/15 border border-error/40 text-error flex items-start gap-3 shadow-md bg-red-200">
+                <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div className="text-xs leading-relaxed text-error">
+                  <span className="font-bold block mb-0.5 text-sm uppercase tracking-wider">
+                    Action Blocked: Quiz Has Past Submissions ({quizSubmissionsCount || 1})
+                  </span>
+                  You cannot add brand new questions to this quiz because student(s) have already submitted attempts. Adding new questions would alter the total question count and corrupt historical attempt grading records.
+                </div>
+              </div>
+            )}
+
             {/* Step indicator */}
             <div className="flex items-center gap-2 mb-7 p-3 bg-gray-300 rounded-xl border-black border-2">
               {(["input", "review"] as const).map((step, i) => (
@@ -308,25 +327,38 @@ export const AIGenerateQuestionsModal: React.FC<AIGenerateQuestionsModalProps> =
                   </span>
                 </div>
 
-                {/* Generate button */}
-                <button
-                  onClick={handleAIGenerate}
-                  disabled={isGenerating}
-                  className={`btn btn-primary btn-block py-3.5 text-base font-extrabold flex items-center justify-center gap-2.5 ${
-                    isGenerating ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
-                  }`}
-                >
-                  {isGenerating ? (
-                    <>
-                      <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Generating {aiQuestionCount} question{aiQuestionCount !== 1 ? "s" : ""}...
-                    </>
-                  ) : (
-                    <>
-                      ✨ Generate {aiQuestionCount} Question{aiQuestionCount !== 1 ? "s" : ""}
-                    </>
-                  )}
-                </button>
+                {/* Generate button or Close when blocked */}
+                {quizHasSubmissions ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      setAIStep("input");
+                    }}
+                    className="btn btn-secondary btn-block py-3.5 text-base font-extrabold cursor-pointer"
+                  >
+                    Close
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleAIGenerate}
+                    disabled={isGenerating}
+                    className={`btn btn-primary btn-block py-3.5 text-base font-extrabold flex items-center justify-center gap-2.5 ${
+                      isGenerating ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
+                    }`}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Generating {aiQuestionCount} question{aiQuestionCount !== 1 ? "s" : ""}...
+                      </>
+                    ) : (
+                      <>
+                        ✨ Generate {aiQuestionCount} Question{aiQuestionCount !== 1 ? "s" : ""}
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             )}
 

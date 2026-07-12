@@ -316,6 +316,8 @@ export default function QuizQuestionsPage() {
           isOpen={isAIModalOpen}
           onClose={() => setIsAIModalOpen(false)}
           quizId={quizId}
+          quizHasSubmissions={quiz.hasSubmissions}
+          quizSubmissionsCount={quiz.submissionsCount}
           onSuccess={(saved, failed) => {
             if (saved > 0) {
               showToast(`${saved} question${saved > 1 ? 's' : ''} added to quiz!`, 'success');
