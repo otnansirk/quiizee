@@ -15,9 +15,9 @@ import { quizAttempts } from './quiz-attempts';
 import { users } from './users';
 
 /**
- * Access mode enum for quizzes: public or private.
+ * Access mode enum for quizzes: public, private, or strict (whitelist).
  */
-export const accessModeEnum = pgEnum('access_mode', ['public', 'private']);
+export const accessModeEnum = pgEnum('access_mode', ['public', 'private', 'strict']);
 
 /**
  * Duration mode enum for quizzes: global timer or per-question timer.
@@ -36,6 +36,9 @@ export const quizzes = pgTable('quizzes', {
   description: text('description'),
   accessCode: varchar('access_code', { length: 20 }).notNull().unique(),
   accessMode: accessModeEnum('access_mode').notNull().default('public'),
+  allowedEmails: text('allowed_emails'),
+  canResume: boolean('can_resume').notNull().default(true),
+  expiresAt: timestamp('expires_at'),
   durationMode: durationModeEnum('duration_mode').notNull(),
   globalDuration: integer('global_duration'),
   maxAttempts: integer('max_attempts').notNull().default(1),

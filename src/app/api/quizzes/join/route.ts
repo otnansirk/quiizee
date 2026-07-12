@@ -44,6 +44,13 @@ export async function POST(req: Request) {
       );
     }
 
+    if (quiz.expiresAt && new Date() > new Date(quiz.expiresAt)) {
+      return NextResponse.json(
+        { success: false, message: 'This quiz has expired and is no longer accepting new attempts.' },
+        { status: 403 }
+      );
+    }
+
     let userId: string | null = null;
     let participantId: string | null = null;
     let existingCount = 0;
@@ -58,6 +65,20 @@ export async function POST(req: Request) {
 
     const trimmedEmail = email.trim().toLowerCase();
     const trimmedName = name.trim();
+
+    if (quiz.accessMode === 'strict') {
+      const allowedEmailsList = (quiz.allowedEmails || '')
+        .split(/\r?\n|,/)
+        .map((e) => e.trim().toLowerCase())
+        .filter(Boolean);
+
+      if (!allowedEmailsList.includes(trimmedEmail)) {
+        return NextResponse.json(
+          { success: false, message: 'Your email address is not on the authorized list to join this quiz.' },
+          { status: 403 }
+        );
+      }
+    }
 
     const [existingParticipant] = await db
       .select()
@@ -86,9 +107,13 @@ export async function POST(req: Request) {
 
     userId = null;
 
-    // Explicitly check attempt count against this student's email address
+    // Explicitly check attempt count and status against this student's email address
     const existingAttempts = await db
-      .select({ id: schema.quizAttempts.id })
+      .select({
+        id: schema.quizAttempts.id,
+        status: schema.quizAttempts.status,
+        resultCode: schema.quizAttempts.resultCode,
+      })
       .from(schema.quizAttempts)
       .innerJoin(
         schema.participants,
@@ -102,11 +127,34 @@ export async function POST(req: Request) {
       );
 
     existingCount = existingAttempts.length;
-    if (existingCount >= quiz.maxAttempts) {
-      return NextResponse.json(
-        { success: false, message: 'You have reached the maximum number of attempts allowed for this quiz.' },
-        { status: 403 }
-      );
+    const inProgressAttempt = existingAttempts.find((a) => a.status === 'in_progress');
+
+    if (inProgressAttempt) {
+      if (quiz.canResume) {
+        return NextResponse.json(
+          {
+            attemptId: inProgressAttempt.id,
+            resultCode: inProgressAttempt.resultCode,
+            durationMode: quiz.durationMode,
+            resumed: true,
+          },
+          { status: 200 }
+        );
+      } else {
+        if (existingCount >= quiz.maxAttempts) {
+          return NextResponse.json(
+            { success: false, message: 'You have reached the maximum number of attempts allowed for this quiz.' },
+            { status: 403 }
+          );
+        }
+      }
+    } else {
+      if (existingCount >= quiz.maxAttempts) {
+        return NextResponse.json(
+          { success: false, message: 'You have reached the maximum number of attempts allowed for this quiz.' },
+          { status: 403 }
+        );
+      }
     }
 
     let resCode = '';
@@ -151,7 +199,7 @@ export async function POST(req: Request) {
         questions.map((q) => ({
           attemptId: attempt.id,
           questionId: q.id,
-          questionStartedAt: new Date(),
+          questionStartedAt: attempt.startTime,
           status: 'viewing' as const,
         }))
       );

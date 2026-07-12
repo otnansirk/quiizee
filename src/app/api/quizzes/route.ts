@@ -18,6 +18,9 @@ const createQuizSchema = z.object({
   certificateSignerName: z.string().nullable().optional(),
   certificateSignerRole: z.string().nullable().optional(),
   certificateSignatureUrl: z.string().nullable().optional(),
+  canResume: z.union([z.boolean(), z.string()]).optional(),
+  allowedEmails: z.string().nullable().optional(),
+  expiresAt: z.string().nullable().optional(),
 }).superRefine((data, ctx) => {
   const isCertEnabled = data.certificateEnabled === true || data.certificateEnabled === 'true';
   if (isCertEnabled) {
@@ -118,6 +121,9 @@ export async function POST(req: Request) {
       certificateSignerName,
       certificateSignerRole,
       certificateSignatureUrl,
+      canResume,
+      allowedEmails,
+      expiresAt,
     } = parseResult.data;
 
     // Validate required fields
@@ -128,9 +134,9 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!['public', 'private'].includes(accessMode)) {
+    if (!['public', 'private', 'strict'].includes(accessMode)) {
       return NextResponse.json(
-        { success: false, message: "Invalid accessMode. Must be 'public' or 'private'." },
+        { success: false, message: "Invalid accessMode. Must be 'public', 'private', or 'strict'." },
         { status: 400 }
       );
     }
@@ -174,7 +180,10 @@ export async function POST(req: Request) {
         title: title.trim(),
         description: description ? description.trim() : null,
         accessCode,
-        accessMode: accessMode as 'public' | 'private',
+        accessMode: accessMode as 'public' | 'private' | 'strict',
+        allowedEmails: allowedEmails ? allowedEmails.trim() : null,
+        canResume: canResume !== undefined ? (canResume === true || canResume === 'true') : true,
+        expiresAt: expiresAt ? new Date(expiresAt) : null,
         durationMode: durationMode as 'global' | 'per_question',
         globalDuration: globalDuration !== undefined && globalDuration !== null ? Number(globalDuration) : null,
         maxAttempts: maxAttempts !== undefined && maxAttempts !== null ? Number(maxAttempts) : 1,
