@@ -334,6 +334,7 @@ export default function QuizQuestionsPage() {
           onClose={() => { setIsFormModalOpen(false); setQuestionToEdit(null); }}
           quizId={quizId}
           durationMode={quiz.durationMode}
+          defaultDuration={quiz.durationMode === 'per_question' ? quiz.globalDuration || 30 : null}
           questionToEdit={questionToEdit}
           nextOrder={questions.length + 1}
           quizHasSubmissions={quiz.hasSubmissions}

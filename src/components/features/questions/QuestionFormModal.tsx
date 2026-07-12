@@ -9,6 +9,7 @@ export interface QuestionFormModalProps {
   onClose: () => void;
   quizId: string;
   durationMode?: string;
+  defaultDuration?: number | null;
   questionToEdit: QuestionData | null;
   nextOrder: number;
   quizHasSubmissions?: boolean;
@@ -21,6 +22,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
   onClose,
   quizId,
   durationMode = "global",
+  defaultDuration,
   questionToEdit,
   nextOrder,
   quizHasSubmissions = false,
@@ -31,7 +33,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
   const [formText, setFormText] = useState<string>("");
   const [formImage, setFormImage] = useState<string>("");
   const [formPoints, setFormPoints] = useState<number>(1);
-  const [formDuration, setFormDuration] = useState<number>(30);
+  const [formDuration, setFormDuration] = useState<number>(defaultDuration || 30);
   const [formCorrectAnswer, setFormCorrectAnswer] = useState<string>("true");
   const [formOptions, setFormOptions] = useState<OptionData[]>([
     { optionText: "", isCorrect: true, order: 1 },
@@ -52,7 +54,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
       setFormText(questionToEdit.questionText);
       setFormImage(questionToEdit.questionImage || "");
       setFormPoints(questionToEdit.points || 1);
-      setFormDuration(questionToEdit.duration || 30);
+      setFormDuration(questionToEdit.duration || defaultDuration || 30);
       setFormCorrectAnswer(questionToEdit.correctAnswer || "true");
 
       if (
@@ -84,7 +86,7 @@ export const QuestionFormModal: React.FC<QuestionFormModalProps> = ({
       setFormText("");
       setFormImage("");
       setFormPoints(1);
-      setFormDuration(durationMode === "per_question" ? 30 : 30);
+      setFormDuration(defaultDuration || 30);
       setFormCorrectAnswer("true");
       setFormOptions([
         { optionText: "", isCorrect: true, order: 1 },

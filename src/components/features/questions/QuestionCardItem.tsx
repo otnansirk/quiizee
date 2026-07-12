@@ -182,9 +182,9 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
 
         {/* TRUE / FALSE DETAILS */}
         {q.type === "true_false" && (
-          <div className="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 inline-flex items-center gap-3 text-emerald-400 font-bold text-base shadow-lg shadow-emerald-500/10">
+          <div className="p-4 rounded-xl bg-success border-2 border-border inline-flex items-center gap-3 text-white font-bold text-sm">
             <span>Correct Answer:</span>
-            <span className="px-3 py-1 bg-emerald-600 rounded-md text-white capitalize">
+            <span className="px-2.5 py-0.5 rounded-full bg-white text-success text-xs font-bold inline-flex items-center gap-1">
               {q.correctAnswer === "false"
                 ? "False (Correct)"
                 : "True (Correct)"}
