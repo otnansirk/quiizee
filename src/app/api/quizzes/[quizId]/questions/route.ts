@@ -204,7 +204,14 @@ export async function POST(req: Request, { params }: RouteContext) {
           type: type as 'multiple_choice' | 'true_false' | 'essay',
           questionText: questionText.trim(),
           questionImage: questionImage ? questionImage.trim() : null,
-          duration: duration !== undefined && duration !== null ? Number(duration) : null,
+          duration:
+            quiz?.durationMode === 'global'
+              ? null
+              : duration !== undefined && duration !== null && Number(duration) > 0
+              ? Number(duration)
+              : quiz?.globalDuration && quiz.globalDuration > 0
+              ? quiz.globalDuration
+              : 30,
           points: points !== undefined && points !== null ? Number(points) : 1,
           order: Number(questionOrder),
           correctAnswer:

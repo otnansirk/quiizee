@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { getDb } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
-import { eq, asc, inArray, and } from 'drizzle-orm';
+import { eq, asc, inArray, and, or, isNull, lte } from 'drizzle-orm';
 import { z } from 'zod';
 
 const updateQuizSchema = z.object({
@@ -18,6 +18,9 @@ const updateQuizSchema = z.object({
   certificateSignerRole: z.string().nullable().optional(),
   certificateSignatureUrl: z.string().nullable().optional(),
   isPublished: z.union([z.boolean(), z.string()]).optional(),
+  canResume: z.union([z.boolean(), z.string()]).optional(),
+  allowedEmails: z.string().nullable().optional(),
+  expiresAt: z.string().nullable().optional(),
 }).superRefine((data, ctx) => {
   const isCertEnabled = data.certificateEnabled === true || data.certificateEnabled === 'true';
   if (isCertEnabled) {
@@ -174,6 +177,9 @@ export async function PUT(req: Request, { params }: RouteContext) {
       certificateSignerRole,
       certificateSignatureUrl,
       isPublished,
+      canResume,
+      allowedEmails,
+      expiresAt,
     } = parseResult.data;
 
     const updateData: Partial<schema.NewQuiz> = {
@@ -183,13 +189,13 @@ export async function PUT(req: Request, { params }: RouteContext) {
     if (title !== undefined) updateData.title = title.trim();
     if (description !== undefined) updateData.description = description !== null ? description.trim() : null;
     if (accessMode !== undefined) {
-      if (!['public', 'private'].includes(accessMode)) {
+      if (!['public', 'private', 'strict'].includes(accessMode)) {
         return NextResponse.json(
-          { success: false, message: "Invalid accessMode. Must be 'public' or 'private'." },
+          { success: false, message: "Invalid accessMode. Must be 'public', 'private', or 'strict'." },
           { status: 400 }
         );
       }
-      updateData.accessMode = accessMode as 'public' | 'private';
+      updateData.accessMode = accessMode as 'public' | 'private' | 'strict';
     }
     if (durationMode !== undefined) {
       if (!['global', 'per_question'].includes(durationMode)) {
@@ -207,6 +213,9 @@ export async function PUT(req: Request, { params }: RouteContext) {
     if (certificateSignerName !== undefined) updateData.certificateSignerName = certificateSignerName !== null ? certificateSignerName.trim() : null;
     if (certificateSignerRole !== undefined) updateData.certificateSignerRole = certificateSignerRole !== null ? certificateSignerRole.trim() : null;
     if (certificateSignatureUrl !== undefined) updateData.certificateSignatureUrl = certificateSignatureUrl !== null ? certificateSignatureUrl.trim() : null;
+    if (canResume !== undefined) updateData.canResume = canResume === true || canResume === 'true';
+    if (allowedEmails !== undefined) updateData.allowedEmails = allowedEmails !== null ? allowedEmails.trim() : null;
+    if (expiresAt !== undefined) updateData.expiresAt = expiresAt ? new Date(expiresAt) : null;
 
     if (isPublished !== undefined) {
       const publishing = isPublished === true || isPublished === 'true';
@@ -230,6 +239,36 @@ export async function PUT(req: Request, { params }: RouteContext) {
         }
       }
       updateData.isPublished = publishing;
+    }
+
+    // Synchronize questions table durations when durationMode is updated or per-question duration is changed
+    const targetDurationMode = updateData.durationMode || quiz.durationMode;
+    if (targetDurationMode === 'per_question') {
+      const bulkDuration =
+        typeof updateData.globalDuration === 'number' && updateData.globalDuration > 0
+          ? updateData.globalDuration
+          : typeof quiz.globalDuration === 'number' && quiz.globalDuration > 0
+          ? quiz.globalDuration
+          : 30;
+      updateData.globalDuration = bulkDuration;
+      await db
+        .update(schema.questions)
+        .set({ duration: bulkDuration })
+        .where(eq(schema.questions.quizId, quizId));
+    } else if (targetDurationMode === 'global' && updateData.durationMode === 'global') {
+      if (
+        updateData.globalDuration === undefined ||
+        updateData.globalDuration === null ||
+        updateData.globalDuration <= 0
+      ) {
+        if (!quiz.globalDuration || quiz.globalDuration <= 0) {
+          updateData.globalDuration = 1800;
+        }
+      }
+      await db
+        .update(schema.questions)
+        .set({ duration: null })
+        .where(eq(schema.questions.quizId, quizId));
     }
 
     const [updatedQuiz] = await db

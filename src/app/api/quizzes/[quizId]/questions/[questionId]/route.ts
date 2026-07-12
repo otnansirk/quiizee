@@ -96,7 +96,7 @@ export async function PUT(req: Request, { params }: RouteContext) {
   const db = getDb();
   try {
     const { quizId, questionId } = await params;
-    const { error, question } = await checkTeacherAndQuestion(quizId, questionId);
+    const { error, quiz, question } = await checkTeacherAndQuestion(quizId, questionId);
     if (error) return error;
     if (!question) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
 
@@ -135,7 +135,16 @@ export async function PUT(req: Request, { params }: RouteContext) {
       if (type !== undefined) updateData.type = type as 'multiple_choice' | 'true_false' | 'essay';
       if (questionText !== undefined) updateData.questionText = questionText.trim();
       if (questionImage !== undefined) updateData.questionImage = questionImage !== null ? questionImage.trim() : null;
-      if (duration !== undefined) updateData.duration = duration !== null ? Number(duration) : null;
+      if (duration !== undefined) {
+        updateData.duration =
+          quiz?.durationMode === 'global'
+            ? null
+            : duration !== null && Number(duration) > 0
+            ? Number(duration)
+            : quiz?.globalDuration && quiz.globalDuration > 0
+            ? quiz.globalDuration
+            : 30;
+      }
       if (points !== undefined) updateData.points = points !== null ? Number(points) : 1;
       if (order !== undefined) updateData.order = Number(order);
       if (correctAnswer !== undefined) {
