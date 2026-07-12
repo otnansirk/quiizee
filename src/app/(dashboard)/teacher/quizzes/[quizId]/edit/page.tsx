@@ -19,9 +19,13 @@ export default function EditQuizPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [accessCode, setAccessCode] = useState('');
-  const [accessMode, setAccessMode] = useState<'public' | 'private'>('public');
+  const [accessMode, setAccessMode] = useState<'public' | 'private' | 'strict'>('public');
+  const [allowedEmails, setAllowedEmails] = useState<string>('');
+  const [canResume, setCanResume] = useState<boolean>(true);
+  const [expiresAt, setExpiresAt] = useState<string>('');
   const [durationMode, setDurationMode] = useState<'global' | 'per_question'>('global');
   const [globalDurationMinutes, setGlobalDurationMinutes] = useState<number | string>(30);
+  const [perQuestionDurationSeconds, setPerQuestionDurationSeconds] = useState<number | string>('30');
   const [maxAttempts, setMaxAttempts] = useState<number | string>(1);
   const [certificateEnabled, setCertificateEnabled] = useState<boolean>(false);
   const [certificateMinScore, setCertificateMinScore] = useState<number | string>(70);
@@ -55,8 +59,18 @@ export default function EditQuizPage() {
         setDescription(q.description || '');
         setAccessCode(q.accessCode || '');
         setAccessMode(q.accessMode || 'public');
+        setAllowedEmails(q.allowedEmails || '');
+        setCanResume(q.canResume !== undefined ? Boolean(q.canResume) : true);
+        setExpiresAt(q.expiresAt ? new Date(q.expiresAt).toISOString().slice(0, 16) : '');
         setDurationMode(q.durationMode || 'global');
-        setGlobalDurationMinutes(q.globalDuration ? Math.round(q.globalDuration / 60) : 30);
+        setGlobalDurationMinutes(q.globalDuration && q.durationMode === 'global' ? Math.round(q.globalDuration / 60) : 30);
+        setPerQuestionDurationSeconds(
+          q.globalDuration && q.durationMode === 'per_question'
+            ? String(q.globalDuration)
+            : Array.isArray(q.questions) && q.questions[0]?.duration
+            ? String(q.questions[0].duration)
+            : '30'
+        );
         setMaxAttempts(q.maxAttempts || 1);
         setCertificateEnabled(q.certificateEnabled || false);
         setCertificateMinScore(q.certificateMinScore || 70);
@@ -135,8 +149,16 @@ export default function EditQuizPage() {
       title: title.trim(),
       description: description.trim() || null,
       accessMode,
+      allowedEmails: accessMode === 'strict' ? (allowedEmails.trim() || null) : null,
+      canResume,
+      expiresAt: expiresAt ? expiresAt : null,
       durationMode,
-      globalDuration: durationMode === 'global' ? Math.round(Number(globalDurationMinutes) * 60) : null,
+      globalDuration:
+        durationMode === 'global'
+          ? Math.round(Number(globalDurationMinutes) * 60)
+          : durationMode === 'per_question'
+          ? Math.max(5, Number(perQuestionDurationSeconds) || 30)
+          : null,
       maxAttempts: Math.max(1, Number(maxAttempts) || 1),
       certificateEnabled,
       certificateMinScore: certificateEnabled ? Math.min(100, Math.max(1, Number(certificateMinScore) || 70)) : null,
@@ -209,8 +231,13 @@ export default function EditQuizPage() {
         accessCode={accessCode}
         title={title}
         description={description}
+        accessMode={accessMode}
+        allowedEmails={allowedEmails}
+        canResume={canResume}
+        expiresAt={expiresAt}
         durationMode={durationMode}
         globalDurationMinutes={globalDurationMinutes}
+        perQuestionDurationSeconds={perQuestionDurationSeconds}
         maxAttempts={maxAttempts}
         certificateEnabled={certificateEnabled}
         certificateMinScore={certificateMinScore}
@@ -220,8 +247,13 @@ export default function EditQuizPage() {
         isSubmitting={isSubmitting}
         onTitleChange={setTitle}
         onDescriptionChange={setDescription}
+        onAccessModeChange={setAccessMode}
+        onAllowedEmailsChange={setAllowedEmails}
+        onCanResumeChange={setCanResume}
+        onExpiresAtChange={setExpiresAt}
         onDurationModeChange={setDurationMode}
         onGlobalDurationChange={setGlobalDurationMinutes}
+        onPerQuestionDurationChange={setPerQuestionDurationSeconds}
         onMaxAttemptsChange={setMaxAttempts}
         onCertificateEnabledChange={setCertificateEnabled}
         onCertificateMinScoreChange={setCertificateMinScore}

@@ -7,8 +7,13 @@ export interface EditQuizSettingsFormProps {
   accessCode: string;
   title: string;
   description: string;
+  accessMode: "public" | "private" | "strict";
+  allowedEmails: string;
+  canResume: boolean;
+  expiresAt: string;
   durationMode: "global" | "per_question";
   globalDurationMinutes: number | string;
+  perQuestionDurationSeconds?: number | string;
   maxAttempts: number | string;
   certificateEnabled: boolean;
   certificateMinScore: number | string;
@@ -18,8 +23,13 @@ export interface EditQuizSettingsFormProps {
   isSubmitting: boolean;
   onTitleChange: (val: string) => void;
   onDescriptionChange: (val: string) => void;
+  onAccessModeChange: (val: "public" | "private" | "strict") => void;
+  onAllowedEmailsChange: (val: string) => void;
+  onCanResumeChange: (val: boolean) => void;
+  onExpiresAtChange: (val: string) => void;
   onDurationModeChange: (val: "global" | "per_question") => void;
   onGlobalDurationChange: (val: number | string) => void;
+  onPerQuestionDurationChange?: (val: number | string) => void;
   onMaxAttemptsChange: (val: number | string) => void;
   onCertificateEnabledChange: (val: boolean) => void;
   onCertificateMinScoreChange: (val: number | string) => void;
@@ -33,8 +43,13 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
   accessCode,
   title,
   description,
+  accessMode,
+  allowedEmails,
+  canResume,
+  expiresAt,
   durationMode,
   globalDurationMinutes,
+  perQuestionDurationSeconds = "30",
   maxAttempts,
   certificateEnabled,
   certificateMinScore,
@@ -44,8 +59,13 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
   isSubmitting,
   onTitleChange,
   onDescriptionChange,
+  onAccessModeChange,
+  onAllowedEmailsChange,
+  onCanResumeChange,
+  onExpiresAtChange,
   onDurationModeChange,
   onGlobalDurationChange,
+  onPerQuestionDurationChange,
   onMaxAttemptsChange,
   onCertificateEnabledChange,
   onCertificateMinScoreChange,
@@ -117,14 +137,47 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
           How students will access this assessment.
         </p>
 
-        <div className="choice-card selected cursor-default">
-          <div className="choice-card-title">Public Access Code Only</div>
-          <div className="choice-card-desc">
-            Students access this assessment by entering the unique access code
-            along with their Name and Email. No student login or account
-            registration required.
+        <div className="choice-grid">
+          <div
+            className={`choice-card ${accessMode === "public" ? "selected" : ""}`}
+            onClick={() => !isSubmitting && onAccessModeChange("public")}
+          >
+            <div className="choice-card-title">Public Mode (Access Code Only)</div>
+            <div className="choice-card-desc">
+              Anyone with the unique access code can join and attempt this assessment by entering their Name and Email.
+            </div>
+          </div>
+
+          <div
+            className={`choice-card ${accessMode === "strict" ? "selected" : ""}`}
+            onClick={() => !isSubmitting && onAccessModeChange("strict")}
+          >
+            <div className="choice-card-title">Strict Mode (Email Whitelist)</div>
+            <div className="choice-card-desc">
+              Only students whose email address matches your whitelist can join using the access code.
+            </div>
           </div>
         </div>
+
+        {accessMode === "strict" && (
+          <div className="form-group animate-fade-in mt-5">
+            <label className="label" htmlFor="allowedEmails">
+              Allowed Email Addresses <span className="text-error">*</span>
+            </label>
+            <textarea
+              id="allowedEmails"
+              rows={4}
+              className="input font-mono"
+              placeholder={`student1@example.com\nstudent2@example.com`}
+              value={allowedEmails}
+              onChange={(e) => onAllowedEmailsChange(e.target.value)}
+              disabled={isSubmitting}
+            />
+            <span className="text-xs text-muted-foreground">
+              Enter one email per line (or separate by comma). Only these exact email addresses can attempt the quiz.
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Duration Mode Section */}
@@ -191,6 +244,34 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
             </span>
           </div>
         )}
+
+        {/* Conditional Input: Per-Question Bulk Duration */}
+        {durationMode === "per_question" && (
+          <div className="form-group animate-fade-in mt-5 max-w-[300px]">
+            <label className="label" htmlFor="perQuestionDuration">
+              Bulk Per-Question Duration (seconds){" "}
+              <span className="text-error">*</span>
+            </label>
+            <input
+              id="perQuestionDuration"
+              type="number"
+              min="5"
+              max="3600"
+              className="input"
+              value={perQuestionDurationSeconds || ""}
+              onChange={(e) =>
+                onPerQuestionDurationChange &&
+                onPerQuestionDurationChange(e.target.value)
+              }
+              required={durationMode === "per_question"}
+              disabled={isSubmitting}
+              placeholder="30"
+            />
+            <span className="text-xs text-muted-foreground">
+              Sets and updates all questions in this assessment to this duration in seconds upon saving.
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Max Attempts Section */}
@@ -213,6 +294,67 @@ export const EditQuizSettingsForm: React.FC<EditQuizSettingsFormProps> = ({
         <span className="text-xs text-muted-foreground">
           Number of times a student is allowed to retake this assessment.
         </span>
+      </div>
+
+      {/* Attempt Resume Section */}
+      <div className="mb-10">
+        <h3 className="card-title text-xl mb-1.5">
+          Attempt Resume Setting
+        </h3>
+        <p className="card-description mb-4">
+          Control whether students can resume an unfinished assessment session if they accidentally close or refresh their tab.
+        </p>
+
+        <div
+          className={`toggle-switch-wrapper ${canResume ? "active" : ""}`}
+          onClick={() => !isSubmitting && onCanResumeChange(!canResume)}
+        >
+          <div>
+            <div className="font-bold text-foreground flex items-center gap-2">
+              Allow Students to Resume Ongoing Attempts
+            </div>
+            <div className="text-sm text-muted-foreground">
+              If enabled, re-entering the assessment with the same email brings students right back where they left off without using up an attempt.
+            </div>
+          </div>
+
+          <label className="toggle-switch" onClick={(e) => e.stopPropagation()}>
+            <input
+              type="checkbox"
+              checked={canResume}
+              onChange={(e) => onCanResumeChange(e.target.checked)}
+              disabled={isSubmitting}
+            />
+            <span className="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      {/* Expiration Deadline Section */}
+      <div className="mb-10">
+        <h3 className="card-title text-xl mb-1.5">
+          Expiration Deadline
+        </h3>
+        <p className="card-description mb-4">
+          Set an optional closing date and time. After this deadline, no new attempts can be started.
+        </p>
+
+        <div className="form-group max-w-[350px]">
+          <label className="label" htmlFor="expiresAt">
+            Closing Date & Time (Optional)
+          </label>
+          <input
+            id="expiresAt"
+            type="datetime-local"
+            className="input"
+            value={expiresAt}
+            onChange={(e) => onExpiresAtChange(e.target.value)}
+            disabled={isSubmitting}
+          />
+          <span className="text-xs text-muted-foreground">
+            Leave empty for lifetime validity (never expires).
+          </span>
+        </div>
       </div>
 
       {/* Certificate Settings Section */}

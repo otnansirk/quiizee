@@ -10,9 +10,13 @@ export default function CreateNewQuizPage() {
   // Form State
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [accessMode, setAccessMode] = useState<'public' | 'private'>('public');
+  const [accessMode, setAccessMode] = useState<'public' | 'private' | 'strict'>('public');
+  const [allowedEmails, setAllowedEmails] = useState<string>('');
+  const [canResume, setCanResume] = useState<boolean>(true);
+  const [expiresAt, setExpiresAt] = useState<string>('');
   const [durationMode, setDurationMode] = useState<'global' | 'per_question'>('global');
   const [globalDurationMinutes, setGlobalDurationMinutes] = useState<number | string>(30);
+  const [perQuestionDurationSeconds, setPerQuestionDurationSeconds] = useState<number | string>('30');
   const [maxAttempts, setMaxAttempts] = useState<number | string>(1);
   const [certificateEnabled, setCertificateEnabled] = useState<boolean>(false);
   const [certificateMinScore, setCertificateMinScore] = useState<number | string>(70);
@@ -49,8 +53,16 @@ export default function CreateNewQuizPage() {
       title: title.trim(),
       description: description.trim() || null,
       accessMode,
+      allowedEmails: accessMode === 'strict' ? (allowedEmails.trim() || null) : null,
+      canResume,
+      expiresAt: expiresAt ? expiresAt : null,
       durationMode,
-      globalDuration: durationMode === 'global' ? Math.round(Number(globalDurationMinutes) * 60) : null,
+      globalDuration:
+        durationMode === 'global'
+          ? Math.round(Number(globalDurationMinutes) * 60)
+          : durationMode === 'per_question'
+          ? Math.max(5, Number(perQuestionDurationSeconds) || 30)
+          : null,
       maxAttempts: Math.max(1, Number(maxAttempts) || 1),
       certificateEnabled,
       certificateMinScore: certificateEnabled ? Math.min(100, Math.max(1, Number(certificateMinScore) || 70)) : null,
@@ -178,14 +190,52 @@ export default function CreateNewQuizPage() {
             How students will access this assessment.
           </p>
 
-          <div className="choice-card selected" style={{ cursor: 'default' }}>
-            <div className="choice-card-title">
-              Public Access Code Only
+          <div className="choice-grid">
+            <div
+              className={`choice-card ${accessMode === 'public' ? 'selected' : ''}`}
+              onClick={() => !isSubmitting && setAccessMode('public')}
+            >
+              <div className="choice-card-title">
+                Public Mode (Access Code Only)
+              </div>
+              <div className="choice-card-desc">
+                Anyone with the unique access code can join and attempt this assessment by entering their Name and Email.
+              </div>
             </div>
-            <div className="choice-card-desc">
-              Students access this assessment by entering the unique access code along with their Name and Email. No student login or account registration required.
+
+            <div
+              className={`choice-card ${accessMode === 'strict' ? 'selected' : ''}`}
+              onClick={() => !isSubmitting && setAccessMode('strict')}
+            >
+              <div className="choice-card-title">
+                Strict Mode (Email Whitelist)
+              </div>
+              <div className="choice-card-desc">
+                Only students whose email address matches your whitelist can join using the access code.
+              </div>
             </div>
           </div>
+
+          {accessMode === 'strict' && (
+            <div className="form-group animate-fade-in" style={{ marginTop: '1.25rem' }}>
+              <label className="label" htmlFor="allowedEmails">
+                Allowed Email Addresses <span style={{ color: 'var(--error)' }}>*</span>
+              </label>
+              <textarea
+                id="allowedEmails"
+                rows={4}
+                className="input"
+                placeholder={`student1@example.com\nstudent2@example.com`}
+                value={allowedEmails}
+                onChange={(e) => setAllowedEmails(e.target.value)}
+                disabled={isSubmitting}
+                style={{ resize: 'vertical', fontFamily: 'monospace' }}
+              />
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                Enter one email per line (or separate by comma). Only these exact email addresses can attempt the quiz.
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Duration Mode Section */}
@@ -246,6 +296,30 @@ export default function CreateNewQuizPage() {
               </span>
             </div>
           )}
+
+          {/* Conditional Input: Per-Question Bulk Duration */}
+          {durationMode === 'per_question' && (
+            <div className="form-group animate-fade-in" style={{ marginTop: '1.25rem', maxWidth: '300px' }}>
+              <label className="label" htmlFor="perQuestionDuration">
+                Bulk Per-Question Duration (seconds) <span style={{ color: 'var(--error)' }}>*</span>
+              </label>
+              <input
+                id="perQuestionDuration"
+                type="number"
+                min="5"
+                max="3600"
+                className="input"
+                value={perQuestionDurationSeconds}
+                onChange={(e) => setPerQuestionDurationSeconds(e.target.value)}
+                required={durationMode === 'per_question'}
+                disabled={isSubmitting}
+                placeholder="30"
+              />
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                Sets the default duration in seconds for each question in this assessment.
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Max Attempts Section */}
@@ -267,6 +341,67 @@ export default function CreateNewQuizPage() {
           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
             Number of times a student is allowed to retake this assessment.
           </span>
+        </div>
+
+        {/* Attempt Resume Section */}
+        <div style={{ marginBottom: '2.5rem' }}>
+          <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '0.35rem' }}>
+            Attempt Resume Setting
+          </h3>
+          <p className="card-description" style={{ marginBottom: '1rem' }}>
+            Control whether students can resume an unfinished assessment session if they accidentally close or refresh their tab.
+          </p>
+
+          <div
+            className={`toggle-switch-wrapper ${canResume ? 'active' : ''}`}
+            onClick={() => !isSubmitting && setCanResume(!canResume)}
+          >
+            <div>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                Allow Students to Resume Ongoing Attempts
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                If enabled, re-entering the assessment with the same email brings students right back where they left off without using up an attempt.
+              </div>
+            </div>
+
+            <label className="toggle-switch" onClick={(e) => e.stopPropagation()}>
+              <input
+                type="checkbox"
+                checked={canResume}
+                onChange={(e) => setCanResume(e.target.checked)}
+                disabled={isSubmitting}
+              />
+              <span className="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        {/* Expiration Deadline Section */}
+        <div style={{ marginBottom: '2.5rem' }}>
+          <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '0.35rem' }}>
+            Expiration Deadline
+          </h3>
+          <p className="card-description" style={{ marginBottom: '1rem' }}>
+            Set an optional closing date and time. After this deadline, no new attempts can be started.
+          </p>
+
+          <div className="form-group" style={{ maxWidth: '350px' }}>
+            <label className="label" htmlFor="expiresAt">
+              Closing Date & Time (Optional)
+            </label>
+            <input
+              id="expiresAt"
+              type="datetime-local"
+              className="input"
+              value={expiresAt}
+              onChange={(e) => setExpiresAt(e.target.value)}
+              disabled={isSubmitting}
+            />
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              Leave empty for lifetime validity (never expires).
+            </span>
+          </div>
         </div>
 
         {/* Certificate Settings Section */}
