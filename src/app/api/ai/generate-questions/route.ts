@@ -9,8 +9,9 @@ const generateQuestionsSchema = z.object({
   difficulty: z.string().optional().default('medium'),
 });
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL: string =
+const AI_API_KEY = process.env.AI_API_KEY || process.env.GEMINI_API_KEY;
+const AI_API_URL: string =
+  process.env.AI_API_URL ||
   process.env.GEMINI_API_URL ||
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
@@ -22,9 +23,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!GEMINI_API_KEY) {
+    if (!AI_API_KEY) {
       return NextResponse.json(
-        { success: false, message: 'AI service is not configured. Please set GEMINI_API_KEY in your environment.' },
+        { success: false, message: 'AI service is not configured. Please set AI_API_KEY in your environment.' },
         { status: 503 }
       );
     }
@@ -115,31 +116,33 @@ RESPOND WITH ONLY VALID JSON — no markdown, no explanation, no code fences. Us
   ]
 }`;
 
-    const isRouterV1 =
-      GEMINI_API_URL.includes('/chat/completions') ||
-      (GEMINI_API_URL.includes('/v1') &&
-        !GEMINI_API_URL.includes('googleapis.com') &&
-        !GEMINI_API_URL.includes(':generateContent'));
+    const AI_MODEL = process.env.AI_MODEL || process.env.GEMINI_MODEL || 'gemini-2.0-flash';
 
-    let targetUrl: string = GEMINI_API_URL;
+    const isRouterV1 =
+      AI_API_URL.includes('/chat/completions') ||
+      (AI_API_URL.includes('/v1') &&
+        !AI_API_URL.includes('googleapis.com') &&
+        !AI_API_URL.includes(':generateContent'));
+
+    let targetUrl: string = AI_API_URL;
     let headers: Record<string, string> = { 'Content-Type': 'application/json' };
     let requestBody: any;
 
     if (isRouterV1) {
       // 9router / OpenAI / OneAPI format
-      targetUrl = GEMINI_API_URL.endsWith('/v1') || GEMINI_API_URL.endsWith('/v1/')
-        ? GEMINI_API_URL.replace(/\/$/, '') + '/chat/completions'
-        : GEMINI_API_URL;
-      headers['Authorization'] = `Bearer ${GEMINI_API_KEY}`;
+      targetUrl = AI_API_URL.endsWith('/v1') || AI_API_URL.endsWith('/v1/')
+        ? AI_API_URL.replace(/\/$/, '') + '/chat/completions'
+        : AI_API_URL;
+      headers['Authorization'] = `Bearer ${AI_API_KEY}`;
       requestBody = {
-        model: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
+        model: AI_MODEL,
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
         max_tokens: 4096,
       };
     } else {
       // Google Gemini Native format
-      targetUrl = `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`;
+      targetUrl = `${AI_API_URL}?key=${AI_API_KEY}`;
       requestBody = {
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {

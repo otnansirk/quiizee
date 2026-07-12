@@ -44,5 +44,8 @@ jobs:
           echo "Mengirimkan rahasia runtime ke Cloudflare..."
           npx wrangler secret put DATABASE_URL <<< "${{ secrets.DATABASE_URL }}"
           npx wrangler secret put AUTH_SECRET <<< "${{ secrets.AUTH_SECRET }}"
-          npx wrangler secret put GEMINI_API_URL <<< "${{ secrets.GEMINI_API_URL }}"
-          npx wrangler secret put GEMINI_API_KEY <<< "${{ secrets.GEMINI_API_KEY }}"
+          if [ -n "${{ secrets.AI_API_URL }}" ]; then npx wrangler secret put AI_API_URL <<< "${{ secrets.AI_API_URL }}"; fi
+          if [ -n "${{ secrets.AI_API_KEY }}" ]; then npx wrangler secret put AI_API_KEY <<< "${{ secrets.AI_API_KEY }}"; fi
+          if [ -n "${{ secrets.AI_MODEL }}" ]; then npx wrangler secret put AI_MODEL <<< "${{ secrets.AI_MODEL }}"; fi
+          npx wrangler secret put AUTH_URL <<< "${{ secrets.AUTH_URL }}"
+          npx wrangler secret put NEXTAUTH_URL <<< "${{ secrets.NEXTAUTH_URL }}"
