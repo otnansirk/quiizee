@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { FormattedText } from "@/components/atoms/FormattedText";
 
 export interface ResultQuestionItemProps {
   question: {
@@ -112,7 +113,7 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
 
       {/* Question Text */}
       <div className="results-q-text text-base sm:text-lg font-semibold text-foreground mb-3 leading-relaxed">
-        {q.text}
+        <FormattedText text={q.text} />
       </div>
 
       {/* Image Preview if exists */}
@@ -177,13 +178,13 @@ export const ResultQuestionItem: React.FC<ResultQuestionItemProps> = ({
                           : "border-gray-400 bg-transparent"
                       }`}
                     />
-                    <span
+                    <div
                       className={`text-sm sm:text-base ${
                         isSelected || isThisOptionCorrect ? "font-semibold" : "font-normal"
                       }`}
                     >
-                      {opt.text}
-                    </span>
+                      <FormattedText text={opt.text} inline />
+                    </div>
                   </div>
                   {statusIcon && (
                     <div className="flex-shrink-0">{statusIcon}</div>

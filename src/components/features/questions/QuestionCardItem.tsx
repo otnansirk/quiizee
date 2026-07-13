@@ -2,6 +2,7 @@
 
 import React from "react";
 import { QuestionData } from "@/app/(dashboard)/teacher/quizzes/[quizId]/questions/page";
+import { FormattedText } from "@/components/atoms/FormattedText";
 
 export interface QuestionCardItemProps {
   question: QuestionData;
@@ -111,9 +112,9 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
 
       {/* Question Text & Optional Image */}
       <div>
-        <p className={`text-base sm:text-lg font-semibold text-foreground leading-relaxed whitespace-pre-wrap ${q.questionImage ? "mb-3 sm:mb-4" : "mb-0"}`}>
-          {q.questionText}
-        </p>
+        <div className={`text-base sm:text-lg font-semibold text-foreground leading-relaxed ${q.questionImage ? "mb-3 sm:mb-4" : "mb-0"}`}>
+          <FormattedText text={q.questionText} />
+        </div>
 
         {q.questionImage && (
           <div className="mt-2.5 sm:mt-3 rounded-xl overflow-hidden border border-white/10 max-w-[500px] bg-black/30">
@@ -165,7 +166,7 @@ export const QuestionCardItem: React.FC<QuestionCardItemProps> = ({
                             : "text-foreground font-normal"
                         }`}
                       >
-                        {opt.optionText}
+                        <FormattedText text={opt.optionText} inline />
                       </span>
                     </div>
 

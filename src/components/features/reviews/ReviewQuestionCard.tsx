@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { FormattedText } from "@/components/atoms/FormattedText";
 
 export interface ReviewQuestionCardProps {
   item: any;
@@ -97,8 +98,8 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
       </div>
 
       {/* Question Prompt */}
-      <div className={`text-lg font-semibold leading-relaxed italic ${isEssay ? "text-white/85" : "text-muted-foreground"}`}>
-        {item.questionText}
+      <div className={`text-lg font-semibold leading-relaxed not-italic ${isEssay ? "text-white/85" : "text-muted-foreground"}`}>
+        <FormattedText text={item.questionText} />
       </div>
 
       {/* Question Image if any */}
@@ -241,11 +242,11 @@ export const ReviewQuestionCard: React.FC<ReviewQuestionCardProps> = ({
 
                 return (
                   <div key={opt.id} className={boxClass}>
-                    <span className={`text-base text-foreground ${
+                    <div className={`text-base text-foreground ${
                       isSelected || isOptCorrect ? "font-bold" : "font-normal"
                     }`}>
-                      {letter}. {opt.optionText}
-                    </span>
+                      {letter}. <FormattedText text={opt.optionText} inline />
+                    </div>
                     {badgeText && (
                       <span className={`text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap ${badgeClass}`}>
                         {badgeText}

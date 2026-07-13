@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { FormattedText } from "@/components/atoms/FormattedText";
 
 export interface QuizQuestionDisplayProps {
   currentQuestion: any;
@@ -64,9 +65,9 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
       </div>
 
       {/* Question Text */}
-      <h2 className="text-lg sm:text-2xl font-bold text-foreground leading-relaxed mb-5">
-        {currentQuestion.questionText}
-      </h2>
+      <div className="text-lg sm:text-2xl font-bold text-foreground leading-relaxed mb-5">
+        <FormattedText text={currentQuestion.questionText} />
+      </div>
 
       {/* Question Image Preview */}
       {currentQuestion.questionImage && (
@@ -118,7 +119,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                           : "text-foreground font-normal"
                       }`}
                     >
-                      {option.optionText}
+                      <FormattedText text={option.optionText} />
                     </div>
                   </div>
                 );
