@@ -1,0 +1,115 @@
+# Cloudflare Hyperdrive & Wrangler Configuration
+
+Quiizee runs on **Cloudflare Workers** via `@opennextjs/cloudflare`. To overcome traditional serverless database bottlenecks (TCP handshake latency, TLS negotiation overhead, connection limits), the project integrates **Cloudflare Hyperdrive** alongside **Supabase Postgres**.
+
+---
+
+## The Critical Connection Resolution Architecture (`src/lib/db/index.ts`)
+
+Understanding `src/lib/db/index.ts` is critical when troubleshooting database bugs (`connect ENETUNREACH`, `Too many open connections`, etc.).
+
+```ts
+export function getDb() {
+  let connectionString: string | undefined;
+
+  try {
+    const { env } = getCloudflareContext();
+    if (env?.HYPERDRIVE?.connectionString) {
+      connectionString = env.HYPERDRIVE.connectionString;
+    }
+  } catch {
+    // Fallback when outside Cloudflare context
+  }
+
+  // In local development or scripts, fallback to process.env.DATABASE_URL if Hyperdrive is not bound
+  // or if running locally where direct IPv6 Supabase connection (`db.*.supabase.co`) cannot be reached.
+  if ((!connectionString || process.env.NODE_ENV === 'development') && process.env.DATABASE_URL) {
+    connectionString = process.env.DATABASE_URL;
+  }
+
+  if (!connectionString) {
+    throw new Error('No database connection string found. Please set HYPERDRIVE or DATABASE_URL.');
+  }
+
+  const client = postgres(connectionString, {
+    prepare: false,
+    max: 5,
+    connect_timeout: 5,
+    idle_timeout: 5,
+  });
+
+  return drizzle(client, { schema });
+}
+```
+
+---
+
+## Why `ENETUNREACH 2406:da18:...:5432` Happens & How to Avoid It
+
+### The IPv6 vs IPv4 Gotcha
+1. **Direct Supabase Hosts (`db.<project-ref>.supabase.co:5432`) are IPv6-Only**:
+   When connecting directly to Supabase on port `5432` (`db.edunmxvcycpogjzzwvgt.supabase.co`), DNS returns only an **IPv6 (`AAAA`) record**.
+2. **Local Development Limitations (`Local :::0`)**:
+   Most developer laptops, Docker containers, and local networks lack global IPv6 routing. If `next dev` attempts to open a TCP connection to `db.*.supabase.co:5432`, the operating system immediately throws **`connect ENETUNREACH 2406:da18:...:5432`**.
+3. **The Solution (`localConnectionString`)**:
+   In `wrangler.jsonc`, the Hyperdrive configuration defines `localConnectionString`. For local development (`next dev` / `wrangler dev`), **`localConnectionString` MUST point to the Supabase IPv4 Connection Pooler (`aws-1-ap-southeast-1.pooler.supabase.com:6543`)** rather than the direct IPv6 host.
+
+```jsonc
+// wrangler.jsonc
+{
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "2d07aaca2af846d7a43481dd29315b0e",
+      "localConnectionString": "postgresql://postgres.edunmxvcycpogjzzwvgt:4UlfXpZTfocFzAIg@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres"
+    }
+  ]
+}
+```
+
+### Production vs Local Hyperdrive Behavior
+- **In Production on Cloudflare Workers (`NODE_ENV === 'production'`)**:
+  When deployed (`wrangler deploy` / `opennextjs-cloudflare deploy`), Cloudflare Workers **completely ignores** `localConnectionString`. Instead, the Cloudflare edge runtime reads `"id": "2d07aaca2af846d7a43481dd29315b0e"` and injects its own internal, high-speed proxy socket into `env.HYPERDRIVE.connectionString`. Cloudflare edge servers natively support IPv6 and connect to Supabase over Cloudflare's private backbone.
+- **In Local Dev (`NODE_ENV === 'development'`)**:
+  `getCloudflareContext().env.HYPERDRIVE.connectionString` simulates Hyperdrive by returning `localConnectionString`. Because `localConnectionString` (`wrangler.jsonc`) and `DATABASE_URL` (`.env`) point to the IPv4 pooler, all queries succeed cleanly over IPv4.
+
+---
+
+## `prepare: false` vs `prepare: true` with `postgres.js`
+
+In `src/lib/db/index.ts`, `postgres(connectionString, { prepare: false, ... })` is configured.
+- **Why `prepare: false` when using Supavisor Pooler locally?**
+  Supabase's external connection pooler (Supavisor on port `6543`) runs in **Transaction Mode (`?pgbouncer=true`)**. Transaction-mode poolers multiplex client connections across multiple server connections after each transaction. Because prepared statements (`PREPARE ... EXECUTE`) are tied to a specific backend server session, transaction poolers **do not support prepared statements** (unless disabled on the client side via `prepare: false`).
+- **When to use `prepare: true`?**
+  If using `postgres.js` *exclusively* over Cloudflare Hyperdrive (`env.HYPERDRIVE.connectionString` on edge), Hyperdrive requires `prepare: true` to inspect query ASTs and enable read-replica caching. If Hyperdrive caching needs to be maximized on production routes, ensure the driver flags align with Hyperdrive requirements (`prepare: true` on edge, `prepare: false` when connected to local pooler).
+
+---
+
+## Wrangler & OpenNext Configuration (`wrangler.jsonc` & `open-next.config.ts`)
+
+### `wrangler.jsonc` Breakdown
+```jsonc
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js", // Generated by @opennextjs/cloudflare during build
+  "name": "quiizee",
+  "compatibility_date": "2026-07-09",
+  "compatibility_flags": ["nodejs_compat"], // Required for Node.js APIs (buffer, crypto, path)
+  "assets": {
+    "directory": ".open-next/assets", // Static HTML, CSS, JS, and image outputs
+    "binding": "ASSETS"
+  },
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "quiizee" }],
+  "hyperdrive": [{
+    "binding": "HYPERDRIVE",
+    "id": "2d07aaca2af846d7a43481dd29315b0e",
+    "localConnectionString": "postgresql://postgres.edunmxvcycpogjzzwvgt:4UlfXpZTfocFzAIg@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres"
+  }]
+}
+```
+
+### `@opennextjs/cloudflare` Workflow
+1. When `npm run build` or `npm run preview` / `npm run deploy` is executed, the `opennextjs-cloudflare` CLI compiles the Next.js 16 App Router app into `.open-next/`.
+2. It bundles server components, route handlers, and middleware/proxy into `.open-next/worker.js`.
+3. It emits client-side public static files (`_next/static`, images, manifest) to `.open-next/assets/`.
+4. `wrangler` then deploys `.open-next/worker.js` as the main entrypoint and serves `.open-next/assets/` directly from Cloudflare's edge CDN via the `ASSETS` binding.
