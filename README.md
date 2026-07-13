@@ -1,34 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Quiizee (Mini LMS)
 
-## Getting Started
+**Quiizee** is a modern, AI-powered Learning Management System (Mini LMS) tailored for dynamic quiz creation, automated scoring, and interactive online assessments. Built with **Next.js 16**, **Drizzle ORM**, and **Supabase PostgreSQL**, and optimized for serverless edge deployment on **Cloudflare Workers** using **Hyperdrive**.
 
-First, run the development server:
+---
 
+## ✨ Features
+
+- **Teacher Dashboard**: Create, edit, reorder, and publish quizzes with custom time limits, access codes, and certificate settings.
+- **AI Question Generation**: Automatically draft multiple choice, true/false, and essay questions with code formatting using **Google Gemini AI**.
+- **Interactive Student Attempts**: Seamless quiz-taking interface with per-question or global timers, auto-saving responses, and instant grading.
+- **Essay Review Workflow**: Dedicated teacher grading workspace for evaluating written responses and leaving feedback.
+- **Rich Markdown & Code Rendering**: Built-in support for syntax highlighted code blocks (` ``` `) and inline formatting across all question cards.
+
+---
+
+## 🚀 How to Run Locally
+
+### 1. Prerequisites
+- **Node.js**: `v20` or higher (`v24` recommended)
+- **Database**: A PostgreSQL database (e.g., [Supabase](https://supabase.com))
+
+### 2. Installation & Environment Setup
+
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Configure environment variables**:
+   Copy the example environment file and fill in your values:
+   ```bash
+   cp .env.example .env
+   ```
+   *Make sure your `DATABASE_URL` in `.env` points to your Supabase **Connection Pooler URL (`aws-0-...pooler.supabase.com:6543`) over IPv4** to avoid local `ENETUNREACH` IPv6 errors.*
+
+### 3. Database Migration
+
+Push the Drizzle ORM schema to your database to create the required tables:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run db:push
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4. Start Development Server
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Run the Next.js dev server (powered by Turbopack):
+```bash
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Key Commands
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Starts local development server with Turbopack on `http://localhost:3000`. |
+| `npm run build` | Builds the application locally for verification. |
+| `npm run preview` | Compiles and previews the Cloudflare Worker locally via Miniflare. |
+| `npm run db:push` | Syncs Drizzle ORM schema directly to the database. |
+| `npm run db:studio` | Opens a visual web interface (`Drizzle Studio`) to inspect database tables. |
