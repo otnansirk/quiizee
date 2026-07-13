@@ -104,7 +104,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
                     }`}
                   >
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-base flex-shrink-0 transition-all ${
+                      className={`w-7 h-7 rounded-full flex items-center justify-center font-extrabold text-sm flex-shrink-0 transition-all ${
                         isSelected
                           ? "bg-primary text-white border-none"
                           : "bg-white/10 text-muted-foreground border border-border"

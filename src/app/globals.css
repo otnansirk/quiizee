@@ -639,7 +639,7 @@ body {
   transition: all var(--transition-normal);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.1rem;
   text-align: left;
   box-shadow: var(--shadow-sm);
 }
