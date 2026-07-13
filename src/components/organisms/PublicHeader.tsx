@@ -21,7 +21,7 @@ export const PublicHeader: React.FC<PublicHeaderProps> = ({
   return (
     <header
       className={`py-3 border-b-2 border-foreground bg-background ${
-        sticky ? "sticky top-0 z-40" : "static"
+        sticky ? "fixed top-0 z-40" : "static"
       } ${className}`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">

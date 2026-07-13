@@ -14,7 +14,7 @@ function JoinQuizForm() {
   const [accessCode, setAccessCode] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -81,7 +81,7 @@ function JoinQuizForm() {
   };
 
   return (
-    <div className="card" style={{ padding: "2.5rem" }}>
+    <div className="card">
       <form onSubmit={handleSubmit}>
         {error && (
           <div className="alert alert-error animate-fade-in" role="alert" style={{ marginBottom: "1.75rem" }}>
@@ -93,7 +93,6 @@ function JoinQuizForm() {
         <div className="form-group">
           <label className="label" htmlFor="accessCode" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>Access Code <span style={{ color: "#dc2626" }}>*</span></span>
-            <span style={{ fontSize: "0.75rem", color: "#6b7280", fontWeight: 700 }}>REQUIRED</span>
           </label>
           <div style={{ position: "relative" }}>
             <input
@@ -102,7 +101,7 @@ function JoinQuizForm() {
               required
               disabled={loading}
               className="input"
-              placeholder="e.g. QUIZ-X8Y2Z1"
+              placeholder="e.g. X8Y2Z1"
               value={accessCode}
               onChange={(e) => {
                 setAccessCode(e.target.value.toUpperCase());
@@ -112,8 +111,6 @@ function JoinQuizForm() {
                 fontFamily: "monospace, var(--font-inter)",
                 textTransform: "uppercase",
                 letterSpacing: "0.12em",
-                fontWeight: 900,
-                fontSize: "1.15rem",
               }}
             />
           </div>
@@ -123,7 +120,6 @@ function JoinQuizForm() {
         <div className="form-group">
           <label className="label" htmlFor="name" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>Your Full Name <span style={{ color: "#dc2626" }}>*</span></span>
-            <span style={{ fontSize: "0.75rem", color: "#6b7280", fontWeight: 700 }}>PUBLIC IDENTIFIER</span>
           </label>
           <input
             id="name"
@@ -144,7 +140,6 @@ function JoinQuizForm() {
         <div className="form-group" style={{ marginBottom: "2rem" }}>
           <label className="label" htmlFor="email" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>Email Address <span style={{ color: "#dc2626" }}>*</span></span>
-            <span style={{ fontSize: "0.75rem", color: "#6b7280", fontWeight: 700 }}>FOR RESULT CODE &amp; CERTIFICATE</span>
           </label>
           <input
             id="email"
@@ -195,7 +190,7 @@ function JoinQuizForm() {
         </button>
       </form>
 
-      <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+      <div style={{ textAlign: "center", marginTop: "1rem" }}>
         <BackLink href="/" label="Back to Home" variant="ghost" style={{ color: "#111827", fontWeight: 800 }} />
       </div>
     </div>
@@ -213,10 +208,10 @@ export default function JoinQuizPage() {
             <div className="badge badge-accent" style={{ marginBottom: "1rem" }}>
               Live Assessment Room
             </div>
-            <h1 className="title" style={{ fontSize: "2.75rem", marginBottom: "0.75rem" }}>
+            <h1 className="title">
               Join Assessment
             </h1>
-            <p className="subtitle" style={{ margin: "0 auto", maxWidth: "450px" }}>
+            <p className="text-sm md:text-base" style={{ margin: "0 auto", maxWidth: "450px" }}>
               Enter your access code to begin your quiz session. Prepare your environment and good luck!
             </p>
           </div>

@@ -235,14 +235,15 @@ body {
   width: 100%;
   background: #f9fafb;
   border: 2px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 0.875rem 1rem;
   color: var(--text-primary);
-  font-size: 0.95rem;
-  font-weight: 600;
-  font-family: inherit;
   transition: all var(--transition-normal);
   outline: none;
+  border-radius: clamp(8px, 0.51vw + 8px, 12px);
+  padding-top: clamp(0.50rem, 2.04vw - 0.23rem, 0.75rem);
+  padding-bottom: clamp(0.50rem, 2.04vw - 0.23rem, 0.75rem);
+  padding-left: clamp(0.5rem, 1.02vw + 0.26rem, 0.75rem);
+  padding-right: clamp(0.5rem, 1.02vw + 0.26rem, 0.75rem);
+  font-size: clamp(0.875rem, 0.51vw + 0.76rem, 1rem);
 }
 
 .input::placeholder {
