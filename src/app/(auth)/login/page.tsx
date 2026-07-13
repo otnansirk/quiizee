@@ -46,9 +46,9 @@ function LoginForm() {
   };
 
   return (
-    <div className="card" style={{ padding: "2.5rem" }}>
+    <div className="card !p-6 md:!p-11">
       <div className="card-header text-center" style={{ marginBottom: "2rem" }}>
-        <h1 className="card-title" style={{ fontSize: "1.75rem", marginBottom: "0.5rem" }}>
+        <h1 className="card-title">
           Teacher Login
         </h1>
         <p className="card-description">
@@ -128,13 +128,13 @@ function LoginForm() {
         </button>
       </form>
 
-      <div style={{ marginTop: "2rem", textAlign: "center", paddingTop: "1.5rem", borderTop: "1px solid var(--border)" }}>
-        <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+      <div style={{ fontSize: "0.9rem", marginTop: "2rem", textAlign: "center", paddingTop: "1.5rem", borderTop: "1px solid var(--border)" }}>
+        <p style={{ color: "var(--text-secondary)" }}>
           Don&apos;t have a teacher account?{" "}
+        </p>
           <Link href="/register" style={{ color: "var(--accent-hover)", fontWeight: 600, textDecoration: "none" }}>
             Register here
           </Link>
-        </p>
       </div>
     </div>
   );

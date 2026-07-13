@@ -56,9 +56,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="card" style={{ padding: "2.5rem" }}>
+    <div className="card !p-6 md:!p-11">
       <div className="card-header text-center" style={{ marginBottom: "2rem" }}>
-        <h1 className="card-title" style={{ fontSize: "1.75rem", marginBottom: "0.5rem" }}>
+        <h1 className="card-title">
           Teacher Registration
         </h1>
         <p className="card-description">
