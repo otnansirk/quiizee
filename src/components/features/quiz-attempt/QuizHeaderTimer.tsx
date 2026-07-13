@@ -80,7 +80,7 @@ export const QuizHeaderTimer: React.FC<QuizHeaderTimerProps> = ({
 
       {/* Question Timeout Banner */}
       {questionTimeoutBanner && (
-        <div className="animate-fade-in fixed top-20 left-1/2 -translate-x-1/2 z-[100] bg-red-500 text-white py-3 px-7 rounded-full shadow-xl shadow-red-500/50 font-extrabold text-base flex items-center gap-2.5 border-2 border-white/30">
+        <div className="animate-fade-in fixed top-20 left-1 md:left-1/2 md:-translate-x-1/2 z-[100] bg-red-500 text-white py-3 rounded-full shadow-xl shadow-red-500/50 font-extrabold text-xs md:text-sm flex items-center gap-2.5 border-2 border-white/30 w-[98%] md:max-w-md text-center justify-center">
           <span>{questionTimeoutBanner}</span>
         </div>
       )}
