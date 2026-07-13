@@ -32,7 +32,7 @@ export default function HomePage() {
         size="md"
         className="editorial-header"
         rightAction={
-          <Link href="/login" className="editorial-btn-black" style={{ width: "auto", padding: "0.5rem 1.25rem", fontSize: "0.85rem" }}>
+          <Link href="/login" className="editorial-btn-black text-sm px-3 py-1 md:px-4 md:py-2 md:text-base">
             Creator Portal
           </Link>
         }

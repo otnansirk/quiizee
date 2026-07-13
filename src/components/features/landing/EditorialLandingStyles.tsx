@@ -14,12 +14,10 @@ export const EditorialLandingStyles: React.FC = () => {
           overflow-x: hidden;
         }
         .editorial-header {
-          padding: 1.25rem 0;
           border-bottom: 2px solid #111827;
           background: #ffffff;
-          position: sticky;
-          top: 0;
           z-index: 50;
+          width: 100%;
         }
         .editorial-logo {
           font-size: 1.4rem;
@@ -44,10 +42,8 @@ export const EditorialLandingStyles: React.FC = () => {
           justify-content: center;
           background: #111827;
           color: #ffffff;
-          padding: 0.9rem 1.75rem;
           border-radius: 12px;
           font-weight: 800;
-          font-size: 1rem;
           text-decoration: none;
           border: 2px solid #111827;
           box-shadow: 4px 4px 0px #111827;
@@ -71,10 +67,7 @@ export const EditorialLandingStyles: React.FC = () => {
           justify-content: center;
           background: #2563eb;
           color: #ffffff;
-          padding: 0.9rem 1.75rem;
-          border-radius: 12px;
           font-weight: 800;
-          font-size: 1rem;
           text-decoration: none;
           border: 2px solid #111827;
           box-shadow: 4px 4px 0px #111827;
@@ -101,13 +94,13 @@ export const EditorialLandingStyles: React.FC = () => {
           flex-wrap: wrap;
         }
         .chunky-letter {
-          font-size: clamp(3.5rem, 8vw, 6.5rem);
+          font-size: clamp(1rem, 6vw, 6.5rem);
           font-weight: 900;
           line-height: 1;
           color: #ffffff;
           background: #111827;
           padding: 0.2rem 0.6rem;
-          border-radius: 16px;
+          border-radius:  clamp(8px, 1.85vw - 3px, 16px);
           border: 3px solid #111827;
           box-shadow: 5px 5px 0px #2563eb;
           display: inline-block;
@@ -128,7 +121,7 @@ export const EditorialLandingStyles: React.FC = () => {
           font-weight: 900;
           color: #111827;
           background: #fde047;
-          padding: 0.3rem 0.8rem;
+          padding: 0.1rem 0.2rem;
           border-radius: 12px;
           border: 3px solid #111827;
           box-shadow: 4px 4px 0px #111827;
@@ -137,7 +130,7 @@ export const EditorialLandingStyles: React.FC = () => {
           margin-left: 0.5rem;
         }
         .hero-subtitle {
-          font-size: clamp(0.85rem, 2.5vw, 1.2rem);
+          font-size: clamp(0.6rem, 2.5vw, 1rem);
           font-weight: 900;
           color: #111827;
           text-transform: uppercase;
@@ -153,7 +146,6 @@ export const EditorialLandingStyles: React.FC = () => {
         .cards-layout {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 2.5rem;
           width: 100%;
           max-width: 950px;
           align-items: stretch;
@@ -169,7 +161,6 @@ export const EditorialLandingStyles: React.FC = () => {
           border: 3px solid #111827;
           border-radius: 24px;
           box-shadow: 8px 8px 0px #111827;
-          padding: 2.5rem;
           transition: transform 0.2s, box-shadow 0.2s;
           text-align: left;
           height: 100%;
@@ -196,9 +187,8 @@ export const EditorialLandingStyles: React.FC = () => {
         }
         .tag-blue { background: #2563eb; }
         .tag-mint { background: #059669; }
-        
+
         .card-title {
-          font-size: 1.65rem;
           font-weight: 900;
           color: #111827;
           margin-bottom: 0.5rem;
