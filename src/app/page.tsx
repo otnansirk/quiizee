@@ -24,7 +24,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="editorial-landing-wrapper min-h-screen flex flex-col justify-between animate-fade-in">
+    <div className="editorial-landing-wrapper min-h-screen flex flex-col justify-between animate-fade-in pt-28">
       <EditorialLandingStyles />
 
       {/* Top Header */}

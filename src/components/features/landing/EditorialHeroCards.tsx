@@ -17,7 +17,7 @@ export const EditorialHeroCards: React.FC<EditorialHeroCardsProps> = ({
   onSubmitCheckResults,
 }) => {
   return (
-    <main className="container mx-auto px-6 py-16 flex-1 flex flex-col justify-center items-center">
+    <main className="container mx-auto flex-1 flex flex-col justify-center items-center">
       {/* Playful Chunky Graphic Typography */}
       <div className="chunky-title-container">
         <span className="chunky-letter">Q</span>
